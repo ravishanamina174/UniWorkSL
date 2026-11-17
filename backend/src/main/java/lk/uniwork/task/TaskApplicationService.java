@@ -50,10 +50,10 @@ public class TaskApplicationService {
     @Transactional(readOnly = true)
     public PageResponse<TaskApplicationResponse> mine(String subject, int page, int size, TaskApplicationStatus status) {
         identities.requireStudent(subject);
-        var paging = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        var result = status == null ? applications.findByStudentClerkUserId(subject, paging)
-                : applications.findByStudentClerkUserIdAndStatus(subject, status, paging);
-        return PageResponse.from(result.map(this::withStudentProfile));
+        var paging = PageRequest.of(page, size);
+        var result = status == null ? applications.pageForStudent(subject, paging)
+                : applications.pageForStudentStatus(subject, status, paging);
+        return PageResponse.from(result);
     }
 
     @Transactional
@@ -91,10 +91,10 @@ public class TaskApplicationService {
         identities.requireTaskPoster(subject);
         if (taskId != null && tasks.findByIdAndPosterClerkUserId(taskId, subject).isEmpty())
             throw notFound("TASK_NOT_FOUND", "This task could not be found.");
-        var paging = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        var result = taskId == null ? applications.findByTaskPosterClerkUserId(subject, paging)
-                : applications.findByTaskIdAndTaskPosterClerkUserIdOrderByCreatedAtDesc(taskId, subject, paging);
-        return PageResponse.from(result.map(this::withStudentProfile));
+        var paging = PageRequest.of(page, size);
+        var result = taskId == null ? applications.pageForPoster(subject, paging)
+                : applications.pageForPosterTask(subject, taskId, paging);
+        return PageResponse.from(result);
     }
 
     @Transactional

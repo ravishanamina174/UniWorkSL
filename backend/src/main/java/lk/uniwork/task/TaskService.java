@@ -142,17 +142,6 @@ public class TaskService {
                 applications.countByTaskPosterClerkUserIdAndStatus(subject, TaskApplicationStatus.PENDING));
     }
 
-    @Transactional(readOnly = true)
-    public PageResponse<TaskApplicationResponse> applications(String subject, UUID taskId, int page, int size) {
-        identities.requireTaskPoster(subject);
-        if (taskId != null) findOwned(subject, taskId);
-        PageRequest paging = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<TaskApplication> results = taskId == null
-                ? applications.findByTaskPosterClerkUserId(subject, paging)
-                : applications.findByTaskIdAndTaskPosterClerkUserId(taskId, subject, paging);
-        return PageResponse.from(results.map(TaskApplicationResponse::from));
-    }
-
     private Task findOwned(String subject, UUID taskId) {
         return tasks.findByIdAndPosterClerkUserId(taskId, subject)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "TASK_NOT_FOUND", "This task could not be found."));

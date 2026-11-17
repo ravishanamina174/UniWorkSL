@@ -10,6 +10,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
@@ -65,7 +66,10 @@ public class PiiEncryptionService {
     public String keyedHash(String value) {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(new SecretKeySpec(requireKey().getEncoded(), "HmacSHA256"));
+            byte[] baseKey = requireKey().getEncoded();
+            byte[] domain = "uniwork/hmac/v1".getBytes(java.nio.charset.StandardCharsets.US_ASCII);
+            byte[] material = java.nio.ByteBuffer.allocate(domain.length + baseKey.length).put(domain).put(baseKey).array();
+            mac.init(new SecretKeySpec(MessageDigest.getInstance("SHA-256").digest(material), "HmacSHA256"));
             return java.util.HexFormat.of().formatHex(mac.doFinal(value.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
         } catch (GeneralSecurityException exception) {
             throw new IllegalStateException("Unable to protect verification data.", exception);

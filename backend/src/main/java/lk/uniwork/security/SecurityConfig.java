@@ -13,6 +13,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.BadJwtException;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -30,18 +34,32 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(webOrigin));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
     @Bean
-    JwtDecoder jwtDecoder(@Value("${uniwork.security.clerk-issuer-uri:}") String issuerUri) {
+    JwtDecoder jwtDecoder(@Value("${uniwork.security.clerk-issuer-uri:}") String issuerUri,
+                          @Value("${uniwork.security.clerk-jwks-uri:}") String configuredJwksUri,
+                          @Value("${uniwork.security.jwt-audience:}") String audienceSetting,
+                          @Value("${uniwork.security.authorized-parties:}") String authorizedPartySetting) {
         if (issuerUri == null || issuerUri.isBlank()) {
             return token -> { throw new BadJwtException("Clerk issuer is not configured."); };
         }
-        return NimbusJwtDecoder.withIssuerLocation(issuerUri).build();
+        String issuer = issuerUri.trim().replaceAll("/+$", "");
+        String jwksUri = configuredJwksUri == null || configuredJwksUri.isBlank()
+                ? issuer + "/.well-known/jwks.json" : configuredJwksUri.trim();
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwksUri).build();
+        OAuth2TokenValidator<Jwt> claims = new ClerkJwtClaimValidator(csv(audienceSetting), csv(authorizedPartySetting));
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(JwtValidators.createDefaultWithIssuer(issuer), claims));
+        return decoder;
+    }
+
+    private List<String> csv(String value) {
+        if (value == null || value.isBlank()) return List.of();
+        return java.util.Arrays.stream(value.split(",")).map(String::trim).filter(item -> !item.isEmpty()).distinct().toList();
     }
 
     @Bean

@@ -51,7 +51,10 @@ public class TaskExecution {
         this.pinLastAttemptAt = now; this.pinLastResult = "INVALID";
         if (this.pinAttempts >= 5) { this.pinHash = null; this.pinSalt = null; }
     }
-    public boolean verifyHash(String hash) { return this.pinHash != null && this.pinHash.equals(hash); }
+    public boolean verifyHash(String hash) {
+        return this.pinHash != null && hash != null && java.security.MessageDigest.isEqual(
+                this.pinHash.getBytes(java.nio.charset.StandardCharsets.US_ASCII), hash.getBytes(java.nio.charset.StandardCharsets.US_ASCII));
+    }
     public void verifyPin(Instant now) { this.pinVerifiedAt = now; this.pinLastAttemptAt = now; this.pinLastResult = "VERIFIED"; this.startedAt = now; clearPin(); }
     private void clearPin() { this.pinHash = null; this.pinSalt = null; this.pinExpiresAt = null; }
     public void recordLocation(boolean verified, Double distanceMeters, Double accuracyMeters, String result, Instant now) {

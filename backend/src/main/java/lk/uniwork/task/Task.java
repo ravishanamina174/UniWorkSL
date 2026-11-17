@@ -14,6 +14,7 @@ import lk.uniwork.user.UniWorkUser;
 import jakarta.persistence.ManyToOne;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.BatchSize;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -23,6 +24,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "tasks")
+@BatchSize(size = 25)
 public class Task {
     @Id
     @Column(name = "task_id", nullable = false, updatable = false)
@@ -58,6 +60,7 @@ public class Task {
     private TaskStatus status;
 
     @ElementCollection
+    @BatchSize(size = 25)
     @CollectionTable(name = "task_skills", joinColumns = @JoinColumn(name = "task_id"))
     @Column(name = "skill", nullable = false, length = 80)
     private Set<String> requiredSkills = new LinkedHashSet<>();

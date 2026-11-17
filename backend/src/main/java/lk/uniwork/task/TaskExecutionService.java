@@ -84,8 +84,10 @@ public class TaskExecutionService {
             if (request.latitude() == null || request.longitude() == null)
                 throw new ApiException(HttpStatus.BAD_REQUEST, "LOCATION_COORDINATES_REQUIRED", "Coordinates are required when location is available.");
             distance = locations.distanceMeters(task.getLatitude().doubleValue(), task.getLongitude().doubleValue(), request.latitude(), request.longitude());
-            verified = distance <= 100;
-            result = verified ? "WITHIN_RADIUS" : "OUTSIDE_RADIUS";
+            if (request.accuracyMeters() == null || request.accuracyMeters() > 100) result = "ACCURACY_INSUFFICIENT";
+            else if (distance + request.accuracyMeters() <= 100) { verified = true; result = "WITHIN_RADIUS"; }
+            else if (distance - request.accuracyMeters() > 100) result = "OUTSIDE_RADIUS";
+            else result = "ACCURACY_UNCERTAIN";
         }
         execution.recordLocation(verified, distance, available ? request.accuracyMeters() : null, result, Instant.now());
         return StartTaskResponse.from(execution);

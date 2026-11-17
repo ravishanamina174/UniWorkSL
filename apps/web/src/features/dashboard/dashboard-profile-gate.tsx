@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ApiRequestError } from "@/services/api-client";
 import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/ui/loading-state";
 import { useAuthenticatedApi } from "./use-api";
@@ -29,7 +28,6 @@ export function DashboardProfileGate({ children }: { children: ReactNode }) {
         setState("ready");
       } catch (cause) {
         if (!active) return;
-        if (cause instanceof ApiRequestError && cause.status === 401) { router.replace(`/sign-in?redirect_url=${encodeURIComponent(pathname)}`); return; }
         setError(cause instanceof Error ? cause.message : "The profile service could not be reached.");
         setState("error");
       }

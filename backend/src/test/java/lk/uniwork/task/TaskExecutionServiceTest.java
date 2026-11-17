@@ -69,6 +69,23 @@ class TaskExecutionServiceTest {
         assertTrue(f.execution.hasActivePin(java.time.Instant.now()));
     }
 
+    @Test void inaccurateLocationIsRecordedButNeverClaimsVerification() {
+        Fixture f=fixture();
+        when(identities.requireStudent("student")).thenReturn(student);
+        when(tasks.findByIdForUpdate(f.task.getId())).thenReturn(Optional.of(f.task));
+        when(executions.findByTaskIdAndStudentClerkUserId(f.task.getId(),"student")).thenReturn(Optional.of(f.execution));
+        service.requestStart("student",f.task.getId());
+        String pin=crypto.deriveFourDigitCode(f.task.getId() + ":" + student.getId(),f.execution.getPinSalt());
+        assertTrue(service.verifyPin("student",f.task.getId(),pin).verified());
+
+        var result=service.checkLocation("student",f.task.getId(),new LocationCheckRequest(true,true,
+                6.9271,79.8612,250.0));
+
+        assertFalse(result.locationVerified());
+        assertEquals("ACCURACY_INSUFFICIENT",result.locationResult());
+        assertNotNull(result.locationCheckedAt());
+    }
+
     private Fixture fixture() {
         Task task=new Task(poster,"Carry boxes","Move boxes",new BigDecimal("2500.00"),LocalDateTime.now().plusDays(1).atZone(ZoneId.of("Asia/Colombo")).toInstant(),
                 "Colombo 07",new BigDecimal("6.9271"),new BigDecimal("79.8612"),Set.of("lifting"));

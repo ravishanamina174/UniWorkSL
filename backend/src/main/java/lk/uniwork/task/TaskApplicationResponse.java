@@ -10,8 +10,4 @@ public record TaskApplicationResponse(UUID applicationId, UUID taskId, String ta
         return new TaskApplicationResponse(application.getId(), application.getTask().getId(), application.getTask().getTitle(),
                 application.getStatus(), application.getCreatedAt(), profile.getFullName(), profile.getUniversity(), profile.getFaculty());
     }
-    static TaskApplicationResponse from(TaskApplication application) {
-        return new TaskApplicationResponse(application.getId(), application.getTask().getId(), application.getTask().getTitle(),
-                application.getStatus(), application.getCreatedAt(), null, null, null);
-    }
 }

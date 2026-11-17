@@ -41,5 +41,8 @@ uniwork:
   web-origin: ${WEB_ORIGIN:http://localhost:3000}
   security:
     clerk-issuer-uri: ${CLERK_ISSUER_URI:}
+    clerk-jwks-uri: ${CLERK_JWKS_URI:}
+    jwt-audience: ${CLERK_JWT_AUDIENCE:}
+    authorized-parties: ${CLERK_AUTHORIZED_PARTIES:${WEB_ORIGIN:http://localhost:3000}}
   pii:
     encryption-key: ${UNIWORK_PII_ENCRYPTION_KEY:}
