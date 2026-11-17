@@ -23,6 +23,20 @@ Students must be at least 16. Roles are assigned once by the API; an existing Ta
 
 The `eas.json` preview and production profiles produce internal APKs. Run `npx eas-cli@latest build --platform android --profile preview` or `npx eas-cli@latest build --platform android --profile production`. See [Android EAS release setup](../../docs/deployment/android-eas.md) for EAS environments, Clerk native registration, signing, and post-build verification. The production API URL and Clerk publishable key are supplied by the EAS `production` environment; no release credentials are stored in the repository.
 
+## Physical iPhone development
+
+This app uses Expo SDK 58. The Expo Go version available from the iOS App Store supports only SDK 54, so it cannot open this project. Use the EAS `development` profile instead; it includes `expo-dev-client` and creates an internal iOS development build without downgrading the app. An Expo account and Apple Developer Program membership are required.
+
+From `apps/mobile`, sign in to EAS, register the iPhone's UDID, and build:
+
+```sh
+npx eas-cli@latest login
+npx eas-cli@latest device:create
+npx eas-cli@latest build --platform ios --profile development
+```
+
+Install the build from the EAS build page on that registered iPhone. With the phone and development computer on the same network, start Metro with `npx expo start --dev-client` and open the QR code from the installed UniWork development app. Use `npx expo start --dev-client --tunnel` if the network blocks local device discovery. Configure the EAS `development` environment with the development API URL and Clerk publishable key, and register the iOS bundle ID `lk.uniwork.student` in Clerk's Native API settings.
+
 ## Checks
 
 From the repository root:
@@ -32,7 +46,7 @@ pnpm --filter @uniwork/api-contracts build
 pnpm --filter @uniwork/mobile typecheck
 pnpm --filter @uniwork/mobile lint
 pnpm --filter @uniwork/mobile test
-cd apps/mobile && pnpm dlx expo-doctor
+cd apps/mobile && npx expo install --check && npx expo-doctor@latest
 ```
 
 Use `pnpm --filter @uniwork/mobile start` to launch Metro. A real device, Clerk Native API dashboard setup, and a reachable configured backend are needed for end-to-end verification. Those external checks are reported separately in `docs/development/mobile-verification.md`.
