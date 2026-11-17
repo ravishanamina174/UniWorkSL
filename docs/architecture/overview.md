@@ -8,11 +8,11 @@ Organize future business work by feature (`user`, `student`, `poster`, `task`, `
 
 ## Authentication
 
-Clerk is the identity provider. Spring Security is configured as an OAuth2 resource server and validates bearer JWTs using the configured Clerk issuer/JWKS discovery. Public API routes are explicitly allowlisted; other routes require a valid JWT. The web dashboard requires both Clerk keys, an authenticated Clerk session, and administrator-managed `publicMetadata.role === "task_poster"`. Client-editable `unsafeMetadata` is never used for authorization. Role and ownership checks for business APIs remain server-side responsibilities as those APIs are implemented. The browser API client accepts an access-token provider for future Clerk integration; it does not invent or persist tokens.
+Clerk is the identity provider. Spring Security is configured as an OAuth2 resource server and validates bearer JWTs using the configured Clerk issuer/JWKS discovery. Health and published-task GET routes are public; poster routes require a valid JWT. During web onboarding, the backend binds the verified Clerk `sub` to an internal user and assigns `TASK_POSTER` once. Subsequent poster APIs require that server-side role and check ownership in repository queries. No request DTO accepts role changes, and Clerk client metadata is not an authorization source. If Clerk issuer configuration is missing, protected API routes fail closed.
 
 ## Database
 
-PostgreSQL is the relational source of truth, with PostGIS for geographic data and distance operations. Flyway owns schema changes. Hibernate validates rather than creates the schema. Local development uses native PostgreSQL, without containers. Sensitive identity fields must be access-controlled and omitted from public DTOs.
+PostgreSQL is the relational source of truth. Flyway owns schema changes; Hibernate validates rather than creates the schema. Core migrations store latitude and longitude as bounded numeric values, so core features do not require PostGIS. The optional PostGIS migration is profile-scoped. NIC values are stored using AES-256-GCM ciphertext with a server-held encryption key. Private profile data is owner-scoped and omitted from public task/application DTOs. Local development uses native PostgreSQL, without containers.
 
 ## Mobile integration
 

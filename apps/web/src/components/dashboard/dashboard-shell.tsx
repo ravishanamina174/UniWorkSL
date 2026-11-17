@@ -15,7 +15,7 @@ const navigation = [
 ];
 
 const routeLabels: Record<string, string> = {
-  dashboard: "Dashboard", tasks: "Posted Tasks", new: "Create Task", applications: "Applications", profile: "Profile", start: "Task Start",
+  dashboard: "Dashboard", tasks: "Posted Tasks", new: "Create Task", applications: "Applications", profile: "Profile", onboarding: "Complete Profile", edit: "Edit Task",
 };
 
 export function DashboardShell({ children, displayName }: { children: React.ReactNode; displayName: string }) {

@@ -18,6 +18,11 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.BAD_REQUEST, "INVALID_ARGUMENT", "A request value has an invalid format.");
     }
 
+    @ExceptionHandler(ApiException.class)
+    ResponseEntity<ApiError> handleApiException(ApiException exception) {
+        return ResponseEntity.status(exception.getStatus()).body(new ApiError(exception.getStatus().value(), exception.getCode(), exception.getMessage(), Instant.now()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException exception) {
         return error(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", "One or more request fields are invalid.");

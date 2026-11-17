@@ -8,5 +8,5 @@ export const metadata = { title: "Task Poster sign in | UniWork" };
 
 export default function SignInPage() {
   if (!hasClerkConfiguration()) return <DashboardConfigurationRequired />;
-  return <main id="main-content" className="sign-in-page"><div className="sign-in-panel"><Link href="/" className="sign-in-back"><ArrowLeft size={15} aria-hidden="true" /> UniWork</Link><SignIn signUpUrl="/sign-up" /></div></main>;
+  return <main id="main-content" className="sign-in-page"><div className="sign-in-panel"><Link href="/" className="sign-in-back"><ArrowLeft size={15} aria-hidden="true" /> UniWork</Link><SignIn signUpUrl="/sign-up" fallbackRedirectUrl="/dashboard" /></div></main>;
 }

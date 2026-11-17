@@ -1,32 +1,28 @@
-# Foundation milestone status
+# Foundation and Prompt 3 status
 
-The Prompt 1 backend and repository foundation and the Prompt 2 public web and dashboard foundation are implemented. The Expo mobile application and business workflows remain future work.
+The Prompt 1–2 repository, backend, public landing page, and dashboard shell remain in place. Prompt 3 adds Clerk-backed Task Poster onboarding, private profile management, task publishing/management, location selection, and an applications foundation. The Expo app and student application workflows remain deferred.
 
-## Verified
+## Verified in this environment
 
-- Frontend ESLint and TypeScript checks pass.
-- Frontend Vitest passes (9 tests across 5 files).
-- Next.js production build succeeds.
-- Spring Boot Maven `verify` succeeds (4 tests).
-- Browser checks confirmed the landing page at mobile, tablet, and desktop viewport overrides. The rendered document width matched the available viewport width at each size; the mobile menu opened and the desktop navigation appeared at desktop width.
-- The landing page showed the configured Coming Soon APK state. `/dashboard` showed the configuration-required screen with Clerk keys absent.
-- Automated UI tests cover theme switching and persistence. A browser log exposed a server/client icon hydration mismatch; the toggle now renders a stable server snapshot. The browser stopped reconnecting to the local dev server during the post-fix check, so the final hydration fix was not independently rechecked in the browser.
-- The visual dashboard preview is explicitly illustrative and contains no live task records. Dashboard task routes have empty placeholders only.
+- Web package: API contracts build, ESLint, TypeScript, Vitest, and Next.js production build pass.
+- Backend: Maven `verify` passes (17 tests, including profile encryption/role checks, task state/ownership, and HTTP authorization/validation checks).
+- PostgreSQL 16: default Flyway V1 and V2 migrations were applied successfully without PostGIS; Hibernate validated the mapped schema at API startup.
+- Live unauthenticated API: public published-task listing returns a real empty page from the database; private profile and poster summary endpoints return 401 without a bearer token.
+- No task, profile, or application demo records were added. The interactive map and real Clerk sign-in were not verified because their API key/project credentials are not configured.
+- The Prompt 2 browser checks previously confirmed responsive layout, mobile navigation, APK Coming Soon state, and protected dashboard configuration screen. Prompt 3 authenticated dashboard screens cannot be exercised without Clerk configuration.
 
-## Setup still required
+## Configuration needed for authenticated use
 
-### PostGIS
+- Clerk web keys: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`.
+- Backend Clerk issuer: `CLERK_ISSUER_URI`; JWT validation fails closed when absent.
+- Stable server-side encryption key: `UNIWORK_PII_ENCRYPTION_KEY`, base64-encoded 32 bytes. Without it, profile persistence returns 503. Keep this stable and back it up securely.
+- Optional Google Maps browser key: `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, restricted to Maps JavaScript API and the app's HTTP referrers. Manual coordinate entry remains available without it.
+- Optional Android APK URL: `NEXT_PUBLIC_ANDROID_APK_URL` (HTTPS).
 
-PostGIS is not installed and no spatial query has been run. Homebrew's PostGIS formula planned 96 dependencies and 16 package upgrades, so that installation was stopped. The default Flyway migration requires PostGIS and has not been applied. Do not disable Flyway in normal development or claim PostGIS support is verified.
+## Spatial support
 
-Recommended next step: use an existing managed PostgreSQL service that offers PostGIS for a separate UniWork development database, or deliberately choose a PostgreSQL distribution that bundles PostGIS. See [web UI foundation and PostGIS options](web-ui.md#postgis-local-development-options) for the tradeoffs. Once selected, enable PostGIS and run the backend with default Flyway settings.
-
-### Clerk and APK
-
-The web dashboard stays unavailable until both `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` are configured. Authenticated dashboard access also requires administrator-managed Clerk `publicMetadata.role` set to `task_poster`; never authorize based on client-controlled `unsafeMetadata`. Backend JWT validation remains fail-closed until `CLERK_ISSUER_URI` is configured.
-
-The Student app download displays Coming Soon until `NEXT_PUBLIC_ANDROID_APK_URL` is set to an HTTPS APK URL. No APK has been provided or generated.
+Core schema and task APIs use PostgreSQL numeric latitude/longitude and work without PostGIS. PostGIS remains uninstalled; no distance query or spatial verification is claimed. `SPRING_PROFILES_ACTIVE=postgis` enables the isolated V3 extension migration only after the database administrator installs/enables PostGIS for this server. See [local setup](local-setup.md#postgresql-and-migrations).
 
 ## Readiness
 
-**READY WITH BLOCKERS** for Prompt 3. The landing and dashboard foundation is complete and verified. PostGIS setup and Clerk configuration remain environment prerequisites; task workflows and the mobile app are intentionally not part of this milestone.
+**READY WITH BLOCKERS** for Prompt 4. Core migrations, task/profile APIs, authorization boundaries, and pages are implemented. Real Clerk login and authenticated web-to-API CRUD still require Clerk configuration and a secure PII key; the interactive map requires a restricted Google Maps key for map-based selection. Automated secure-auth tests and the live unauthenticated API checks do not count as real Clerk login verification.
