@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: uniwork-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: postgis,prod
+      - key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+        value: "5"
+      - key: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+        value: "1"
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: CLERK_ISSUER_URI
+        sync: false
+      - key: CLERK_JWT_AUDIENCE
+        sync: false
+      - key: CLERK_AUTHORIZED_PARTIES
+        sync: false
+      - key: WEB_ORIGIN
+        sync: false
+      - key: UNIWORK_PII_ENCRYPTION_KEY
+        sync: false

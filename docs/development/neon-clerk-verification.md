@@ -1,39 +1,26 @@
 # Neon and Clerk verification
 
-Checked: 2026-11-17
+Checked: 2026-11-17. This record supersedes the earlier pre-configuration check below; the configured local environment now connects to Neon.
 
-## Environment status
+## Environment and database
 
-- `apps/web/.env.local` is present and ignored by Git. Both Clerk web keys are populated. The Clerk development instance is reachable by the Next.js client: `/sign-in` and `/sign-up` rendered the real Clerk components in development mode. The current UI offers Google sign-in.
-- No `backend/.env` is present, and no backend database, Clerk issuer, or PII key variables are set in the process environment. No Neon URL or DB credentials were found. Secret values were not printed.
-- `NEXT_PUBLIC_API_BASE_URL` in the local web environment targets loopback. There is no running local API configured to Neon.
+- The ignored `backend/.env`, `apps/web/.env.local`, and `apps/mobile/.env.local` exist. Secret values were not printed or committed.
+- Spring Boot connected to Neon PostgreSQL 18.7 using the configured direct JDBC connection and SSL-required settings. Hibernate ORM initialized with `ddl-auto=validate`.
+- Flyway validated the existing migration set and reported schema version V7 current. No migration was applied during the latest read-only verification run.
+- `SELECT PostGIS_Version()` returned PostGIS 3.6.
+- `GET /api/v1/health` returned HTTP 200 with application and database status `UP`.
+- An unauthenticated request to `GET /api/v1/student/profile` returned HTTP 401 (`UNAUTHENTICATED`). No user/task/application/report test records were inserted.
+- Earlier read-only inspection of local PostgreSQL found no UniWork business rows. The local service and database were left intact.
 
-## Local database preservation check
+## Clerk status
 
-The local `postgresql@16` service and `uniwork` database are still present. Read-only checks found Flyway versions 1, 2, and 4–6 applied; V3 (PostGIS) and V7 are absent. The application tables inspected (`uniwork_users`, profiles, tasks, applications, executions, reviews, and safety reports) all have zero rows. PostGIS is not installed in that database. No local database, migration history, or rows were changed. There are no business rows to migrate, though the existing local database should remain preserved.
+- The web and mobile publishable keys are development (`pk_test_`) keys. The backend has a configured Clerk development issuer and authorized-party setting. The audience setting is blank; audience validation is therefore not active for this instance.
+- Backend JWT verification validates signature through the configured/default JWKS URI, issuer, expiration/not-before, and checks `azp` against configured authorized parties when the claim exists. Automated validator tests cover accepted and rejected audience/party values.
+- No real Clerk session token was used against the backend. No authenticated profile onboarding, mobile sign-in, Poster sign-in, or full cross-platform API workflow is verified.
+- Clerk production configuration must use production instance keys/issuer. Register Android package `lk.uniwork.student`, enable Native API after reviewing Clerk's stated challenge implications, and verify the real mobile session's issuer, audience if configured, and exact `azp` before changing the production allowlist. Do not assume that the custom app scheme is the session's authorized party.
 
-## Changes prepared
+## Data preservation
 
-- Spring Boot imports an ignored `backend/.env` in the backend working directory. Process environment variables take precedence.
-- The datasource no longer defaults to `localhost`; `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` are required. PostgreSQL JDBC SSL mode is set to `require`.
-- The backend environment example uses placeholders and a direct Neon endpoint format with `sslmode=require`; it contains no real credentials.
-- Setup instructions require a schema/history inspection and Neon backup before touching a non-empty target. On a fresh target, start with the `postgis` profile so Flyway applies V1, V2, optional PostGIS V3, then V4–V7 in version order. Verify with `SELECT PostGIS_Version();`. Application location checks continue using Haversine.
+The latest verification used health and version queries only. It did not reset schemas, run destructive SQL, or create business data. Preserve the existing local and Neon datasets. Keep the same `UNIWORK_PII_ENCRYPTION_KEY` for any database that contains records encrypted with that key.
 
-## Verification outcomes
-
-| Check | Result |
-| --- | --- |
-| Clerk sign-in/sign-up UI | PASS: real Clerk development components loaded in browser. |
-| Clerk user sign-in, onboarding, session token, sign-out | BLOCKED: no test identity/session was available; no account was created. |
-| Spring JWT validation against a real Clerk session | BLOCKED: backend issuer and Neon configuration are absent, and no signed-in session token is available. Automated validator and unauthenticated 401 tests remain in the backend suite. |
-| Neon TLS connection and backend health | BLOCKED: Neon host/credentials are not configured. |
-| Neon Flyway V1–V7, Hibernate validation, and PostGIS V3 | BLOCKED: no Neon connection is available. The local database was not used as a substitute. |
-| Local database data migration | No business data to migrate based on aggregate row counts; keep the local database intact. |
-
-## To complete live migration
-
-1. Put Neon direct-host credentials in the ignored `backend/.env` and keep `sslmode=require` in `DB_URL`. Keep the existing encryption key stable; do not generate a replacement if encrypted data already exists.
-2. Set `CLERK_ISSUER_URI` to the configured Clerk instance issuer and match `CLERK_AUTHORIZED_PARTIES` to the web origin. Set `CLERK_JWT_AUDIENCE` if the session token includes an API audience.
-3. Inspect the Neon schema and `flyway_schema_history` read-only first. Take a restore point. Resolve any existing data/schema history before allowing migrations to run.
-4. On a new empty target, run from `backend`: `SPRING_PROFILES_ACTIVE=postgis ./mvnw spring-boot:run`. Check Flyway completion, Hibernate validation, `/api/v1/health`, and `SELECT PostGIS_Version();`.
-5. Sign in with an approved Clerk test account and exercise onboarding and authenticated API calls. Do not use a production account or create a new account without an approved test identity.
+See [V1 release verification](v1-release-verification.md) for test results and remaining deployment/device blockers.

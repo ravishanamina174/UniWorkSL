@@ -1,31 +1,22 @@
 # UniWork implementation status
 
-Prompts 1–4 retain the public site and Task Poster dashboard foundation and add poster/student profile APIs, task management, applications, task execution, reviews, and private safety reports. The Expo project remains uninitialized as required.
+UniWork now contains the public Next.js site and Task Poster dashboard, Expo Android Student app, Java 21 Spring Boot REST API, and Neon PostgreSQL/PostGIS configuration. The web and mobile clients call the same API. Payments remain direct between users.
 
-## Prompt 4 verification
+## Current verification
 
-- Maven `verify` passes 25 tests. API contracts build, ESLint, TypeScript, Vitest (13 tests), and the Next.js production build pass.
-- PostgreSQL 16 applied the available default migrations through V6; Hibernate validated the complete mapped schema. The filtered published-task browse query returned HTTP 200 against the live database.
-- Protected student and poster API endpoints return 401 without a Clerk bearer token. Clerk is not configured in this environment, so real sign-in and authenticated database-backed business workflows have not been verified.
-- No sample users, tasks, applications, reports, or payments were inserted.
-- PostGIS remains uninstalled. Arrival checks use an isolated Haversine calculation with a 100-meter threshold; denied or unavailable location is recorded as not verified and does not block an already PIN-verified start.
+- Spring Boot connected to the configured Neon database, Hibernate validated mapped tables, Flyway found schema version V7 current, and PostGIS returned version 3.6. The API health endpoint reported both application and database `UP`; a protected profile request without a token returned 401.
+- Backend Maven tests, web checks/build, mobile checks/build, and the task lifecycle/security unit suite are recorded in [V1 release verification](v1-release-verification.md).
+- A real Clerk Student/Poster account flow and full cross-platform task lifecycle were not run. Local Clerk keys are development keys, no controlled test identities or Android device are available, and the mobile Clerk Native API registration must be checked in the Clerk Dashboard.
+- No Render or Vercel deployment has been created. No EAS APK has been built or hosted. The landing page must keep its Coming Soon state until a public APK has passed device checks.
+- The prior local PostgreSQL database remains untouched; the previous read-only inspection found no UniWork business rows. No data migration or reset was performed.
 
-## Lifecycle and data protection
+## Release preparation
 
-- Application acceptance serializes on the task row, closes other pending applications, and has a partial unique database index as a second one-selected-student safeguard.
-- Student and Task Poster roles are bound to the first role-specific profile created for the verified Clerk subject; roles cannot be switched.
-- Student addresses and NIC values are AES-GCM encrypted. Start PIN validation uses a keyed HMAC plus random salt; no plaintext or reversible PIN is stored, and only the authorized poster receives a derived code while active.
-- Payments remain direct between users. The API stores the student's completion and payment report; unpaid completion remains marked unresolved and can be reported.
-- Safety reports are private to the submitting student. The API does not promise immediate human response.
+- Render uses the backend-only multi-stage `backend/Dockerfile`, a non-root Java 21 runtime, `PORT` binding, production profile, health check, HTTPS Neon connection, and bounded Hikari pool. Docker/container runtime checks have not been run locally.
+- The Vercel build compiles shared API contracts before Next.js and expects the project root `apps/web`.
+- EAS preview/production profiles are configured for Android APK output with remote version-code incrementing.
+- Production startup validation checks HTTPS origins, explicit allowed parties, Neon `sslmode=require`, and a valid 32-byte PII encryption key.
 
-## External configuration still needed
+See [Render deployment](../deployment/render.md), [Vercel deployment](../deployment/vercel.md), [Android EAS builds](../deployment/android-eas.md), [environment variable reference](../deployment/environment-variables.md), [local setup](local-setup.md), and [Neon/Clerk verification](neon-clerk-verification.md).
 
-- Clerk web keys are present in ignored `apps/web/.env.local` and the real Clerk development sign-in/sign-up components render. A test account/session and backend `CLERK_ISSUER_URI` are still needed to verify JWT acceptance and the signed-in workflow.
-- A stable, secret base64 32-byte `UNIWORK_PII_ENCRYPTION_KEY` is still needed by the backend. Preserve the existing key if encrypted profiles or PINs have ever been stored.
-- Neon direct connection host, database, username, and password are not configured. Spring Boot now expects them and enforces JDBC SSL rather than falling back to localhost.
-- Optional restricted `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` for interactive map selection; manual coordinates remain available.
-- A hosted Android APK URL is optional until the student mobile app is built.
-
-## Readiness
-
-**READY WITH BLOCKERS**. The student API and poster workflow are implemented. The local PostgreSQL `uniwork` database remains intact; read-only inspection found no business rows, Flyway through V6, and no PostGIS extension. Real Neon persistence, PostGIS, and Clerk-authenticated API workflows remain unverified until the missing backend credentials and test identity are configured. See [local setup](local-setup.md), [Neon and Clerk verification](neon-clerk-verification.md), and [API documentation](../api/README.md).
+**Status: RELEASE CANDIDATE WITH BLOCKERS.** See the V1 release verification record for exact manual actions and limitations.

@@ -14,9 +14,9 @@ Mobile unit tests, lint, TypeScript, Expo config/bundling, API health, and real 
 
 ### Local verification run (2026-11-17)
 
-- Passed: shared API contracts build; mobile TypeScript check; mobile ESLint; mobile Jest suite (6 tests); Android Expo export/bundle; Expo public config evaluation.
-- Not run: Expo Doctor was not available in the installed workspace; its `npx` fallback stalled while registry access was disabled.
-- Passed: web lint, typecheck, tests (19 tests), and production build; Spring Boot `./mvnw verify` (29 tests).
+- Passed: shared API contracts build; mobile TypeScript check; mobile ESLint; mobile Jest suite (6 tests); Android Expo export/bundle; Expo public config evaluation; app icon/adaptive icon and splash assets.
+- Passed: Expo Doctor reported all 20 checks passing after adding the SDK-compatible `expo-constants` peer dependency.
+- Passed: web lint, typecheck, tests (19 tests across 8 files), and production build; Spring Boot `./mvnw clean verify` (32 tests, 0 failures/errors).
 - Live backend: Spring Boot loaded the ignored local backend environment, connected to Neon PostgreSQL 18.7, validated Hibernate mappings, and reported Flyway schema V7 current. A read-only Neon query returned PostGIS 3.6. `GET /api/v1/health` returned `UP` for application and database, and unauthenticated `GET /api/v1/student/profile` returned HTTP 401 (`UNAUTHENTICATED`).
 - Clerk: the mobile publishable key is configured locally and matching backend issuer and authorized-party settings are present. Audience is blank, so audience validation is not configured for this instance. A real native Clerk session was not tested: no Android device/emulator was attached, and Native API enablement/app registration plus a Student test account require Clerk dashboard/manual setup.
 - Not run: device UI, onboarding against a real Clerk Student identity, authenticated mobile-to-Neon requests, foreground location permission flow, and end-to-end execution/review/report. No live Clerk JWT was available to validate issuer/authorized-party claims in a real request.

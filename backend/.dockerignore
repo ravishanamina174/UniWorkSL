@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+.git
+.mvn/wrapper/maven-wrapper.jar
+*.log
+*.pem
+*.key
+target

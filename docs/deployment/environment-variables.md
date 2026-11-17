@@ -1,0 +1,26 @@
+# Environment variable reference
+
+Use ignored local environment files for development and each hosting provider's secret store for production. Example files contain placeholders only. Never commit `.env`, `.env.local`, private Clerk keys, database credentials, or the PII encryption key.
+
+| Variable | Client/service | Required / purpose |
+| --- | --- | --- |
+| `DB_URL` | Render / backend | Direct Neon JDBC URL with `sslmode=require` |
+| `DB_USERNAME`, `DB_PASSWORD` | Render / backend | Neon credentials |
+| `CLERK_ISSUER_URI` | Render / backend | Clerk production issuer; HTTPS |
+| `CLERK_JWKS_URI` | Render / backend | Optional custom JWKS endpoint; otherwise issuer default |
+| `CLERK_JWT_AUDIENCE` | Render / backend | Optional exact API audience when present in tokens |
+| `CLERK_AUTHORIZED_PARTIES` | Render / backend | Exact comma-separated allowed token parties; include canonical web origin and verify mobile `azp` before adding it |
+| `WEB_ORIGIN` | Render / backend | One canonical HTTPS Vercel origin, used for CORS |
+| `UNIWORK_PII_ENCRYPTION_KEY` | Render / backend | Stable Base64 32-byte AES key; preserve for records encrypted with it |
+| `NEXT_PUBLIC_API_BASE_URL` | Vercel / web; EAS / mobile | Backend origin; HTTPS in production |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Vercel / web | Browser-visible Clerk publishable key; environment-specific |
+| `CLERK_SECRET_KEY` | Vercel / web | Clerk server secret; environment-specific |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Vercel / web | Optional Maps JS key, restrict by API and referrer |
+| `NEXT_PUBLIC_ANDROID_APK_URL` | Vercel / web | Public HTTPS APK URL only after successful build/hosting |
+| `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` | EAS / mobile | Browser-visible Clerk publishable key for the matching instance |
+| `SPRING_PROFILES_ACTIVE` | Render / backend | `postgis,prod` |
+| `PORT` | Render / backend | Automatically supplied by Render; do not hard-code |
+| `SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE` | Render / backend | Default/Blueprint cap: 5 per instance |
+| `SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE` | Render / backend | Default/Blueprint idle floor: 1 |
+
+For local emulator development, mobile's example API origin uses `http://10.0.2.2:8080`. For physical-device development, replace it with a reachable computer LAN address. Production must use HTTPS.
