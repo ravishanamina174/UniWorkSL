@@ -1,0 +1,14 @@
+{
+  "name": "uniwork",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "pnpm --filter @uniwork/web dev",
+    "build": "pnpm --filter @uniwork/api-contracts build && pnpm --filter @uniwork/web build",
+    "lint": "pnpm --filter @uniwork/web lint",
+    "test": "pnpm --filter @uniwork/api-contracts build && pnpm --filter @uniwork/web test",
+    "typecheck": "pnpm --filter @uniwork/api-contracts build && pnpm --filter @uniwork/web typecheck",
+    "backend:test": "./backend/mvnw -f backend/pom.xml test",
+    "backend:build": "./backend/mvnw -f backend/pom.xml verify"
+  }
+}

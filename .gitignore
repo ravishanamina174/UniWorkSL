@@ -1,0 +1,33 @@
+# Node / pnpm
+node_modules/
+.pnpm-store/
+.next/
+out/
+coverage/
+dist/
+*.tsbuildinfo
+
+# Java / Maven
+target/
+*.class
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+!.env.test.example
+*.pem
+*.key
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local databases and logs
+*.log
+*.dump
+*.sql.gz
+/data/
+/postgres-data/
