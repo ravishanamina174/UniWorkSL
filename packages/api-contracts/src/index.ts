@@ -117,3 +117,76 @@ export type StudentTaskExecution = {
   completedAt: string | null;
   paymentReceived: boolean | null;
 };
+
+export type StudentProfileInput = {
+  fullName: string;
+  age: number;
+  gender: Gender;
+  address: string;
+  phoneNumber: string;
+  nic: string;
+  university: string;
+  faculty: string;
+};
+
+export type StudentProfile = StudentProfileInput & {
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type StudentTaskApplication = {
+  applicationId: string;
+  taskId: string;
+  taskTitle: string;
+  status: ApplicationStatus;
+  submittedAt: string;
+  studentName: string;
+  university: string;
+  faculty: string;
+};
+
+export type PinVerificationResult = {
+  taskId: string;
+  verified: boolean;
+  locked: boolean;
+  attemptsRemaining: number;
+  taskStatus: TaskStatus;
+  verifiedAt: string | null;
+};
+
+export type TaskReviewInput = {
+  posterRating: number;
+  positiveFeedback: boolean;
+  reviewText?: string;
+  locationFeedback?: string;
+};
+
+export type TaskReview = {
+  reviewId: string;
+  taskId: string;
+  posterRating: number;
+  positiveFeedback: boolean;
+  reviewText: string | null;
+  locationFeedback: string | null;
+  createdAt: string;
+};
+
+export type SafetyReportCategory =
+  | "UNSAFE_LOCATION"
+  | "HARASSMENT"
+  | "MISLEADING_TASK"
+  | "NON_PAYMENT"
+  | "OTHER";
+
+export type SafetyReportInput = {
+  category: SafetyReportCategory;
+  description: string;
+};
+
+export type SafetyReport = SafetyReportInput & {
+  reportId: string;
+  taskId: string;
+  status: string;
+  createdAt: string;
+};

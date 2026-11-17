@@ -41,3 +41,8 @@ Install JavaScript dependencies at the repository root with `pnpm install`. Conf
 ## Verification
 
 Run `pnpm --filter @uniwork/api-contracts build`, `pnpm --filter @uniwork/web lint`, `pnpm --filter @uniwork/web typecheck`, `pnpm --filter @uniwork/web test`, and `pnpm --filter @uniwork/web build`. Run backend checks with `cd backend && ./mvnw verify`. `GET /api/v1/health` checks a real JDBC connection. Swagger UI and OpenAPI JSON are available at `/swagger-ui/index.html` and `/v3/api-docs` in development. Production builds require `NEXT_PUBLIC_API_BASE_URL` to be set to an HTTPS API URL (loopback HTTP remains available for local development).
+
+
+## Android Student app
+
+Configure `apps/mobile/.env.local` from `apps/mobile/.env.example` with the Clerk publishable key and API origin. Register the Android application `lk.uniwork.student` and enable Clerk Native API. The Android emulator reaches the host API at `http://10.0.2.2:8080`; physical devices need a LAN-reachable API host. Use HTTPS for production. See the [mobile setup and verification guide](mobile-verification.md) for Student flows, location behavior, and current external-service checks.

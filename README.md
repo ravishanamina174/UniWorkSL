@@ -6,8 +6,8 @@ UniWork connects Sri Lankan university students with people who need help with s
 
 - `apps/web`: Next.js App Router, TypeScript, Tailwind CSS.
 - `apps/web`: public landing page plus a Clerk-protected Task Poster dashboard for onboarding, profiles, tasks, student application selection, and task-start/completion status. The Student app download remains marked Coming Soon until an HTTPS APK URL is configured.
-- `apps/mobile`: reserved for the later Expo student application; not initialized yet.
-- `backend`: Java 21 Spring Boot modular monolith, REST, PostgreSQL, and Flyway. Student profiles, applications, task execution, reviews, and private safety reports are API-ready for the future mobile app. Task arrival uses an isolated Haversine implementation and works without PostGIS.
+- `apps/mobile`: Android-first Expo Router Student app with Clerk auth, student onboarding, task discovery/applications, task execution, and API-backed reviews/reports.
+- `backend`: Java 21 Spring Boot modular monolith, REST, PostgreSQL, and Flyway. Student profiles, applications, task execution, reviews, and private safety reports serve the Android Student app. Task arrival uses an isolated Haversine implementation and works without PostGIS.
 - `packages/api-contracts`: shared TypeScript response types.
 - `docs`: architecture, API, and local development notes.
 
@@ -31,6 +31,6 @@ From the repository root, install dependencies with `pnpm install`. In one termi
 
 See [architecture](docs/architecture/overview.md), [API](docs/api/README.md), and [local setup](docs/development/local-setup.md). The current implementation milestone and any external service limitations are recorded in [status](docs/development/status.md).
 
-Prompt 5 web results and Neon/Clerk verification status are recorded in [web platform verification](docs/development/web-verification.md) and [Neon and Clerk verification](docs/development/neon-clerk-verification.md).
+Prompt 5 web results and Neon/Clerk verification status are recorded in [web platform verification](docs/development/web-verification.md) and [Neon and Clerk verification](docs/development/neon-clerk-verification.md). Student app setup and verification are in [mobile verification](docs/development/mobile-verification.md).
 
 The landing page and dashboard use the centralized UI tokens and shared components documented in [web UI foundation](docs/development/web-ui.md). Dashboard task, profile, and application screens read from Spring APIs and show real empty states when the database has no records.

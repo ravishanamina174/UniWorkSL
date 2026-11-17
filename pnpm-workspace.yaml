@@ -2,4 +2,7 @@ packages:
   - apps/*
   - packages/*
 allowBuilds:
+  '@parcel/watcher': true
+  browser-tabs-lock: true
+  core-js: true
   esbuild: true
