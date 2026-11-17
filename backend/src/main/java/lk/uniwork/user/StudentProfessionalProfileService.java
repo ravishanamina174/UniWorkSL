@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.math.BigDecimal;
 
 @Service
 public class StudentProfessionalProfileService {
@@ -32,7 +33,7 @@ public class StudentProfessionalProfileService {
         profile.update(clean(request.professionalSummary()), clean(request.primaryLocation()), request.primaryLatitude(), request.primaryLongitude(), clean(request.secondaryLocation()), request.secondaryLatitude(), request.secondaryLongitude(), skills, new LinkedHashSet<>(request.availability() == null ? java.util.List.of() : request.availability()), new LinkedHashSet<>(request.languages() == null ? java.util.List.of() : request.languages()), request.discoverable());
         return response(profiles.save(profile));
     }
-    private void validateCoordinates(Double lat, Double lng, String label) { if ((lat == null) != (lng == null) || lat != null && (lat < -90 || lat > 90 || lng < -180 || lng > 180)) throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_" + label.toUpperCase(Locale.ROOT) + "_COORDINATES", "Provide both valid " + label + " coordinates or leave them empty."); }
+    private void validateCoordinates(BigDecimal lat, BigDecimal lng, String label) { if ((lat == null) != (lng == null) || lat != null && (lat.compareTo(BigDecimal.valueOf(-90)) < 0 || lat.compareTo(BigDecimal.valueOf(90)) > 0 || lng.compareTo(BigDecimal.valueOf(-180)) < 0 || lng.compareTo(BigDecimal.valueOf(180)) > 0)) throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_" + label.toUpperCase(Locale.ROOT) + "_COORDINATES", "Provide both valid " + label + " coordinates or leave them empty."); }
     private int wordCount(String text) { return text.trim().isBlank() ? 0 : text.trim().split("\\s+").length; }
     private String clean(String value) { return value == null ? null : value.trim().replaceAll("\\s+", " "); }
     private StudentProfessionalProfileResponse empty(java.util.UUID id) { return new StudentProfessionalProfileResponse(id, null, null, null, null, null, null, null, java.util.List.of(), java.util.List.of(), java.util.List.of(), false, null); }
