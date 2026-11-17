@@ -8,7 +8,7 @@ Organize future business work by feature (`user`, `student`, `poster`, `task`, `
 
 ## Authentication
 
-Clerk is the identity provider. Spring Security is configured as an OAuth2 resource server and validates bearer JWTs using the configured Clerk issuer/JWKS discovery. Public routes are explicitly allowlisted; other routes require a valid JWT. Role and ownership checks belong on server-side authorization rules and services. The browser API client can accept a token provider for future Clerk integration; it does not invent or persist tokens.
+Clerk is the identity provider. Spring Security is configured as an OAuth2 resource server and validates bearer JWTs using the configured Clerk issuer/JWKS discovery. Public API routes are explicitly allowlisted; other routes require a valid JWT. The web dashboard requires both Clerk keys, an authenticated Clerk session, and administrator-managed `publicMetadata.role === "task_poster"`. Client-editable `unsafeMetadata` is never used for authorization. Role and ownership checks for business APIs remain server-side responsibilities as those APIs are implemented. The browser API client accepts an access-token provider for future Clerk integration; it does not invent or persist tokens.
 
 ## Database
 

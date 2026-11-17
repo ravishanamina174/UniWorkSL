@@ -1,19 +1,32 @@
 # Foundation milestone status
 
-This repository contains the Prompt 1 foundation only. No mobile app or business feature workflows have been initialized.
+The Prompt 1 backend and repository foundation and the Prompt 2 public web and dashboard foundation are implemented. The Expo mobile application and business workflows remain future work.
 
-## Verified on this development machine
+## Verified
 
-- Java 21.0.12.1, Node.js 24.4.0, pnpm 11.25.0, Next.js 16.4.6, React 19.3.1, PostgreSQL 16.16 (Homebrew), Spring Boot 4.1.2, and Springdoc 3.2.0.
-- Frontend dependencies installed; lint, typecheck, Vitest, and Next.js production build pass.
-- Backend Maven `verify` passes (4 tests, including public health, protected-route rejection, CORS, and database health service behavior).
-- PostgreSQL service is running, with a dedicated `uniwork` role/database. A live `SELECT 1` and `GET /api/v1/health` both report the database UP.
-- The packaged backend starts against PostgreSQL with JPA/Hibernate Spatial active. `GET /v3/api-docs` returned 200, and a protected route returned the expected JSON 401 response.
-- The local Next.js page was opened in a browser and reached the real API. Its status changed from loading to API connected.
-- During this integration check only, Flyway was disabled because PostGIS is not installed yet.
+- Frontend ESLint and TypeScript checks pass.
+- Frontend Vitest passes (9 tests across 5 files).
+- Next.js production build succeeds.
+- Spring Boot Maven `verify` succeeds (4 tests).
+- Browser checks confirmed the landing page at mobile, tablet, and desktop viewport overrides. The rendered document width matched the available viewport width at each size; the mobile menu opened and the desktop navigation appeared at desktop width.
+- The landing page showed the configured Coming Soon APK state. `/dashboard` showed the configuration-required screen with Clerk keys absent.
+- Automated UI tests cover theme switching and persistence. A browser log exposed a server/client icon hydration mismatch; the toggle now renders a stable server snapshot. The browser stopped reconnecting to the local dev server during the post-fix check, so the final hydration fix was not independently rechecked in the browser.
+- The visual dashboard preview is explicitly illustrative and contains no live task records. Dashboard task routes have empty placeholders only.
 
-## Outstanding database setup
+## Setup still required
 
-PostGIS is not installed and no spatial query has been run. Homebrew showed that its PostGIS formula would bring in 96 dependencies and upgrade 16 existing packages on this machine, so that installation was stopped. The default Flyway migration (`V1__foundation.sql`) requires PostGIS and has not been applied. Install PostGIS using an approved method, enable the extension in the `uniwork` database, and start the backend with its default Flyway setting to complete migration verification. Do not leave `FLYWAY_ENABLED=false` in normal development.
+### PostGIS
 
-The Clerk issuer is also not configured. JWT validation is fail-closed until `CLERK_ISSUER_URI` is set; no Clerk project credentials were supplied.
+PostGIS is not installed and no spatial query has been run. Homebrew's PostGIS formula planned 96 dependencies and 16 package upgrades, so that installation was stopped. The default Flyway migration requires PostGIS and has not been applied. Do not disable Flyway in normal development or claim PostGIS support is verified.
+
+Recommended next step: use an existing managed PostgreSQL service that offers PostGIS for a separate UniWork development database, or deliberately choose a PostgreSQL distribution that bundles PostGIS. See [web UI foundation and PostGIS options](web-ui.md#postgis-local-development-options) for the tradeoffs. Once selected, enable PostGIS and run the backend with default Flyway settings.
+
+### Clerk and APK
+
+The web dashboard stays unavailable until both `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` are configured. Authenticated dashboard access also requires administrator-managed Clerk `publicMetadata.role` set to `task_poster`; never authorize based on client-controlled `unsafeMetadata`. Backend JWT validation remains fail-closed until `CLERK_ISSUER_URI` is configured.
+
+The Student app download displays Coming Soon until `NEXT_PUBLIC_ANDROID_APK_URL` is set to an HTTPS APK URL. No APK has been provided or generated.
+
+## Readiness
+
+**READY WITH BLOCKERS** for Prompt 3. The landing and dashboard foundation is complete and verified. PostGIS setup and Clerk configuration remain environment prerequisites; task workflows and the mobile app are intentionally not part of this milestone.

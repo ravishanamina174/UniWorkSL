@@ -1,10 +1,14 @@
 import type { ButtonHTMLAttributes } from "react";
+import Link from "next/link";
+import type { AnchorHTMLAttributes, ReactNode } from "react";
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" };
+type ButtonVariant = "primary" | "secondary" | "light" | "dark-outline";
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant };
 
 export function Button({ variant = "primary", className = "", ...props }: ButtonProps) {
-  const style = variant === "primary"
-    ? "border-transparent bg-[var(--foreground)] text-[var(--background)] hover:opacity-85"
-    : "border-[var(--border-strong)] bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)]";
-  return <button className={`inline-flex min-h-11 items-center justify-center rounded-[var(--radius-small)] border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${style} ${className}`} {...props} />;
+  return <button className={`button button-${variant} ${className}`} {...props} />;
+}
+
+export function ButtonLink({ href, variant = "primary", className = "", children, ...props }: AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; variant?: ButtonVariant; children: ReactNode }) {
+  return <Link href={href} className={`button button-${variant} ${className}`} {...props}>{children}</Link>;
 }
