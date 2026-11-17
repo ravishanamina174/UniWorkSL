@@ -36,3 +36,9 @@ Prompt 5 web results and Neon/Clerk verification status are recorded in [web pla
 The landing page and dashboard use the centralized UI tokens and shared components documented in [web UI foundation](docs/development/web-ui.md). Dashboard task, profile, and application screens read from Spring APIs and show real empty states when the database has no records.
 
 Deployment preparation and remaining V1 release checks are documented in [Render backend setup](docs/deployment/render.md), [Vercel web setup](docs/deployment/vercel.md), [Android EAS APK setup](docs/deployment/android-eas.md), and [V1 release verification](docs/development/v1-release-verification.md).
+
+
+
+Terminal	Application	Command
+Terminal 1	cd backend && ./mvnw spring-boot:run
+Terminal 2	pnpm dev       (from UniWork root)
