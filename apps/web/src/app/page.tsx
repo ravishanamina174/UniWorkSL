@@ -123,8 +123,8 @@ export default function HomePage() {
           </Container>
         </section>
       </main>
+      {/* {process.env.NODE_ENV !== "production" ? <div className="dev-diagnostic-slot"><DevelopmentHealthDiagnostic /></div> : null} */}
       <SiteFooter />
-      {process.env.NODE_ENV !== "production" ? <div className="dev-diagnostic-slot"><DevelopmentHealthDiagnostic /></div> : null}
     </>
   );
 }
