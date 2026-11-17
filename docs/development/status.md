@@ -20,11 +20,12 @@ Prompts 1–4 retain the public site and Task Poster dashboard foundation and ad
 
 ## External configuration still needed
 
-- Clerk web keys (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`) and backend `CLERK_ISSUER_URI`.
-- A stable, secret base64 32-byte `UNIWORK_PII_ENCRYPTION_KEY` for encrypted profiles and PIN protection.
+- Clerk web keys are present in ignored `apps/web/.env.local` and the real Clerk development sign-in/sign-up components render. A test account/session and backend `CLERK_ISSUER_URI` are still needed to verify JWT acceptance and the signed-in workflow.
+- A stable, secret base64 32-byte `UNIWORK_PII_ENCRYPTION_KEY` is still needed by the backend. Preserve the existing key if encrypted profiles or PINs have ever been stored.
+- Neon direct connection host, database, username, and password are not configured. Spring Boot now expects them and enforces JDBC SSL rather than falling back to localhost.
 - Optional restricted `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` for interactive map selection; manual coordinates remain available.
 - A hosted Android APK URL is optional until the student mobile app is built.
 
 ## Readiness
 
-**READY WITH BLOCKERS**. The student API and poster workflow are implemented, but real Clerk-authenticated workflows cannot be exercised until project credentials and a stable encryption key are configured. See [local setup](local-setup.md) and [API documentation](../api/README.md).
+**READY WITH BLOCKERS**. The student API and poster workflow are implemented. The local PostgreSQL `uniwork` database remains intact; read-only inspection found no business rows, Flyway through V6, and no PostGIS extension. Real Neon persistence, PostGIS, and Clerk-authenticated API workflows remain unverified until the missing backend credentials and test identity are configured. See [local setup](local-setup.md), [Neon and Clerk verification](neon-clerk-verification.md), and [API documentation](../api/README.md).

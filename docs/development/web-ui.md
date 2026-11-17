@@ -40,7 +40,7 @@ With no key, the form states that the map is unavailable and still allows manual
 
 Default Flyway migration V1 and core migration V2 create and constrain the user, encrypted profile, task, task skill, and application schema on PostgreSQL without PostGIS. Task coordinates use numeric columns with database and request-level range checks. Task schedule inputs are interpreted in `Asia/Colombo`, converted to UTC `Instant` storage, and returned in Sri Lanka local time.
 
-The optional `db/postgis/V3__enable_postgis.sql` migration is available only under the `postgis` Spring profile. PostGIS installation and any distance query remain unverified. See [local setup](local-setup.md#postgresql-and-migrations).
+The `db/postgis/V3__enable_postgis.sql` migration runs under the `postgis` Spring profile and enables PostGIS in the target PostgreSQL database. The application still uses its Haversine distance service; PostGIS spatial queries are not part of the current task flow. See [local setup](local-setup.md#postgresql-and-migrations) for target database checks and migration order.
 
 ## APK link and QR code
 

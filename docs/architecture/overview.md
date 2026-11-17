@@ -12,7 +12,7 @@ Clerk is the identity provider. Spring Security is configured as an OAuth2 resou
 
 ## Database
 
-PostgreSQL is the relational source of truth. Flyway owns schema changes; Hibernate validates rather than creates the schema. Core migrations store latitude and longitude as bounded numeric values, so core features do not require PostGIS. The optional PostGIS migration is profile-scoped. NIC values are stored using AES-256-GCM ciphertext with a server-held encryption key. Private profile data is owner-scoped and omitted from public task/application DTOs. Local development uses native PostgreSQL, without containers.
+Neon PostgreSQL is the relational source of truth for the configured platform. Flyway owns schema changes; Hibernate validates rather than creates the schema. The `postgis` profile applies V3 (`CREATE EXTENSION IF NOT EXISTS postgis`) before V4–V7 on a fresh target. Task arrival continues to use the existing Haversine implementation. JDBC SSL is required. NIC values are stored using AES-256-GCM ciphertext with a stable server-held encryption key. Private profile data is owner-scoped and omitted from public task/application DTOs. No local PostgreSQL server is required to run the backend.
 
 ## Mobile integration
 
