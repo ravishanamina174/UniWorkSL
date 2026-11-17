@@ -11,7 +11,7 @@ describe("site navigation", () => {
     const openButton = screen.getByRole("button", { name: "Open navigation menu" });
     fireEvent.click(openButton);
     expect(screen.getByRole("navigation", { name: "Mobile navigation" })).toBeInTheDocument();
-    fireEvent.click(within(screen.getByRole("navigation", { name: "Mobile navigation" })).getByRole("link", { name: /about/i }));
+    fireEvent.click(within(screen.getByRole("navigation", { name: "Mobile navigation" })).getByRole("link", { name: /why uniwork/i }));
     expect(screen.queryByRole("navigation", { name: "Mobile navigation" })).not.toBeInTheDocument();
   });
 

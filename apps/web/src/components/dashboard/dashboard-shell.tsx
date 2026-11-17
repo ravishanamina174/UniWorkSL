@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { BriefcaseBusiness, ChevronRight, FileText, LayoutDashboard, Menu, UserRound, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { BrandSymbol } from "@/components/brand/brand-symbol";
 
 const navigation = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -36,7 +37,7 @@ export function DashboardShell({ children, displayName }: { children: React.Reac
       <header className="dashboard-topbar">
         <div className="dashboard-top-left">
           <button className="dashboard-mobile-menu" type="button" aria-label={menuOpen ? "Close dashboard navigation" : "Open dashboard navigation"} aria-expanded={menuOpen} aria-controls="dashboard-sidebar" onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X size={18} /> : <Menu size={18} />}</button>
-          <Link href="/" className="brand-lockup"><span className="brand-mark">U</span><span>uniwork</span><small>WORKSPACE</small></Link>
+          <Link href="/" className="brand-lockup"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span><small>WORKSPACE</small></Link>
           <div className="dashboard-breadcrumb"><ChevronRight size={14} aria-hidden="true" /><span>Task Poster</span><ChevronRight size={14} aria-hidden="true" /><strong>{pageLabel}</strong></div>
         </div>
         <div className="dashboard-top-right"><ThemeToggle /><span className="dashboard-user-name">{displayName}</span><UserButton /></div>

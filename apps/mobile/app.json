@@ -49,7 +49,8 @@
         {
           "locationWhenInUsePermission": "UniWork uses your location once after you choose Start Task to submit an arrival check. It does not track your location in the background."
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

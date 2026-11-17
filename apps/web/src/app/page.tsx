@@ -7,9 +7,10 @@ import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Sprout, Paintbrush, Truck, Camera, PartyPopper, Flower2, MapPin, ShieldCheck, UsersRound, ArrowDownRight } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "UniWork | Local tasks, student opportunity",
+  title: "UniWorkSL | Local tasks, student opportunity",
   description: "UniWork connects Sri Lankan university students with people who need help with small, physical tasks.",
 };
 
@@ -34,14 +35,15 @@ export default function HomePage() {
       <SiteHeader />
       <main id="main-content">
         <section className="hero-section" aria-labelledby="hero-title">
+          <Image src="/Hero.png" alt="" fill priority sizes="100vw" className="hero-image" />
           <Container className="hero-layout">
             <div className="hero-copy">
-              <p className="eyebrow hero-eyebrow"><span className="eyebrow-dot" /> LOCAL TASKS, STUDENT OPPORTUNITY</p>
-              <h1 id="hero-title">Good work starts<br />close to <span>home.</span></h1>
-              <p className="hero-description">UniWork brings Sri Lankan university students and local Task Posters together for small, physical tasks in their communities.</p>
+              <p className="eyebrow hero-eyebrow"><span className="eyebrow-dot" /> UNIWORK SRI LANKA</p>
+              <h1 id="hero-title">Small tasks.<br /><span>Bigger possibilities.</span></h1>
+              <p className="hero-description">Connecting Sri Lankan university students with meaningful local earning opportunities.</p>
               <div className="hero-actions">
                 <ButtonLink href="#student-app" variant="light">Download Student App <ArrowDownRight size={17} aria-hidden="true" /></ButtonLink>
-                <ButtonLink href="/dashboard" variant="dark-outline">Open Dashboard <ArrowDownRight size={17} aria-hidden="true" /></ButtonLink>
+                <ButtonLink href="/dashboard" variant="dark-outline">Post a Task <ArrowDownRight size={17} aria-hidden="true" /></ButtonLink>
               </div>
               <p className="hero-note"><MapPin size={15} aria-hidden="true" /> Built around work that happens locally</p>
             </div>
@@ -50,10 +52,10 @@ export default function HomePage() {
           <div className="hero-bottom-rule" />
         </section>
 
-        <section id="about" className="section about-section" aria-labelledby="about-title">
+      <section id="about" className="section about-section" aria-labelledby="about-title">
           <Container className="about-layout">
             <div>
-              <p className="eyebrow">01 / ABOUT UNIWORK</p>
+              <p className="eyebrow">01 / WHY UNIWORK</p>
               <h2 id="about-title" className="section-title">A simple way to<br /><span className="accent-text">find a helping hand.</span></h2>
             </div>
             <div className="about-copy">
@@ -117,7 +119,7 @@ export default function HomePage() {
         <section id="safety" className="section safety-section" aria-labelledby="safety-title">
           <Container className="safety-layout">
             <div><p className="eyebrow">06 / SAFETY & TRUST</p><h2 id="safety-title" className="section-title">Clear expectations<br />make better work.</h2></div>
-            <div className="safety-copy"><p>UniWork is being built to support coordination around local tasks. Future task flows include task-linked start codes, recording an arrival-location check, and feedback after work is complete.</p><p>These tools do not verify a person’s identity or guarantee a task outcome. Payments are arranged directly between the Task Poster and student; UniWork does not handle or protect payments in Version 1.</p><div className="safety-note"><ShieldCheck size={20} aria-hidden="true" /><span>Stay clear about the task, timing, location, and payment with the other person before work begins.</span></div></div>
+            <div className="safety-copy"><p>Task execution uses a poster-provided start code. After verifying it, a Student may share one foreground arrival-location check. Reviews and private safety reports are available after task coordination.</p><p>These tools do not verify a person’s identity or guarantee a task outcome. Payments are arranged directly between the Task Poster and student; UniWork does not handle or protect payments in Version 1.</p><div className="safety-note"><ShieldCheck size={20} aria-hidden="true" /><span>Stay clear about the task, timing, location, and payment with the other person before work begins.</span></div></div>
           </Container>
         </section>
       </main>

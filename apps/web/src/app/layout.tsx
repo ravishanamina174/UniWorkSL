@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "UniWork | Local tasks, student opportunity",
+  title: "UniWorkSL | Local tasks, student opportunity",
   description: "UniWork connects Sri Lankan university students with people who need help with small, physical tasks.",
 };
 
@@ -17,7 +17,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <body className={`${GeistSans.variable} ${GeistMono.variable}`}>
         <a className="skip-link" href="#main-content">Skip to content</a>
-        {hasClerkConfiguration() ? <ClerkProvider>{page}</ClerkProvider> : page}
+        {hasClerkConfiguration() ? <ClerkProvider appearance={{ variables: {
+          borderRadius: "4px",
+          colorBackground: "var(--surface-raised)",
+          colorBorder: "var(--border)",
+          colorForeground: "var(--foreground)",
+          colorInput: "var(--background)",
+          colorInputForeground: "var(--foreground)",
+          colorMutedForeground: "var(--muted)",
+          colorPrimary: "var(--accent)",
+          colorPrimaryForeground: "#172113",
+          colorRing: "var(--accent)",
+        } }}>{page}</ClerkProvider> : page}
       </body>
     </html>
   );

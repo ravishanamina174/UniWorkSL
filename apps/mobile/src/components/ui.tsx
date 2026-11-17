@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode } from 'react';
+import { useState, type ComponentProps, type ReactNode } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MapPin } from 'lucide-react-native';
@@ -123,25 +123,29 @@ export function SkillBadges({ skills }: { skills: string[] }) {
 
 export function TaskCard({ task, onPress, applied }: { task: Task; onPress: () => void; applied?: boolean }) {
   const theme = useTheme();
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const canExpand = task.description.length > 140;
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={`View ${task.title}`} onPress={onPress}>
-      <Card>
-        <View style={styles.taskTop}>
-          <View style={styles.flex}>
-            <Text style={[styles.cardTitle, { color: theme.text }]}>{task.title}</Text>
-            <Text numberOfLines={2} style={[styles.body, { color: theme.muted }]}>{task.description}</Text>
-          </View>
+    <Card style={styles.taskCard}>
+        <View style={styles.taskDateRow}>
+          <Text style={[styles.taskDate, { color: theme.muted }]}>{formatDate(task.taskDateTime)}</Text>
           {applied ? <StatusPill status="APPLIED" /> : null}
         </View>
-        <View style={styles.metaRow}>
-          <Text style={[styles.amount, { color: theme.text }]}>LKR {Number(task.amountLkr).toLocaleString('en-LK')}</Text>
-          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4 }}><MapPin size={14} color={theme.muted} /><Text numberOfLines={1} style={[styles.meta, { color: theme.muted, flex: 1 }]}>{task.locationAddress}</Text></View>
+        <Text style={[styles.cardTitle, styles.taskTitle, { color: theme.text }]}>{task.title}</Text>
+        <Text style={[styles.amount, { color: theme.accent }]}>LKR {Number(task.amountLkr).toLocaleString('en-LK')}</Text>
+        <View style={[styles.taskLocation, { backgroundColor: theme.accentSoft }]}>
+          <MapPin size={14} color={theme.accent} />
+          <Text numberOfLines={2} style={[styles.meta, styles.taskLocationText, { color: theme.text }]}>{task.locationAddress}</Text>
         </View>
+        <Text numberOfLines={descriptionExpanded ? undefined : 3} style={[styles.body, { color: theme.muted }]}>{task.description}</Text>
+        {canExpand ? <Pressable accessibilityRole="button" accessibilityState={{ expanded: descriptionExpanded }} onPress={() => setDescriptionExpanded((expanded) => !expanded)} hitSlop={6}>
+          <Text style={[styles.expandLink, { color: theme.text }]}>{descriptionExpanded ? 'See less' : 'See more'}</Text>
+        </Pressable> : null}
         <SkillBadges skills={task.requiredSkills || []} />
-        <Text style={[styles.meta, { color: theme.muted }]}>{formatDate(task.taskDateTime)}</Text>
-        <Text style={[styles.link, { color: theme.accent }]}>View details →</Text>
-      </Card>
-    </Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel={`View ${task.title}`} onPress={onPress} style={({ pressed }) => [styles.taskAction, { borderColor: theme.accent, backgroundColor: pressed ? theme.accent : theme.surface }]}>
+          {({ pressed }) => <><Text style={[styles.link, { color: pressed ? theme.onAccent : theme.text }]}>View task details</Text><Text style={{ color: pressed ? theme.onAccent : theme.accent, fontSize: 18 }}>→</Text></>}
+        </Pressable>
+    </Card>
   );
 }
 
@@ -208,9 +212,14 @@ const styles = StyleSheet.create({
   pill: { minHeight: 24, alignSelf: 'flex-start', justifyContent: 'center', paddingHorizontal: spacing.sm, borderRadius: radius.small },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
   skill: { borderWidth: 1, borderRadius: radius.small, paddingHorizontal: spacing.sm, paddingVertical: 3 },
-  taskTop: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm },
-  flex: { flex: 1, gap: spacing.xs },
-  metaRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
+  taskCard: { gap: 11, borderRadius: 4, padding: spacing.md },
+  taskDateRow: { minHeight: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
+  taskDate: { fontSize: 11, textAlign: 'right', flex: 1 },
+  taskTitle: { fontSize: 18, lineHeight: 24 },
+  taskLocation: { minHeight: 38, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 4 },
+  taskLocationText: { flex: 1, lineHeight: 17 },
+  taskAction: { minHeight: 46, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, marginTop: 2, paddingHorizontal: spacing.md, borderWidth: 1, borderRadius: 4 },
+  expandLink: { fontSize: 13, fontWeight: '600', textDecorationLine: 'underline' },
   amount: { fontSize: 16, fontWeight: '700' },
   meta: { fontSize: 12, lineHeight: 18, flexShrink: 1 },
   link: { fontSize: 14, fontWeight: '600' },
