@@ -7,6 +7,8 @@ Use ignored local environment files for development and each hosting provider's 
 | `DB_URL` | Render / backend | Direct Neon JDBC URL with `sslmode=require` |
 | `DB_USERNAME`, `DB_PASSWORD` | Render / backend | Neon credentials |
 | `CLERK_ISSUER_URI` | Render / backend | Clerk production issuer; HTTPS |
+| `GEMINI_API_KEY` | Render / backend | Server-side Google Gemini key; never expose to clients |
+| `GEMINI_MODEL` | Render / backend | Gemini model name; defaults to `gemini-3.6-flash` |
 | `CLERK_JWKS_URI` | Render / backend | Optional custom JWKS endpoint; otherwise issuer default |
 | `CLERK_JWT_AUDIENCE` | Render / backend | Optional exact API audience when present in tokens |
 | `CLERK_AUTHORIZED_PARTIES` | Render / backend | Exact comma-separated allowed token parties; include canonical web origin and verify mobile `azp` before adding it |

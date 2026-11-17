@@ -135,6 +135,28 @@ export type StudentProfile = StudentProfileInput & {
   updatedAt: string;
 };
 
+export type Availability = "WEEKENDS" | "WEEKDAYS" | "EVERY_DAY" | "AFTER_5_PM" | "HOLIDAY_FULL_TIME";
+export type ProfessionalLanguage = "SINHALA" | "ENGLISH" | "TAMIL";
+export type StudentProfessionalProfile = {
+  profileId: string;
+  professionalSummary: string | null;
+  primaryLocation: string | null;
+  primaryLatitude: number | null;
+  primaryLongitude: number | null;
+  secondaryLocation: string | null;
+  secondaryLatitude: number | null;
+  secondaryLongitude: number | null;
+  skills: string[];
+  availability: Availability[];
+  languages: ProfessionalLanguage[];
+  discoverable: boolean;
+  updatedAt: string | null;
+};
+export type StudentProfessionalProfileInput = Omit<StudentProfessionalProfile, "profileId" | "updatedAt">;
+export type StudentLookupCriteria = { skills: string[]; location: string | null; availability: Availability[]; languages: ProfessionalLanguage[] };
+export type StudentLookupCandidate = StudentProfessionalProfile & { name: string; matchScore: number; matchReasons: string[] };
+export type StudentLookupResponse = { criteria: StudentLookupCriteria; candidates: StudentLookupCandidate[] };
+
 export type StudentTaskApplication = {
   applicationId: string;
   taskId: string;

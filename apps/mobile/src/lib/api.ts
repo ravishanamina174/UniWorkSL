@@ -6,6 +6,8 @@ import type {
   SafetyReportInput,
   StudentProfile,
   StudentProfileInput,
+  StudentProfessionalProfile,
+  StudentProfessionalProfileInput,
   StudentTaskApplication,
   StudentTaskExecution,
   Task,
@@ -76,6 +78,8 @@ export class UniWorkApi {
 
   getProfile = () => this.request<StudentProfile>('/api/v1/student/profile');
   saveProfile = (input: StudentProfileInput) => this.request<StudentProfile>('/api/v1/student/profile', json('PUT', input));
+  getProfessionalProfile = () => this.request<StudentProfessionalProfile>('/api/v1/student/professional-profile');
+  saveProfessionalProfile = (input: StudentProfessionalProfileInput) => this.request<StudentProfessionalProfile>('/api/v1/student/professional-profile', json('PUT', input));
 
   listTasks = (page: number, search: string, minAmount?: number, maxAmount?: number) => {
     const params = new URLSearchParams({ page: String(page), size: '10' });

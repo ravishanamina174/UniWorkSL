@@ -53,3 +53,6 @@ uniwork:
     authorized-parties: ${CLERK_AUTHORIZED_PARTIES:${WEB_ORIGIN:http://localhost:3000}}
   pii:
     encryption-key: ${UNIWORK_PII_ENCRYPTION_KEY:}
+  ai:
+    gemini-api-key: ${GEMINI_API_KEY:}
+    gemini-model: ${GEMINI_MODEL:gemini-3.6-flash}
