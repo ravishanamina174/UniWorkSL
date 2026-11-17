@@ -24,7 +24,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <Link href="/" className="brand-lockup" aria-label="UniWorkSL home"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span></Link>
+        <Link href="/" className="brand-lockup" aria-label="UniWorkSL home"><BrandSymbol className="brand-mark" /><span className="brand-wordmark">UniWorkSL</span></Link>
         <nav className="desktop-nav" aria-label="Main navigation">{links.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}</nav>
         <div className="header-actions"><ThemeToggle /><a className="header-download" href="#student-app">Download app</a><Link className="header-dashboard" href="/dashboard">Post a task <ArrowUpRight size={15} aria-hidden="true" /></Link></div>
         <button className="mobile-menu-toggle" type="button" aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X size={21} /> : <Menu size={21} />}</button>
