@@ -1,28 +1,30 @@
-# Foundation and Prompt 3 status
+# UniWork implementation status
 
-The Prompt 1–2 repository, backend, public landing page, and dashboard shell remain in place. Prompt 3 adds Clerk-backed Task Poster onboarding, private profile management, task publishing/management, location selection, and an applications foundation. The Expo app and student application workflows remain deferred.
+Prompts 1–4 retain the public site and Task Poster dashboard foundation and add poster/student profile APIs, task management, applications, task execution, reviews, and private safety reports. The Expo project remains uninitialized as required.
 
-## Verified in this environment
+## Prompt 4 verification
 
-- Web package: API contracts build, ESLint, TypeScript, Vitest, and Next.js production build pass.
-- Backend: Maven `verify` passes (17 tests, including profile encryption/role checks, task state/ownership, and HTTP authorization/validation checks).
-- PostgreSQL 16: default Flyway V1 and V2 migrations were applied successfully without PostGIS; Hibernate validated the mapped schema at API startup.
-- Live unauthenticated API: public published-task listing returns a real empty page from the database; private profile and poster summary endpoints return 401 without a bearer token.
-- No task, profile, or application demo records were added. The interactive map and real Clerk sign-in were not verified because their API key/project credentials are not configured.
-- The Prompt 2 browser checks previously confirmed responsive layout, mobile navigation, APK Coming Soon state, and protected dashboard configuration screen. Prompt 3 authenticated dashboard screens cannot be exercised without Clerk configuration.
+- Maven `verify` passes 25 tests. API contracts build, ESLint, TypeScript, Vitest (13 tests), and the Next.js production build pass.
+- PostgreSQL 16 applied the available default migrations through V6; Hibernate validated the complete mapped schema. The filtered published-task browse query returned HTTP 200 against the live database.
+- Protected student and poster API endpoints return 401 without a Clerk bearer token. Clerk is not configured in this environment, so real sign-in and authenticated database-backed business workflows have not been verified.
+- No sample users, tasks, applications, reports, or payments were inserted.
+- PostGIS remains uninstalled. Arrival checks use an isolated Haversine calculation with a 100-meter threshold; denied or unavailable location is recorded as not verified and does not block an already PIN-verified start.
 
-## Configuration needed for authenticated use
+## Lifecycle and data protection
 
-- Clerk web keys: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`.
-- Backend Clerk issuer: `CLERK_ISSUER_URI`; JWT validation fails closed when absent.
-- Stable server-side encryption key: `UNIWORK_PII_ENCRYPTION_KEY`, base64-encoded 32 bytes. Without it, profile persistence returns 503. Keep this stable and back it up securely.
-- Optional Google Maps browser key: `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, restricted to Maps JavaScript API and the app's HTTP referrers. Manual coordinate entry remains available without it.
-- Optional Android APK URL: `NEXT_PUBLIC_ANDROID_APK_URL` (HTTPS).
+- Application acceptance serializes on the task row, closes other pending applications, and has a partial unique database index as a second one-selected-student safeguard.
+- Student and Task Poster roles are bound to the first role-specific profile created for the verified Clerk subject; roles cannot be switched.
+- Student addresses and NIC values are AES-GCM encrypted. Start PIN validation uses a keyed HMAC plus random salt; no plaintext or reversible PIN is stored, and only the authorized poster receives a derived code while active.
+- Payments remain direct between users. The API stores the student's completion and payment report; unpaid completion remains marked unresolved and can be reported.
+- Safety reports are private to the submitting student. The API does not promise immediate human response.
 
-## Spatial support
+## External configuration still needed
 
-Core schema and task APIs use PostgreSQL numeric latitude/longitude and work without PostGIS. PostGIS remains uninstalled; no distance query or spatial verification is claimed. `SPRING_PROFILES_ACTIVE=postgis` enables the isolated V3 extension migration only after the database administrator installs/enables PostGIS for this server. See [local setup](local-setup.md#postgresql-and-migrations).
+- Clerk web keys (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`) and backend `CLERK_ISSUER_URI`.
+- A stable, secret base64 32-byte `UNIWORK_PII_ENCRYPTION_KEY` for encrypted profiles and PIN protection.
+- Optional restricted `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` for interactive map selection; manual coordinates remain available.
+- A hosted Android APK URL is optional until the student mobile app is built.
 
 ## Readiness
 
-**READY WITH BLOCKERS** for Prompt 4. Core migrations, task/profile APIs, authorization boundaries, and pages are implemented. Real Clerk login and authenticated web-to-API CRUD still require Clerk configuration and a secure PII key; the interactive map requires a restricted Google Maps key for map-based selection. Automated secure-auth tests and the live unauthenticated API checks do not count as real Clerk login verification.
+**READY WITH BLOCKERS**. The student API and poster workflow are implemented, but real Clerk-authenticated workflows cannot be exercised until project credentials and a stable encryption key are configured. See [local setup](local-setup.md) and [API documentation](../api/README.md).

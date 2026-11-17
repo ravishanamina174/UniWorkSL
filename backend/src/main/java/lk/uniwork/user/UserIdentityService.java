@@ -20,4 +20,14 @@ public class UserIdentityService {
         }
         return user;
     }
+
+    @Transactional(readOnly = true)
+    public UniWorkUser requireStudent(String clerkUserId) {
+        UniWorkUser user = users.findByClerkUserId(clerkUserId)
+                .orElseThrow(() -> new ApiException(HttpStatus.FORBIDDEN, "STUDENT_PROFILE_REQUIRED", "Complete Student onboarding before using this feature."));
+        if (user.getRole() != UserRole.STUDENT) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "STUDENT_ROLE_REQUIRED", "This action is available to Students only.");
+        }
+        return user;
+    }
 }

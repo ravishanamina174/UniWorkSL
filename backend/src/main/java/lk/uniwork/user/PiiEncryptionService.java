@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.GeneralSecurityException;
@@ -59,6 +60,21 @@ public class PiiEncryptionService {
         } catch (GeneralSecurityException | IllegalArgumentException exception) {
             throw new IllegalStateException("Unable to read protected profile data.", exception);
         }
+    }
+
+    public String keyedHash(String value) {
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(requireKey().getEncoded(), "HmacSHA256"));
+            return java.util.HexFormat.of().formatHex(mac.doFinal(value.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        } catch (GeneralSecurityException exception) {
+            throw new IllegalStateException("Unable to protect verification data.", exception);
+        }
+    }
+
+    public String deriveFourDigitCode(String context, String salt) {
+        java.math.BigInteger sample = new java.math.BigInteger(1, java.util.HexFormat.of().parseHex(keyedHash("pin:" + context + ":" + salt)));
+        return String.format("%04d", sample.mod(java.math.BigInteger.valueOf(10_000)).intValue());
     }
 
     private SecretKeySpec requireKey() {

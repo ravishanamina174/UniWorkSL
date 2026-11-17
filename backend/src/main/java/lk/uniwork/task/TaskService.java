@@ -68,7 +68,7 @@ public class TaskService {
     @Transactional
     public TaskResponse update(String subject, UUID taskId, TaskRequest request) {
         identities.requireTaskPoster(subject);
-        Task task = findOwned(subject, taskId);
+        Task task = findOwnedForUpdate(subject, taskId);
         if (task.getStatus() != TaskStatus.DRAFT) throw conflict("Only draft tasks can be edited.");
         task.updateDetails(clean(request.title()), clean(request.description()), request.amountLkr(), scheduledInstant(request.taskDateTime()),
                 clean(request.locationAddress()), request.latitude(), request.longitude(), cleanSkills(request.requiredSkills()));
@@ -78,7 +78,7 @@ public class TaskService {
     @Transactional
     public TaskResponse publish(String subject, UUID taskId) {
         identities.requireTaskPoster(subject);
-        Task task = findOwned(subject, taskId);
+        Task task = findOwnedForUpdate(subject, taskId);
         if (task.getStatus() != TaskStatus.DRAFT) throw conflict("Only draft tasks can be published.");
         if (!task.getScheduledAt().isAfter(Instant.now())) throw new ApiException(HttpStatus.BAD_REQUEST, "TASK_DATE_IN_PAST", "Choose a future task date and time.");
         task.publish();
@@ -88,8 +88,10 @@ public class TaskService {
     @Transactional
     public TaskResponse cancel(String subject, UUID taskId) {
         identities.requireTaskPoster(subject);
-        Task task = findOwned(subject, taskId);
+        Task task = findOwnedForUpdate(subject, taskId);
         if (task.getStatus() != TaskStatus.DRAFT && task.getStatus() != TaskStatus.PUBLISHED) throw conflict("This task can no longer be cancelled.");
+        if (task.getStatus() == TaskStatus.PUBLISHED)
+            applications.updatePendingStatuses(task.getId(), TaskApplicationStatus.PENDING, TaskApplicationStatus.REJECTED);
         task.cancel();
         return toResponse(task);
     }
@@ -105,6 +107,16 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
+    public PageResponse<TaskResponse> listPublic(int page, int size, String search, java.math.BigDecimal minAmount, java.math.BigDecimal maxAmount) {
+        PageRequest paging = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "scheduledAt"));
+        if (minAmount != null && minAmount.signum() < 0 || maxAmount != null && maxAmount.signum() < 0
+                || minAmount != null && maxAmount != null && minAmount.compareTo(maxAmount) > 0)
+            throw new ApiException(org.springframework.http.HttpStatus.BAD_REQUEST, "INVALID_AMOUNT_FILTER", "Amount filters are invalid.");
+        var results = tasks.browsePublished(search == null ? "" : search.trim(), minAmount, maxAmount, paging);
+        return PageResponse.from(results.map(this::toResponse));
+    }
+
+    @Transactional(readOnly = true)
     public TaskResponse getPublic(UUID taskId) {
         Task task = tasks.findById(taskId).filter(value -> value.getStatus() == TaskStatus.PUBLISHED)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "TASK_NOT_FOUND", "This published task could not be found."));
@@ -112,10 +124,21 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
+    public TaskResponse getStudent(String subject, UUID taskId) {
+        identities.requireStudent(subject);
+        Task task = tasks.findById(taskId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "TASK_NOT_FOUND", "This task could not be found."));
+        boolean published = task.getStatus() == TaskStatus.PUBLISHED;
+        boolean applied = applications.findByTaskIdAndStudentClerkUserId(taskId, subject).isPresent();
+        if (!published && !applied) throw new ApiException(HttpStatus.NOT_FOUND, "TASK_NOT_FOUND", "This task could not be found.");
+        return toResponse(task);
+    }
+
+    @Transactional(readOnly = true)
     public TaskSummaryResponse summary(String subject) {
         identities.requireTaskPoster(subject);
+        long started = tasks.countByPosterClerkUserIdAndStatus(subject, TaskStatus.STARTED) + tasks.countByPosterClerkUserIdAndStatus(subject, TaskStatus.ONGOING);
         return new TaskSummaryResponse(tasks.countByPosterClerkUserId(subject), tasks.countByPosterClerkUserIdAndStatus(subject, TaskStatus.PUBLISHED),
-                tasks.countByPosterClerkUserIdAndStatus(subject, TaskStatus.ONGOING), tasks.countByPosterClerkUserIdAndStatus(subject, TaskStatus.COMPLETED),
+                tasks.countByPosterClerkUserIdAndStatus(subject, TaskStatus.ACCEPTED), started, tasks.countByPosterClerkUserIdAndStatus(subject, TaskStatus.COMPLETED),
                 applications.countByTaskPosterClerkUserIdAndStatus(subject, TaskApplicationStatus.PENDING));
     }
 
@@ -133,6 +156,12 @@ public class TaskService {
     private Task findOwned(String subject, UUID taskId) {
         return tasks.findByIdAndPosterClerkUserId(taskId, subject)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "TASK_NOT_FOUND", "This task could not be found."));
+    }
+
+    private Task findOwnedForUpdate(String subject, UUID taskId) {
+        Task task = tasks.findByIdForUpdate(taskId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "TASK_NOT_FOUND", "This task could not be found."));
+        if (!task.getPoster().getClerkUserId().equals(subject)) throw new ApiException(HttpStatus.NOT_FOUND, "TASK_NOT_FOUND", "This task could not be found.");
+        return task;
     }
 
     private TaskResponse toResponse(Task task) {

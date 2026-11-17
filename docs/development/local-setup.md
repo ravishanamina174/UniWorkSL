@@ -8,7 +8,7 @@ Java 21, Node.js 20.9+ (22 LTS recommended), pnpm 9+, and native PostgreSQL 16+.
 
 Start the local service using its installed version (`brew services start postgresql@16`, or the version present). Create a dedicated `uniwork` database and local database role if needed. Set `DB_URL=jdbc:postgresql://localhost:5432/uniwork`, `DB_USERNAME`, and `DB_PASSWORD` in the backend environment. Do not point development at a database containing unrelated data.
 
-The default Flyway location `classpath:db/migration` applies the core schema (`V1__foundation.sql` and `V2__application_selection_constraint.sql`) for users, encrypted Task Poster profiles, tasks, task skills, and applications. It uses numeric latitude/longitude columns and works without PostGIS. `ddl-auto=validate` checks the mapped schema at startup. Never disable Flyway for normal development.
+The default Flyway location `classpath:db/migration` applies core schema V1–V6 for users, encrypted Student and Task Poster profiles, tasks, applications, execution records, reviews, and private safety reports. V4 extends task lifecycle states and adds verification-attempt audit fields while retaining numeric latitude/longitude columns; V5 constrains verification results; V6 stores only the start-code HMAC and random salt. It works without PostGIS. `ddl-auto=validate` checks the mapped schema at startup. Never disable Flyway for normal development.
 
 PostGIS is isolated in `db/postgis/V3__enable_postgis.sql`. To add it later, first install PostGIS for the exact PostgreSQL server and enable the extension with a database administrator. Then start with `SPRING_PROFILES_ACTIVE=postgis` so Flyway also scans `classpath:db/postgis`. Keep that profile enabled for databases that have applied V3 so Flyway can resolve its history. No PostGIS distance query is implemented or verified.
 
@@ -16,13 +16,17 @@ PostGIS is isolated in `db/postgis/V3__enable_postgis.sql`. To add it later, fir
 
 Configure `CLERK_ISSUER_URI` with the Clerk instance's issuer. Spring Security validates the bearer JWT issuer/signature; if the issuer is empty, protected API routes fail closed. In `apps/web/.env.local`, set both `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`. The dashboard remains unavailable until both are set. Sign-up is configured for Task Posters; backend onboarding creates an internal `TASK_POSTER` user bound to the verified Clerk `sub`. Later requests must resolve to that internal role. No frontend or API request can set or change the role.
 
-NIC values are encrypted at rest with AES-256-GCM. Generate a stable key and keep it in the backend's secret environment:
+Student and Task Poster NIC values and Student home addresses are encrypted at rest with AES-256-GCM. Temporary task-start PINs are stored only as a keyed HMAC and salt; the secure value is derived for the authorized poster dashboard. Generate a stable key and keep it in the backend's secret environment:
 
 ```sh
 openssl rand -base64 32
 ```
 
-Set the output as `UNIWORK_PII_ENCRYPTION_KEY`. Back it up through the team's secure secret-management process; losing or rotating the key without an existing-data re-encryption plan makes saved NIC values unreadable. Profile storage returns `503 PII_ENCRYPTION_NOT_CONFIGURED` when the key is absent. NIC and home address are excluded from the public task DTO and application DTO; the private profile endpoint is authenticated and scoped to the owner.
+Set the output as `UNIWORK_PII_ENCRYPTION_KEY`. Back it up through the team's secure secret-management process; losing or rotating the key without an existing-data re-encryption plan makes saved encrypted data unreadable and prevents PIN validation. Profile storage and PIN issuance return `503 PII_ENCRYPTION_NOT_CONFIGURED` when the key is absent. NIC and home address are excluded from public task and applicant DTOs; private profiles are scoped to their owner.
+
+## Task execution and safety
+
+Student and poster endpoints require Clerk JWTs and backend role checks. A selected student requests a four-digit code; it expires in five minutes, is limited to five guesses, and its dashboard disclosure is restricted to the owning poster. Successful PIN verification starts the task. A later Haversine location check records a 100-meter result but never blocks a verified start, including when location permission is denied or GPS is unavailable. Payment is physical and is only recorded from the student's completion report. Reviews and safety reports require the student's own execution record; reports are private to the reporter.
 
 ## Google Maps
 

@@ -24,7 +24,7 @@ class PublicTaskControllerTest {
 
     @Test
     void publishedTaskListingIsPublicAndReturnsTheRealEmptyPage() throws Exception {
-        when(service.listPublic(0, 10, null)).thenReturn(new PageResponse<>(List.of(), 0, 10, 0, 0));
+        when(service.listPublic(0, 10, null, null, null)).thenReturn(new PageResponse<>(List.of(), 0, 10, 0, 0));
         mockMvc.perform(get("/api/v1/public/tasks"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.content.length()").value(0)).andExpect(jsonPath("$.totalElements").value(0));
     }

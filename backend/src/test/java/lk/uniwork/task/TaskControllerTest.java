@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TaskControllerTest {
     @Autowired private MockMvc mockMvc;
     @MockitoBean private TaskService service;
+    @MockitoBean private TaskApplicationService applicationService;
 
     @Test
     void posterTaskCreationRequiresAnAuthenticatedJwt() throws Exception {

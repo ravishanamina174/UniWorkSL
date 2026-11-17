@@ -46,6 +46,19 @@ public class TaskApplication {
 
     protected TaskApplication() { }
 
+    public TaskApplication(Task task, UniWorkUser student) {
+        this.id = UUID.randomUUID();
+        this.task = task;
+        this.student = student;
+        this.status = TaskApplicationStatus.PENDING;
+    }
+
+    public void changeStatus(TaskApplicationStatus status) { this.status = status; }
+    public void withdraw() {
+        if (this.status != TaskApplicationStatus.PENDING) throw new IllegalStateException("Only pending applications can be withdrawn.");
+        this.status = TaskApplicationStatus.WITHDRAWN;
+    }
+
     public UUID getId() { return id; }
     public Task getTask() { return task; }
     public UniWorkUser getStudent() { return student; }

@@ -26,8 +26,9 @@ import java.util.UUID;
 @RequestMapping("/api/v1/poster/tasks")
 public class TaskController {
     private final TaskService service;
+    private final TaskApplicationService applicationService;
 
-    public TaskController(TaskService service) { this.service = service; }
+    public TaskController(TaskService service, TaskApplicationService applicationService) { this.service = service; this.applicationService = applicationService; }
 
     @Operation(summary = "List tasks owned by the authenticated Task Poster")
     @GetMapping
@@ -63,6 +64,6 @@ public class TaskController {
     @GetMapping("/{taskId}/applications")
     public PageResponse<TaskApplicationResponse> applications(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID taskId,
             @RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) @Max(50) int size) {
-        return service.applications(jwt.getSubject(), taskId, page, size);
+        return applicationService.listPoster(jwt.getSubject(), taskId, page, size);
     }
 }

@@ -47,6 +47,7 @@ class TaskServiceTest {
         Task task = task(TaskStatus.DRAFT);
         when(identities.requireTaskPoster("clerk_poster")).thenReturn(poster);
         when(tasks.findByIdAndPosterClerkUserId(task.getId(), "clerk_poster")).thenReturn(Optional.of(task));
+        when(tasks.findByIdForUpdate(task.getId())).thenReturn(Optional.of(task));
         assertEquals(TaskStatus.PUBLISHED, service.publish("clerk_poster", task.getId()).status());
         assertEquals(HttpStatus.CONFLICT, assertThrows(ApiException.class, () -> service.publish("clerk_poster", task.getId())).getStatus());
         assertEquals(HttpStatus.CONFLICT, assertThrows(ApiException.class, () -> service.update("clerk_poster", task.getId(), futureTask())).getStatus());

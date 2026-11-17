@@ -28,4 +28,11 @@ class UserIdentityServiceTest {
         assertEquals(HttpStatus.FORBIDDEN, assertThrows(ApiException.class, () -> service.requireTaskPoster("unknown")).getStatus());
         assertEquals(HttpStatus.FORBIDDEN, assertThrows(ApiException.class, () -> service.requireTaskPoster("clerk_student")).getStatus());
     }
+
+    @Test
+    void studentRoleIsReadFromTheInternalUserRecord() {
+        when(users.findByClerkUserId("clerk_student")).thenReturn(Optional.of(new UniWorkUser("clerk_student", UserRole.STUDENT)));
+        assertEquals(UserRole.STUDENT, service.requireStudent("clerk_student").getRole());
+        assertEquals(HttpStatus.FORBIDDEN, assertThrows(ApiException.class, () -> service.requireStudent("clerk_poster")).getStatus());
+    }
 }

@@ -5,9 +5,9 @@ UniWork connects Sri Lankan university students with people who need help with s
 ## Stack and layout
 
 - `apps/web`: Next.js App Router, TypeScript, Tailwind CSS.
-- `apps/web`: public landing page plus a Clerk-protected Task Poster dashboard for onboarding, profiles, tasks, and applications. The Student app download remains marked Coming Soon until an HTTPS APK URL is configured.
+- `apps/web`: public landing page plus a Clerk-protected Task Poster dashboard for onboarding, profiles, tasks, student application selection, and task-start/completion status. The Student app download remains marked Coming Soon until an HTTPS APK URL is configured.
 - `apps/mobile`: reserved for the later Expo student application; not initialized yet.
-- `backend`: Java 21 Spring Boot modular monolith, REST, PostgreSQL, and Flyway. Core task location is stored as validated latitude/longitude decimals; optional PostGIS activation is documented separately.
+- `backend`: Java 21 Spring Boot modular monolith, REST, PostgreSQL, and Flyway. Student profiles, applications, task execution, reviews, and private safety reports are API-ready for the future mobile app. Task arrival uses an isolated Haversine implementation and works without PostGIS.
 - `packages/api-contracts`: shared TypeScript response types.
 - `docs`: architecture, API, and local development notes.
 

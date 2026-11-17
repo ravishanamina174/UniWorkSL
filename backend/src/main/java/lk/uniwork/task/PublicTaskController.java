@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
+import java.math.BigDecimal;
 
 @Validated
 @RestController
@@ -24,8 +25,10 @@ public class PublicTaskController {
     @Operation(summary = "Browse published tasks for the future student marketplace")
     @GetMapping
     public PageResponse<TaskResponse> list(@RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "10") @Min(1) @Max(50) int size, @RequestParam(required = false) String search) {
-        return service.listPublic(page, size, search);
+            @RequestParam(defaultValue = "10") @Min(1) @Max(50) int size, @RequestParam(required = false) String search,
+            @RequestParam(required = false) @jakarta.validation.constraints.DecimalMin("0.00") BigDecimal minAmount,
+            @RequestParam(required = false) @jakarta.validation.constraints.DecimalMin("0.00") BigDecimal maxAmount) {
+        return service.listPublic(page, size, search, minAmount, maxAmount);
     }
 
     @GetMapping("/{taskId}")

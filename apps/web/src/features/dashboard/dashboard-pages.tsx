@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { ArrowDown, ArrowRight, BriefcaseBusiness, CalendarDays, MapPin, Plus, Search } from "lucide-react";
-import type { PageResponse, Task, TaskApplication, TaskStatus, TaskSummary } from "@uniwork/api-contracts";
+import type { PageResponse, PosterExecution, Task, TaskApplication, TaskStatus, TaskSummary } from "@uniwork/api-contracts";
 import { Badge } from "@/components/ui/badge";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -17,7 +17,7 @@ import { useAuthenticatedApi } from "./use-api";
 import { formatLkr, formatSriLankaDate, taskStatusLabel } from "./task-ui";
 import { TaskForm } from "./task-form";
 
-const statuses: Array<TaskStatus | ""> = ["", "DRAFT", "PUBLISHED", "ONGOING", "COMPLETED", "CANCELLED", "CLOSED"];
+const statuses: Array<TaskStatus | ""> = ["", "DRAFT", "PUBLISHED", "ACCEPTED", "STARTED", "ONGOING", "COMPLETED", "CANCELLED", "CLOSED"];
 
 function TaskStatusBadge({ status }: { status: TaskStatus }) {
   return <Badge className={`status-${status.toLowerCase()}`}>{taskStatusLabel(status)}</Badge>;
@@ -40,7 +40,7 @@ export function DashboardHomePage() {
   if (error) return <div className="dashboard-content-stack"><PageHeader eyebrow="TASK POSTER WORKSPACE" title="Dashboard" description="A current view of your task activity." /><div className="form-alert" role="alert">{error}</div><Button variant="secondary" onClick={() => { setError(""); setAttempt((value) => value + 1); }}>Try again</Button></div>;
   if (!summary) return <LoadingState label="Loading your dashboard" />;
   const metrics = [
-    { label: "Total posted", value: summary.totalPosted }, { label: "Published", value: summary.published }, { label: "Ongoing", value: summary.ongoing }, { label: "Completed", value: summary.completed }, { label: "Pending applications", value: summary.pendingApplications },
+    { label: "Total posted", value: summary.totalPosted }, { label: "Published", value: summary.published }, { label: "Accepted", value: summary.accepted }, { label: "Ongoing", value: summary.ongoing }, { label: "Completed", value: summary.completed }, { label: "Pending applications", value: summary.pendingApplications },
   ];
   return <div className="dashboard-content-stack"><PageHeader eyebrow="TASK POSTER WORKSPACE" title="Dashboard" description="A current view of your task activity." action={<ButtonLink href="/dashboard/tasks/new"><Plus size={16} /> Create task</ButtonLink>} />
     <section className="metric-grid" aria-label="Task summary">{metrics.map((metric) => <article className="metric-panel" key={metric.label}><span>{metric.label}</span><strong>{metric.value}</strong></article>)}</section>
@@ -109,7 +109,7 @@ export function TaskDetailsPage() {
   return <div className="dashboard-content-stack"><PageHeader eyebrow="TASK DETAILS" title={task.title} description="Review the current task information and status." action={<TaskStatusBadge status={task.status} />} />
     {error ? <div className="form-alert" role="alert">{error}</div> : null}
     <section className="form-section"><div className="form-section-heading"><h2>Task information</h2></div><dl className="profile-details"><div><dt>Amount</dt><dd>{formatLkr(task.amountLkr)}</dd></div><div><dt>Date and time · Sri Lanka</dt><dd>{formatSriLankaDate(task.taskDateTime)}</dd></div><div className="profile-detail-full"><dt>Description</dt><dd>{task.description}</dd></div><div className="profile-detail-full"><dt>Required skills</dt><dd><span className="skill-list">{task.requiredSkills.map((skill) => <Badge key={skill}>{skill}</Badge>)}</span></dd></div><div className="profile-detail-full"><dt>Location</dt><dd>{task.locationAddress}<small className="coordinate-line">{task.latitude}, {task.longitude}</small></dd></div></dl></section>
-    <div className="form-actions task-detail-actions"><ButtonLink href={`/dashboard/tasks/${task.taskId}/applications`} variant="secondary">View applications</ButtonLink>{canEdit ? <ButtonLink href={`/dashboard/tasks/${task.taskId}/edit`} variant="secondary">Edit draft</ButtonLink> : null}{canEdit ? <Button disabled={busy} onClick={() => void performAction("publish")}>Publish task</Button> : null}{canCancel ? <Button variant="secondary" disabled={busy} onClick={() => setCancelOpen(true)}>Cancel task</Button> : null}<ButtonLink href="/dashboard/tasks" variant="secondary">Back to tasks</ButtonLink></div>
+    <div className="form-actions task-detail-actions"><ButtonLink href={`/dashboard/tasks/${task.taskId}/applications`} variant="secondary">View applications</ButtonLink>{task.status === "ACCEPTED" || task.status === "STARTED" || task.status === "COMPLETED" ? <ButtonLink href={`/dashboard/tasks/${task.taskId}/start`} variant="secondary">Task start and status</ButtonLink> : null}{canEdit ? <ButtonLink href={`/dashboard/tasks/${task.taskId}/edit`} variant="secondary">Edit draft</ButtonLink> : null}{canEdit ? <Button disabled={busy} onClick={() => void performAction("publish")}>Publish task</Button> : null}{canCancel ? <Button variant="secondary" disabled={busy} onClick={() => setCancelOpen(true)}>Cancel task</Button> : null}<ButtonLink href="/dashboard/tasks" variant="secondary">Back to tasks</ButtonLink></div>
     <Dialog open={cancelOpen} title="Cancel this task?" onClose={() => setCancelOpen(false)}><p>This task will no longer be available to students. You can’t undo this action.</p><div className="form-actions"><Button variant="secondary" onClick={() => setCancelOpen(false)}>Keep task</Button><Button className="button-danger" disabled={busy} onClick={() => void performAction("cancel")}>Cancel task</Button></div></Dialog>
   </div>;
 }
@@ -130,29 +130,73 @@ export function EditTaskPage() {
   return <div className="dashboard-content-stack"><PageHeader eyebrow="TASK MANAGEMENT" title="Edit draft" description="Update the details before publishing." /><TaskForm initial={task} taskId={task.taskId} /></div>;
 }
 
-function ApplicationsTable({ rows }: { rows: TaskApplication[] }) {
-  return <div className="application-list">{rows.map((application) => <article className="application-row" key={application.applicationId}><div><Link href={`/dashboard/tasks/${application.taskId}`}><strong>{application.taskTitle}</strong></Link><span>Submitted {formatSriLankaDate(application.submittedAt)}</span></div><Badge className={`status-${application.status.toLowerCase()}`}>{application.status.charAt(0) + application.status.slice(1).toLowerCase()}</Badge></article>)}</div>;
-}
-
 export function ApplicationsPage({ taskId }: { taskId?: string }) {
   const api = useAuthenticatedApi();
   const [result, setResult] = useState<PageResponse<TaskApplication> | null>(null);
   const [error, setError] = useState("");
   const [page, setPage] = useState(0);
+  const [attempt, setAttempt] = useState(0);
+  const [selectedAction, setSelectedAction] = useState<{ application: TaskApplication; action: "accept" | "reject" } | null>(null);
+  const [busyId, setBusyId] = useState("");
+  const [notice, setNotice] = useState("");
   useEffect(() => {
     let active = true;
     const endpoint = taskId ? `/api/v1/poster/tasks/${taskId}/applications` : "/api/v1/poster/applications";
-    void api<PageResponse<TaskApplication>>(`${endpoint}?page=${page}&size=10`).then((value) => { if (active) setResult(value); }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : "Applications could not be loaded."); });
+    void api<PageResponse<TaskApplication>>(`${endpoint}?page=${page}&size=10`).then((value) => { if (active) { setResult(value); setError(""); } }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : "Applications could not be loaded."); });
     return () => { active = false; };
-  }, [api, page, taskId]);
-  if (error) return <div className="form-alert" role="alert">{error}</div>;
-  if (!result) return <LoadingState label="Loading applications" />;
-  return <div className="dashboard-content-stack"><PageHeader eyebrow="TASK MANAGEMENT" title={taskId ? "Task applications" : "Applications"} description="Applications received for your posted tasks." />
-    {result.content.length ? <><ApplicationsTable rows={result.content} /><div className="pagination-bar"><span>{result.totalElements} application{result.totalElements === 1 ? "" : "s"}</span><div><Button variant="secondary" disabled={page <= 0} onClick={() => setPage((value) => Math.max(0, value - 1))}>Previous</Button><span>Page {result.page + 1} of {Math.max(1, result.totalPages)}</span><Button variant="secondary" disabled={page + 1 >= result.totalPages} onClick={() => setPage((value) => value + 1)}>Next</Button></div></div></> : <EmptyState icon={<ArrowDown size={20} />} title="No applications yet" description="When students apply to your published tasks, their applications will appear here." />}
+  }, [api, page, taskId, attempt]);
+  async function changeApplication() {
+    if (!selectedAction) return;
+    setBusyId(selectedAction.application.applicationId); setNotice(""); setError("");
+    try {
+      await api<TaskApplication>(`/api/v1/poster/applications/${selectedAction.application.applicationId}/${selectedAction.action}`, { method: "POST" });
+      setNotice(selectedAction.action === "accept" ? "Student selected. Other pending applications have been closed." : "Application rejected.");
+      setSelectedAction(null); setAttempt((value) => value + 1);
+    } catch (cause) { setError(cause instanceof ApiRequestError ? cause.message : cause instanceof Error ? cause.message : "The application could not be updated."); }
+    finally { setBusyId(""); }
+  }
+  if (!result && !error) return <LoadingState label="Loading applications" />;
+  return <div className="dashboard-content-stack"><PageHeader eyebrow="TASK MANAGEMENT" title={taskId ? "Task applications" : "Applications"} description="Review the applicant’s name and university details before deciding." />
+    {error ? <div className="form-alert" role="alert">{error} <button type="button" className="text-button" onClick={() => { setError(""); setAttempt((v) => v + 1); }}>Try again</button></div> : null}
+    {notice ? <div className="form-success" role="status">{notice}</div> : null}
+    {result?.content.length ? <><div className="application-list">{result.content.map((application) => <article className="application-row" key={application.applicationId}><div><Link href={`/dashboard/tasks/${application.taskId}`}><strong>{application.taskTitle}</strong></Link><span>{application.studentName} · {application.university} · {application.faculty}</span><span>Submitted {formatSriLankaDate(application.submittedAt)}</span></div><div className="application-row-actions"><Badge className={`status-${application.status.toLowerCase()}`}>{application.status.charAt(0) + application.status.slice(1).toLowerCase()}</Badge>{application.status === "PENDING" ? <><Button variant="secondary" disabled={Boolean(busyId)} onClick={() => setSelectedAction({ application, action: "reject" })}>Reject</Button><Button disabled={Boolean(busyId)} onClick={() => setSelectedAction({ application, action: "accept" })}>Select student</Button></> : null}</div></article>)}</div><div className="pagination-bar"><span>{result.totalElements} application{result.totalElements === 1 ? "" : "s"}</span><div><Button variant="secondary" disabled={page <= 0} onClick={() => setPage((value) => Math.max(0, value - 1))}>Previous</Button><span>Page {result.page + 1} of {Math.max(1, result.totalPages)}</span><Button variant="secondary" disabled={page + 1 >= result.totalPages} onClick={() => setPage((value) => value + 1)}>Next</Button></div></div></> : !error ? <EmptyState icon={<ArrowDown size={20} />} title="No applications yet" description="When students apply to your published tasks, their applications will appear here." /> : null}
+    <Dialog open={selectedAction !== null} title={selectedAction?.action === "accept" ? "Select this student?" : "Reject this application?"} onClose={() => setSelectedAction(null)}><p>{selectedAction?.action === "accept" ? "This selects the student and closes the task to new applications. Other pending applications will be rejected." : "This application will be marked as rejected. This action cannot be undone."}</p><div className="form-actions"><Button variant="secondary" disabled={Boolean(busyId)} onClick={() => setSelectedAction(null)}>Go back</Button><Button className={selectedAction?.action === "reject" ? "button-danger" : ""} disabled={Boolean(busyId)} onClick={() => void changeApplication()}>{busyId ? "Saving…" : selectedAction?.action === "accept" ? "Select student" : "Reject application"}</Button></div></Dialog>
   </div>;
 }
 
 export function TaskApplicationsPage() {
   const params = useParams<{ taskId: string }>();
   return <ApplicationsPage taskId={params.taskId} />;
+}
+
+export function TaskStartPage() {
+  const params = useParams<{ taskId: string }>();
+  const api = useAuthenticatedApi();
+  const [task, setTask] = useState<Task | null>(null);
+  const [execution, setExecution] = useState<PosterExecution | null>(null);
+  const [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    let active = true;
+    const loadTask = () => api<Task>(`/api/v1/poster/tasks/${params.taskId}`).then((value) => { if (active) setTask(value); }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : "Task could not be loaded."); });
+    const loadExecution = () => api<PosterExecution>(`/api/v1/poster/tasks/${params.taskId}/execution`).then((value) => { if (active) { setExecution(value); setError(""); } }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : "Execution status could not be loaded."); });
+    void loadTask(); void loadExecution();
+    const timer = window.setInterval(() => { void loadExecution(); }, 4000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, [api, params.taskId, attempt]);
+  if (!task && !error) return <LoadingState label="Loading task start status" />;
+  if (!task) return <div className="dashboard-content-stack"><div className="form-alert" role="alert">{error}</div><Button variant="secondary" onClick={() => { setError(""); setAttempt((v) => v + 1); }}>Try again</Button></div>;
+  const refresh = () => { setError(""); setAttempt((v) => v + 1); };
+  const pinExpiry = execution?.pinExpiresAt ? formatSriLankaDate(execution.pinExpiresAt) : "";
+  return <div className="dashboard-content-stack"><PageHeader eyebrow="TASK EXECUTION" title="Task start and status" description={task.title} action={<TaskStatusBadge status={task.status} />} />
+    {error ? <div className="form-alert" role="alert">{error} <button type="button" className="text-button" onClick={refresh}>Retry</button></div> : null}
+    <section className="form-section"><div className="form-section-heading"><h2>Task information</h2><p>{formatSriLankaDate(task.taskDateTime)} · {task.locationAddress}</p></div><p>{task.description}</p></section>
+    {!execution ? <LoadingState label="Loading selected student and verification status" /> : <>
+      <section className="form-section"><div className="form-section-heading"><h2>Selected student</h2><p>Applicant details provided for task coordination.</p></div><dl className="profile-details"><div><dt>Name</dt><dd>{execution.studentName}</dd></div><div><dt>University</dt><dd>{execution.university}</dd></div><div><dt>Faculty</dt><dd>{execution.faculty}</dd></div><div><dt>Verification status</dt><dd>{execution.verificationStatus.replaceAll("_", " ")}</dd></div></dl>
+        {execution.verificationPin ? <div className="verification-pin-panel"><span>Share this code with the selected student</span><strong aria-label={`Verification code ${execution.verificationPin.split("").join(" ")}`}>{execution.verificationPin.split("").join(" ")}</strong><small>Expires {pinExpiry}</small></div> : execution.verificationStatus === "NOT_REQUESTED" ? <p className="dashboard-inline-note">The student has not requested a start code yet. This page refreshes automatically.</p> : execution.verificationStatus === "EXPIRED" ? <p className="dashboard-inline-note">The code expired or reached its attempt limit. The student can request another code after the five-minute security window.</p> : <p className="dashboard-inline-note">The student verified the code at {execution.startedAt ? formatSriLankaDate(execution.startedAt) : "the task start"}.</p>}
+      </section>
+      <section className="form-section"><div className="form-section-heading"><h2>Arrival and completion</h2><p>Location checks are recorded but do not block a verified task start.</p></div><dl className="profile-details"><div><dt>Location check</dt><dd>{execution.locationCheckedAt ? `${execution.locationResult?.replaceAll("_", " ")} · ${execution.locationVerified ? "Verified" : "Not verified"}` : "Not submitted"}</dd></div><div><dt>Task started</dt><dd>{execution.startedAt ? formatSriLankaDate(execution.startedAt) : "Not started"}</dd></div><div><dt>Task completed</dt><dd>{execution.completedAt ? formatSriLankaDate(execution.completedAt) : "Not completed"}</dd></div><div><dt>Student-reported payment</dt><dd>{execution.paymentReceived === true ? "Received" : execution.paymentReceived === false ? "Not received · unresolved" : "Not reported"}</dd></div></dl></section>
+    </>}
+    <div className="form-actions task-detail-actions"><Button variant="secondary" onClick={refresh}>Refresh status</Button><ButtonLink href={`/dashboard/tasks/${task.taskId}`} variant="secondary">Back to task</ButtonLink></div>
+  </div>;
 }

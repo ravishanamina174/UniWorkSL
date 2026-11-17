@@ -95,6 +95,9 @@ public class Task {
 
     public void publish() { this.status = TaskStatus.PUBLISHED; }
     public void cancel() { this.status = TaskStatus.CANCELLED; }
+    public void acceptStudent() { this.status = TaskStatus.ACCEPTED; }
+    public void start() { this.status = TaskStatus.STARTED; }
+    public void complete() { this.status = TaskStatus.COMPLETED; }
     public UUID getId() { return id; }
     public UniWorkUser getPoster() { return poster; }
     public String getTitle() { return title; }
