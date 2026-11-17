@@ -277,8 +277,8 @@ button { color: inherit; }
 .dashboard-topbar { position: sticky; z-index: 20; top: 0; display: flex; height: 62px; align-items: center; justify-content: space-between; padding-inline: 23px; border-bottom: 1px solid var(--border); background: var(--background); }
 .dashboard-top-left, .dashboard-top-right, .dashboard-breadcrumb { display: flex; align-items: center; }
 .dashboard-top-left { gap: 24px; }
-.dashboard-breadcrumb { gap: 9px; color: var(--muted); font-size: 11px; }
-.dashboard-breadcrumb strong { color: var(--foreground); font-weight: 570; }
+.dashboard-breadcrumb { gap: 9px; color: var(--muted); font-size: 13px; font-weight: 500}
+.dashboard-breadcrumb strong { color: var(--foreground); font-weight: 670; }
 .dashboard-top-right { gap: 13px; }
 .dashboard-user-name { color: var(--muted-strong); font-size: 11px; }
 .dashboard-body { display: grid; min-height: calc(100vh - 62px); grid-template-columns: 224px minmax(0, 1fr); }

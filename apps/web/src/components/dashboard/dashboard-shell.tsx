@@ -37,8 +37,8 @@ export function DashboardShell({ children, displayName }: { children: React.Reac
       <header className="dashboard-topbar">
         <div className="dashboard-top-left">
           <button className="dashboard-mobile-menu" type="button" aria-label={menuOpen ? "Close dashboard navigation" : "Open dashboard navigation"} aria-expanded={menuOpen} aria-controls="dashboard-sidebar" onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X size={18} /> : <Menu size={18} />}</button>
-          <Link href="/" className="brand-lockup"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span><small>WORKSPACE</small></Link>
-          <div className="dashboard-breadcrumb"><ChevronRight size={14} aria-hidden="true" /><span>Task Poster</span><ChevronRight size={14} aria-hidden="true" /><strong>{pageLabel}</strong></div>
+          <Link href="/" className="brand-lockup"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span></Link>
+          <div className="dashboard-breadcrumb"><span>Task Poster</span><ChevronRight size={15} aria-hidden="true" /><strong>{pageLabel}</strong></div>
         </div>
         <div className="dashboard-top-right"><ThemeToggle /><span className="dashboard-user-name">{displayName}</span><UserButton /></div>
       </header>
