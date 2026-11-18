@@ -1,0 +1,183 @@
+/* Public landing page only: dashboard components retain their existing styles. */
+.uniwork-landing .hero-image { transform-origin: center center; }
+.uniwork-landing .preview-wrap { padding-right: 110px; margin-bottom: 38px; }
+.uniwork-landing .preview-window {
+  border: 1px solid #ffffff9c; border-radius: 12px; background: #fafafa;
+  box-shadow: 0 32px 80px #0005, 0 2px 8px #0003, inset 0 1px #fff;
+}
+.uniwork-landing .preview-window-bar {
+  height: 48px; gap: 16px; padding-inline: 16px; color: #737373;
+  background: linear-gradient(#f6f6f6, #eaeaea); border-bottom-color: #d5d5d5;
+}
+.uniwork-landing .window-dots { display: flex; gap: 7px; flex: 0 0 auto; }
+.uniwork-landing .window-dots i { width: 11px; height: 11px; border-radius: 50%; box-shadow: inset 0 0 0 1px #00000012; }
+.uniwork-landing .window-dots i:nth-child(1) { background: #ff5f57; }
+.uniwork-landing .window-dots i:nth-child(2) { background: #febc2e; }
+.uniwork-landing .window-dots i:nth-child(3) { background: #28c840; }
+.uniwork-landing .preview-browser-history, .uniwork-landing .preview-browser-tools { display: flex; gap: 12px; }
+.uniwork-landing .preview-window-bar svg { width: 14px; height: 14px; flex-shrink: 0; }
+.uniwork-landing .preview-address { display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1; max-width: 380px; padding: 6px; border: 1px solid #d6d6d6; border-radius: 5px; background: #ffffffb3; font-size: 12px; }
+.uniwork-landing .preview-workspace { grid-template-columns: 174px minmax(0, 1fr); min-height: 475px; }
+.uniwork-landing .preview-sidebar { padding: 24px 14px; background: #f7f7f8; border-color: #e5e5e5; }
+.uniwork-landing .preview-logo { gap: 8px; margin-bottom: 32px; font-size: 16px; color: #242424; }
+.uniwork-landing .preview-logo svg { width: 25px; height: 25px; color: #52525b; }
+.uniwork-landing .preview-sidebar > p { color: #737373; font-size: 10px; }
+.uniwork-landing .preview-nav-active, .uniwork-landing .preview-nav-item { height: 39px; gap: 9px; font-size: 12px; }
+.uniwork-landing .preview-nav-active { background: #eae9f1; color: #595273; }
+.uniwork-landing .preview-sidebar svg { flex-shrink: 0; }
+.uniwork-landing .preview-nav-active svg, .uniwork-landing .preview-nav-item svg { width: 16px; height: 16px; }
+.uniwork-landing .preview-sidebar-bottom { gap: 8px; bottom: 23px; font-size: 12px; color: #525252; }
+.uniwork-landing .preview-sidebar-bottom small { display: block; margin-top: 3px; font-size: 10px; color: #737373; }
+.uniwork-landing .preview-content { min-width: 0; padding: 25px 115px 25px 24px; }
+.uniwork-landing .preview-crumb { display: flex; align-items: center; gap: 6px; margin-bottom: 26px; color: #737373; font-size: 11px; }
+.uniwork-landing .preview-crumb svg { width: 12px; height: 12px; }
+.uniwork-landing .preview-crumb .preview-example-label { margin-left: auto; padding: 3px 5px; border: 1px solid #e5e5e5; font-size: 8px; letter-spacing: .04em; }
+.uniwork-landing .preview-title-row { flex-wrap: wrap; align-items: center; gap: 12px; }
+.uniwork-landing .preview-title-row small { font-size: 10px; color: #737373; }
+.uniwork-landing .preview-title-row h3 { font-size: 23px; line-height: 1.15; letter-spacing: -.045em; }
+.uniwork-landing .preview-add { gap: 5px; min-height: 30px; padding-inline: 9px; font-size: 11px; white-space: nowrap; }
+.uniwork-landing .preview-add svg { width: 13px; height: 13px; }
+.uniwork-landing .preview-task-detail { margin-top: 20px; padding: 16px; border: 1px solid #e2e2e6; border-radius: 5px; background: #fff; }
+.uniwork-landing .preview-task-heading { display: flex; align-items: center; gap: 10px; }
+.uniwork-landing .preview-task-icon { display: grid; place-items: center; flex: 0 0 34px; height: 34px; border-radius: 5px; background: #f0f2ed; color: #687b59; }
+.uniwork-landing .preview-task-icon svg { width: 20px; height: 20px; }
+.uniwork-landing .preview-task-heading small { display: block; margin-bottom: 4px; color: #737373; font-size: 9px; letter-spacing: .06em; }
+.uniwork-landing .preview-task-heading strong { display: block; font-size: 14px; line-height: 1.3; font-weight: 600; }
+.uniwork-landing .preview-status { margin-left: auto; padding: 3px 6px; border: 1px solid #e5e5e5; border-radius: 4px; color: #737373; font-size: 10px; }
+.uniwork-landing .preview-task-detail p { margin: 13px 0; color: #737373; font-size: 12px; line-height: 1.6; }
+.uniwork-landing .preview-task-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 12px; border-top: 1px solid #ededed; font-size: 11px; color: #737373; }
+.uniwork-landing .preview-task-meta span { display: flex; align-items: center; gap: 3px; }
+.uniwork-landing .preview-task-meta svg { width: 12px; height: 12px; }
+.uniwork-landing .preview-task-meta strong { margin-left: auto; color: #333; font-weight: 600; }
+.uniwork-landing .preview-steps { margin-top: 15px; border-radius: 4px; }
+.uniwork-landing .preview-steps > div { min-height: 40px; grid-template-columns: 29px 1fr 15px; }
+.uniwork-landing .preview-steps strong { font-size: 12px; }
+.uniwork-landing .preview-steps > div > span { font-size: 10px; color: #737373; }
+.uniwork-landing .preview-steps svg { width: 14px; height: 14px; color: #777181; }
+.uniwork-landing .preview-caption { gap: 6px; padding: 12px 16px; padding-right: 95px; font-size: 10px; color: #737373; }
+.uniwork-landing .preview-caption-dot { background: #9b91ae; flex-shrink: 0; }
+.uniwork-landing .preview-mobile {
+  display: flex; right: 0; bottom: -38px; width: 224px; height: 453px; padding: 11px 15px 16px;
+  border: 6px solid #27272a; border-radius: 30px; background: #fafafa; color: #27272a;
+  box-shadow: 0 28px 55px #0005, 0 0 0 1px #a1a1aa, inset 0 0 0 1px #fff;
+  transform: rotate(3deg); overflow: hidden;
+}
+.uniwork-landing .mobile-notch { top: 10px; left: calc(50% - 4px); width: 8px; height: 8px; border-radius: 50%; background: #18181b; box-shadow: inset 0 0 0 2px #34343c; }
+.uniwork-landing .mobile-status { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; font-size: 10px; font-weight: 650; }
+.uniwork-landing .mobile-status > div { display: flex; gap: 3px; }
+.uniwork-landing .mobile-status svg { width: 12px; height: 12px; }
+.uniwork-landing .mobile-brand { gap: 6px; font-size: 14px; color: #27272a; }
+.uniwork-landing .mobile-brand-mark { width: 22px; height: 22px; color: #52525b; }
+.uniwork-landing .preview-mobile > small { margin-top: 22px; color: #71717a; font-size: 8px; letter-spacing: .06em; }
+.uniwork-landing .preview-mobile h3 { margin: 7px 0 15px; font-size: 27px; line-height: 1.06; letter-spacing: -.055em; }
+.uniwork-landing .mobile-search { display: flex; align-items: center; gap: 6px; padding: 9px 7px; border: 1px solid #e4e4e7; border-radius: 5px; color: #71717a; font-size: 10px; }
+.uniwork-landing .mobile-search svg { width: 13px; height: 13px; }
+.uniwork-landing .mobile-task-card { margin-top: 12px; padding: 12px; border: 1px solid #e4e4e7; border-radius: 7px; background: #fff; }
+.uniwork-landing .mobile-task-heading { display: flex; align-items: center; gap: 7px; color: #71717a; font-size: 8px; letter-spacing: .04em; }
+.uniwork-landing .mobile-task-heading svg { width: 21px; height: 21px; padding: 3px; border-radius: 4px; color: #687b59; background: #f0f2ed; }
+.uniwork-landing .mobile-task-card > strong { display: block; margin-top: 8px; font-size: 14px; font-weight: 600; }
+.uniwork-landing .mobile-task-location { display: flex; gap: 3px; align-items: center; margin-top: 4px; color: #71717a; font-size: 10px; }
+.uniwork-landing .mobile-task-location svg { width: 11px; height: 11px; }
+.uniwork-landing .mobile-task-card > b { display: block; margin-top: 10px; font-size: 13px; font-weight: 600; }
+.uniwork-landing .mobile-preview-tags { gap: 4px; margin-top: 8px; }
+.uniwork-landing .mobile-preview-tags span { padding: 3px 5px; border-color: #e4e4e7; background: #f7f7f8; color: #71717a; font-size: 8px; }
+.uniwork-landing .mobile-tabbar { gap: 8px; padding-top: 10px; }
+.uniwork-landing .mobile-tabbar span { display: flex; align-items: center; flex-direction: column; gap: 3px; color: #71717a; font-size: 8px; }
+.uniwork-landing .mobile-tabbar span:first-child { color: #66568c; }
+.uniwork-landing .mobile-tabbar svg { width: 15px; height: 15px; }
+.uniwork-landing .mobile-gesture { position: absolute; bottom: 6px; left: 35%; width: 30%; height: 3px; border-radius: 3px; background: #27272a; }
+
+/* Readable body copy without changing the established section hierarchy. */
+.uniwork-landing :is(.workflow-section, .categories-section, .poster-cta-section, .download-section, .safety-section) .eyebrow { font-size: 12px; }
+.uniwork-landing .section-aside { max-width: 350px; font-size: 15px; line-height: 1.65; color: var(--muted-strong); }
+.uniwork-landing .workflow-panel { display: flex; flex-direction: column; padding: 30px; }
+.uniwork-landing .workflow-panel > .button { align-self: flex-start; margin-top: auto; }
+.uniwork-landing .workflow-icon { flex-shrink: 0; }
+.uniwork-landing .workflow-panel-heading h3 { font-size: 21px; }
+.uniwork-landing .workflow-panel-heading p { margin-top: 5px; font-size: 15px; color: var(--muted-strong); }
+.uniwork-landing .workflow-list li { padding-block: 18px; }
+.uniwork-landing .step-number { font-size: 14px; }
+.uniwork-landing .workflow-list h4 { font-size: 18px; line-height: 1.4; }
+.uniwork-landing .workflow-list p { margin-top: 7px; font-size: 16px; line-height: 1.65; color: var(--muted-strong); }
+.uniwork-landing :is(.workflow-section, .poster-cta-section, .download-section) .button { font-size: 15px; }
+.uniwork-landing .category-item { --category-accent: #6b805e; min-height: 218px; padding: 26px; isolation: isolate; background: transparent; transition: box-shadow 240ms ease; }
+.uniwork-landing .category-item:nth-child(2) { --category-accent: #ad8053; }
+.uniwork-landing .category-item:nth-child(3) { --category-accent: #738399; }
+.uniwork-landing .category-item:nth-child(4) { --category-accent: #b56f59; }
+.uniwork-landing .category-item:nth-child(5) { --category-accent: #9274bc; }
+.uniwork-landing .category-item:nth-child(6) { --category-accent: #7a88bf; }
+.uniwork-landing .category-item::before { position: absolute; z-index: -1; inset: 0; content: ""; opacity: 0; background: radial-gradient(ellipse at 14% 12%, color-mix(in srgb, var(--category-accent) 16%, transparent), transparent 72%); transition: opacity 240ms ease; pointer-events: none; }
+.uniwork-landing .category-item > svg { width: 25px; height: 25px; margin-bottom: 24px; color: var(--category-accent); transition: transform 240ms ease; }
+.uniwork-landing .category-number { font-size: 13px; }
+.uniwork-landing .category-item h3 { font-size: 20px; line-height: 1.3; }
+.uniwork-landing .category-item p { max-width: 290px; margin-top: 9px; font-size: 16px; line-height: 1.6; color: var(--muted-strong); }
+@media (hover: hover) and (pointer: fine) {
+  .uniwork-landing .category-item:hover { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--category-accent) 55%, transparent); }
+  .uniwork-landing .category-item:hover::before { opacity: 1; }
+  .uniwork-landing .category-item:hover > svg { transform: translateY(-3px) rotate(-5deg); }
+}
+@media (hover: none) {
+  .uniwork-landing .category-item:active::before { opacity: 1; }
+  .uniwork-landing .category-item:active { box-shadow: inset 0 0 0 1px var(--category-accent); }
+}
+.uniwork-landing .poster-cta-copy > p, .uniwork-landing .safety-copy > p { font-size: 17px; line-height: 1.75; }
+.uniwork-landing .poster-cta-copy li { align-items: baseline; font-size: 16px; line-height: 1.6; }
+.uniwork-landing .poster-cta-copy li span { font-size: 14px; }
+.uniwork-landing .safety-note { padding: 19px; font-size: 15px; line-height: 1.7; }
+
+/* Color stays on the outer download surface; QR content remains neutral. */
+.uniwork-landing .download-section { background: radial-gradient(ellipse at 10% 15%, #bdadf0b3, transparent 58%), radial-gradient(ellipse at 82% 38%, #edc5daaa, transparent 60%), linear-gradient(135deg, #eee8ff, #e5dcf7 46%, #ccdafa); }
+.dark .uniwork-landing .download-section { background: radial-gradient(ellipse at 10% 15%, #7861b759, transparent 58%), radial-gradient(ellipse at 82% 38%, #a45b9440, transparent 60%), linear-gradient(135deg, #292034, #342444 46%, #252d46); }
+.uniwork-landing .download-layout { padding: 20px 0; border: 0; background: transparent; gap: 60px; }
+.uniwork-landing .download-copy > p:not(.eyebrow) { font-size: 17px; line-height: 1.75; color: var(--muted-strong); }
+.uniwork-landing .download-copy > small { font-size: 15px; color: var(--muted-strong); }
+.uniwork-landing .download-copy .eyebrow { color: var(--muted-strong); }
+.uniwork-landing .download-icon { border-color: color-mix(in srgb, var(--foreground) 25%, transparent); color: var(--foreground); }
+.uniwork-landing .download-qr-panel { min-height: 330px; padding: 28px 24px; border: 1px solid #dedee3; border-radius: 8px; background: #fff; color: #27272a; box-shadow: 0 12px 36px #3020440d; }
+.uniwork-landing .qr-frame { width: 206px; height: 206px; padding: 19px; border-color: #e4e4e7; background: #fff; }
+.uniwork-landing .download-qr-panel > p { margin-top: 20px; font-size: 16px; line-height: 1.5; }
+.uniwork-landing .download-qr-panel > span { font-size: 15px; line-height: 1.5; color: #71717a; }
+.uniwork-landing .qr-placeholder { width: 190px; height: 190px; padding: 16px; border-color: #d4d4d8; background: #fafafa; color: #71717a; font-size: 11px; line-height: 1.6; }
+.uniwork-landing .qr-placeholder-mark { border-color: #e4e4e7; color: #71717a; }
+
+@media (max-width: 1020px) {
+  .uniwork-landing .preview-wrap { padding-right: 85px; }
+  .uniwork-landing .preview-workspace { grid-template-columns: 150px minmax(0, 1fr); }
+  .uniwork-landing .preview-content { padding-right: 135px; padding-left: 18px; }
+  .uniwork-landing .preview-logo { font-size: 14px; }
+  .uniwork-landing .preview-crumb .preview-example-label { display: none; }
+  .uniwork-landing .preview-title-row h3 { font-size: 21px; }
+  .uniwork-landing .preview-task-heading { flex-wrap: wrap; }
+  .uniwork-landing .preview-status { display: none; }
+  .uniwork-landing .preview-mobile { width: 210px; right: 0; }
+  .uniwork-landing .category-item { padding: 22px; }
+}
+@media (max-width: 800px) {
+  .uniwork-landing .preview-workspace { grid-template-columns: minmax(0, 1fr); }
+  .uniwork-landing .preview-sidebar { display: none; }
+  .uniwork-landing .preview-content { padding: 24px 125px 24px 24px; }
+  .uniwork-landing .download-layout { gap: 32px; grid-template-columns: minmax(0, 1fr) 280px; }
+}
+@media (max-width: 600px) {
+  .uniwork-landing .preview-wrap { padding: 0; margin-bottom: 0; }
+  .uniwork-landing .preview-window-bar { padding-inline: 12px; gap: 12px; }
+  .uniwork-landing .preview-browser-history, .uniwork-landing .preview-browser-tools { display: none; }
+  .uniwork-landing .preview-address { font-size: 10px; }
+  .uniwork-landing .preview-workspace { min-height: 0; }
+  .uniwork-landing .preview-content { padding: 22px 18px; }
+  .uniwork-landing .preview-task-heading { flex-wrap: nowrap; }
+  .uniwork-landing .preview-caption { flex-wrap: wrap; padding: 12px 18px 42px; font-size: 9px; }
+  .uniwork-landing .preview-mobile { position: relative; width: 224px; height: 453px; right: auto; bottom: auto; margin: -28px 14px 0 auto; transform: rotate(3deg); }
+  .uniwork-landing .workflow-panel { padding: 23px; }
+  .uniwork-landing .workflow-list li { grid-template-columns: 25px 1fr; }
+  .uniwork-landing .category-grid { grid-template-columns: 1fr; }
+  .uniwork-landing .category-item { min-height: 190px; padding: 24px; }
+  .uniwork-landing .category-item p { max-width: none; }
+  .uniwork-landing .download-layout { grid-template-columns: 1fr; padding-block: 0; }
+  .uniwork-landing .download-qr-panel { width: 100%; max-width: 360px; justify-self: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .uniwork-landing .hero-image { transform: none !important; }
+  .uniwork-landing .category-item, .uniwork-landing .category-item::before, .uniwork-landing .category-item > svg { transition: none; }
+  .uniwork-landing .category-item:hover > svg { transform: none; }
+}

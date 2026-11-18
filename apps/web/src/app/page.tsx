@@ -2,12 +2,12 @@ import { SiteHeader } from "@/components/navigation/site-header";
 import { SiteFooter } from "@/components/navigation/site-footer";
 import { HeroPreview } from "@/features/landing/hero-preview";
 import { DownloadSection } from "@/features/landing/download-section";
-import { DevelopmentHealthDiagnostic } from "@/features/health/development-health-diagnostic";
+import { HeroImage } from "@/features/landing/hero-image";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Sprout, Paintbrush, Truck, Camera, PartyPopper, Flower2, MapPin, ShieldCheck, UsersRound, ArrowDownRight } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
+import "@/features/landing/landing-refinements.css";
 
 export const metadata: Metadata = {
   title: "UniWorkSL | Local tasks, student opportunity",
@@ -33,9 +33,9 @@ export default function HomePage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content">
+      <main id="main-content" className="uniwork-landing">
         <section className="hero-section" aria-labelledby="hero-title">
-          <Image src="/Hero.png" alt="" fill priority sizes="100vw" className="hero-image" />
+          <HeroImage />
           <Container className="hero-layout">
             <div className="hero-copy">
               <p className="eyebrow hero-eyebrow"><span className="eyebrow-dot" /> UNIWORK SRI LANKA</p>
