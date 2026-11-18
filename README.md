@@ -1,44 +1,231 @@
-# UniWork Sri Lanka
+# UniWorkSL
 
-UniWork connects Sri Lankan university students with people who need help with small, physical tasks. Version 1 uses a public Next.js site and Task Poster dashboard, a future student-only Expo app, and one shared Spring Boot REST API. Payments remain direct between the poster and student.
+### The First Dedicated Student Task Network in Sri Lanka.
 
-## Stack and layout
+**Small tasks. Bigger possibilities.**
 
-- `apps/web`: Next.js App Router, TypeScript, Tailwind CSS.
-- `apps/web`: public landing page plus a Clerk-protected Task Poster dashboard for onboarding, profiles, tasks, student application selection, and task-start/completion status. The Student app download remains marked Coming Soon until an HTTPS APK URL is configured.
-- `apps/mobile`: Android-first Expo Router Student app with Clerk auth, student onboarding, task discovery/applications, task execution, and API-backed reviews/reports.
-- `backend`: Java 21 Spring Boot modular monolith, REST, PostgreSQL, and Flyway. Student profiles, applications, task execution, reviews, and private safety reports serve the Android Student app. Task arrival uses an isolated Haversine implementation and works without PostGIS.
-- `packages/api-contracts`: shared TypeScript response types.
-- `docs`: architecture, API, and local development notes.
+Connecting Sri Lankan university students with meaningful local earning opportunities.
 
-## Prerequisites
+[**Explore UniWorkSL**](https://uniwork-seven.vercel.app/) · [**Task Poster Dashboard**](https://uniwork-seven.vercel.app/dashboard) · [**Download Android App**](https://github.com/ravishanamina174/UniWorkSL-Releases/releases/download/v1.0.0/UniWorkSL-v1.0.0.apk)
 
-Java 21, Node.js 20.9+ (22 LTS recommended), pnpm 9+, and access to the UniWork Neon PostgreSQL project. Docker is not used. Flyway V3 enables PostGIS for configured Neon environments while task arrival continues to use Haversine. See [development setup](docs/development/local-setup.md) for Neon SSL, database migration, PII encryption, Clerk, and Google Maps configuration.
+![UniWorkSL Platform](docs/images/Hero-Readme.png)
 
-## Configure
+---
 
-Copy `apps/web/.env.example` to `apps/web/.env.local` and `backend/.env.example` to the ignored `backend/.env`. Set `NEXT_PUBLIC_API_BASE_URL` (default `http://localhost:8080`; production requires HTTPS), the direct Neon `DB_URL` with `sslmode=require`, `DB_USERNAME`, `DB_PASSWORD`, `CLERK_ISSUER_URI`, and a stable base64 32-byte `UNIWORK_PII_ENCRYPTION_KEY`. Spring Boot imports `backend/.env` when launched from the `backend` directory. Configure optional Clerk JWT audience/JWKS/authorized-party settings to match the Clerk instance and web origin. The web dashboard also requires `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`. Task Poster role is assigned once by the backend during web onboarding and is stored in its internal user record; clients cannot submit or change it. For interactive task maps, restrict `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` to the Maps JavaScript API and the app's HTTP referrers. Leave it blank to use manual coordinates. `NEXT_PUBLIC_ANDROID_APK_URL` can be set to an HTTPS APK URL when available. Never commit real credentials.
+## 01 / THE IDEA
 
-## Run
+### Good work starts close to home.
 
-From the repository root, install dependencies with `pnpm install`. In one terminal start the backend with `cd backend && ./mvnw spring-boot:run`; in another run `pnpm dev`. Open `http://localhost:3000`; it checks `GET /api/v1/health` against the live backend.
+Some jobs are too small for a formal service but still need a reliable person nearby.
 
-## Verify
+**UniWorkSL** connects people who need help with practical, everyday tasks to university students looking for flexible earning opportunities.
 
-- Web: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`.
-- Backend: `cd backend && ./mvnw test` and `./mvnw verify`.
-- API: `curl http://localhost:8080/api/v1/health`; Swagger UI is at `http://localhost:8080/swagger-ui/index.html` in development.
+Whether it is helping at an event, moving household items, gardening, painting, or photography, UniWorkSL creates a simple way to discover and coordinate local work.
 
-See [architecture](docs/architecture/overview.md), [API](docs/api/README.md), and [local setup](docs/development/local-setup.md). The current implementation milestone and any external service limitations are recorded in [status](docs/development/status.md).
+**Built around two communities. One shared opportunity.**
 
-Prompt 5 web results and Neon/Clerk verification status are recorded in [web platform verification](docs/development/web-verification.md) and [Neon and Clerk verification](docs/development/neon-clerk-verification.md). Student app setup and verification are in [mobile verification](docs/development/mobile-verification.md).
+- **For University Students** — Discover suitable local tasks, earn money, and gain practical experience alongside studies.
+- **For Task Posters** — Publish tasks, review student applications, and find help for everyday work.
+- **Location-First Opportunities** — Connect people around practical, physical tasks in their communities.
+- **Direct Payments** — Payments are arranged directly between Task Posters and students, without platform payment processing.
 
-The landing page and dashboard use the centralized UI tokens and shared components documented in [web UI foundation](docs/development/web-ui.md). Dashboard task, profile, and application screens read from Spring APIs and show real empty states when the database has no records.
+---
 
-Deployment preparation and remaining V1 release checks are documented in [Render backend setup](docs/deployment/render.md), [Vercel web setup](docs/deployment/vercel.md), [Android EAS APK setup](docs/deployment/android-eas.md), and [V1 release verification](docs/development/v1-release-verification.md).
+## 02 / TWO SIDES. ONE LOCAL CONNECTION.
 
+UniWorkSL provides two dedicated experiences, designed around how each user actually works.
 
+| | Task Posters | University Students |
+|---|---|---|
+| **Platform** | Responsive Web Dashboard | Android Mobile Application |
+| **Purpose** | Find local help | Find earning opportunities |
+| **Discover** | Review student applications and discover professional profiles | Browse available physical tasks |
+| **Connect** | Select a suitable applicant | Apply for suitable tasks |
+| **Coordinate** | Share the task-start verification code | Confirm arrival and start work |
+| **Complete** | Monitor task progress | Finish work and report payment status |
+| **Feedback** | Manage task activity | Submit reviews and safety reports |
 
-Terminal	Application	Command
-Terminal 1	cd backend && ./mvnw spring-boot:run
-Terminal 2	pnpm dev       (from UniWork root)
+### For Task Posters
+
+**Have work that needs doing? Find the right helping hand.**
+
+Describe your task, choose a location, set the offered payment, and publish it to the student marketplace.
+
+[**Open Task Poster Dashboard →**](https://uniwork-seven.vercel.app/dashboard)
+
+### For Students
+
+**Your next opportunity could be just around the corner.**
+
+Explore tasks that fit your skills, availability, and location. Apply from your Android phone and coordinate directly with the Task Poster.
+
+[**Download UniWorkSL for Android →**](https://github.com/ravishanamina174/UniWorkSL-Releases/releases/download/v1.0.0/UniWorkSL-v1.0.0.apk)
+
+---
+
+## 03 / HOW IT WORKS
+
+A simple process, from finding a task to completing the work.
+
+| Step | Task Poster | Student |
+|:---:|---|---|
+| **01** | **Publish a task** — Add the title, description, amount, date, skills, and location. | **Explore opportunities** — Discover available tasks through the mobile marketplace. |
+| **02** | **Review applications** — See interested students and select a suitable applicant. | **Apply for work** — Submit an application for a task that fits. |
+| **03** | **Coordinate the task** — Agree on practical details with the selected student. | **Get selected** — View the accepted application and task information. |
+| **04** | **Verify task start** — Provide the temporary four-digit verification code. | **Start the task** — Enter the code and optionally verify arrival location. |
+| **05** | **Track progress** — Follow task execution and completion status. | **Complete the work** — Finish the task and report direct payment status. |
+| **06** | **Close the process** — Review the final task status. | **Share feedback** — Submit reviews or safety reports where appropriate. |
+
+**Important:** UniWorkSL connects and coordinates users. Payments take place directly between the Task Poster and student; the platform does not process, hold, or guarantee payments.
+
+---
+
+## 04 / BUILT FOR REAL-WORLD OPPORTUNITIES
+
+### Practical help, in many forms.
+
+| Category | Example Opportunities |
+|---|---|
+| Gardening | Grass cutting, garden care, outdoor assistance |
+| Painting | Wall painting, small renovation assistance |
+| Moving | Household furniture moving, packing and unloading |
+| Events | Event setup, coordination and decorations |
+| Photography | Events, graduation ceremonies, local photography |
+| General Assistance | Everyday physical tasks and local support |
+
+Task availability depends on listings published by Task Posters.
+
+---
+
+## 05 / INTELLIGENT FEATURES
+
+UniWorkSL combines a straightforward task marketplace with carefully designed AI-assisted features.
+
+| Feature | Description |
+|---|---|
+| **AI Text Enhancement** | Helps Task Posters improve the grammar and clarity of task titles and descriptions while preserving their intended meaning. |
+| **Student Professional Profiles** | Students can optionally share skills, availability, preferred work areas, languages, and a professional summary. |
+| **Student Lookup Agent** | Helps Task Posters discover opted-in student profiles based on task requirements, skills, location preferences, and availability. |
+| **Explainable Matching** | Provides estimated match scores and relevant matching reasons rather than guaranteed predictions. |
+| **Location-Based Tasks** | Supports task location selection and optional arrival-location verification. |
+| **Secure Task Start** | Uses a temporary four-digit code for coordinating task initiation. |
+
+AI-assisted suggestions support decision-making. Final task selection and coordination remain the responsibility of users.
+
+---
+
+## 06 / TECHNOLOGY BEHIND UNIWORKSL
+
+A shared backend powering two dedicated user experiences.
+
+### Technology Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Web Application** | Next.js, React, TypeScript | Landing Page and Task Poster Dashboard |
+| **Mobile Application** | React Native, Expo | Android application for university students |
+| **Styling** | Tailwind CSS, Geist | Responsive web interface and visual design |
+| **Backend** | Java 21, Spring Boot | REST API, business logic, security, and task workflows |
+| **Architecture** | Modular Monolith | Organized, maintainable backend modules |
+| **Database** | PostgreSQL, Neon | Cloud-hosted relational data storage |
+| **Spatial Data** | PostGIS | Geographic data support |
+| **Authentication** | Clerk | Authentication and user sessions |
+| **AI Integration** | Google Gemini, LangChain4j | Text enhancement and student matching |
+| **Web Hosting** | Vercel | Public website and dashboard |
+| **API Hosting** | Render | Spring Boot backend deployment |
+| **Android Builds** | Expo EAS | Standalone Android APK generation |
+| **APK Distribution** | GitHub Releases | Public Android application downloads |
+
+### Platform Architecture
+
+```text
+                      UNIWORKSL PLATFORM
+                              |
+                +-------------+-------------+
+                |                           |
+        NEXT.JS WEB APP             EXPO MOBILE APP
+        Task Posters                University Students
+                |                           |
+                +-------------+-------------+
+                              |
+                      SPRING BOOT API
+                       Java 21 / REST
+                              |
+           +------------------+------------------+
+           |                  |                  |
+      CLERK AUTH          NEON POSTGRES       AI SERVICES
+      Authentication      + PostGIS           Gemini / LangChain4j
+```
+
+The architecture keeps shared business rules centralized while allowing both applications to offer user-specific experiences.
+
+---
+
+## 07 / SAFETY & RESPONSIBILITY
+
+Real-world tasks require clear communication and responsible participation.
+
+UniWorkSL includes task-start verification, optional foreground arrival-location checks, reviews, and private safety reporting.
+
+These features support coordination and record useful information, but **they do not guarantee personal safety, verify every user's identity, or protect direct payments**.
+
+Students and Task Posters should agree on the location, work, schedule, and payment before beginning a task.
+
+---
+
+## 08 / GET UNIWORKSL
+
+### One platform. Two ways to participate.
+
+| For Task Posters | For Students |
+|---|---|
+| Publish tasks and manage applications through the web dashboard. | Browse opportunities and manage tasks from an Android phone. |
+| [**Launch Dashboard →**](https://uniwork-seven.vercel.app/dashboard) | [**Download Android APK →**](https://github.com/ravishanamina174/UniWorkSL-Releases/releases/download/v1.0.0/UniWorkSL-v1.0.0.apk) |
+
+**Android Release v1.0.0**
+
+[View Official Release](https://github.com/ravishanamina174/UniWorkSL-Releases/releases/tag/v1.0.0)
+
+The application is distributed as an Android APK. Android may ask users to approve installation from their browser or file manager.
+
+---
+
+## 09 / PROJECT & DEVELOPMENT
+
+UniWorkSL is developed as a **University Final Year Project** by a four-member team.
+
+The project explores how a location-based student task marketplace can connect university students seeking flexible income opportunities with people who need practical help.
+
+The platform is designed around real-world workflows, including user roles, task management, location data, mobile usability, AI-assisted matching, and safety considerations.
+
+### Development Team
+
+| Member | Role |
+|---|---|
+| **Raveesha** | Team Leader & Lead Developer |
+| Pramila | Project Team Member |
+| Imasha | Project Team Member |
+| Thejan | Project Team Member |
+
+### Project Resources
+
+| Resource | Link |
+|---|---|
+| Public Website | [uniwork-seven.vercel.app](https://uniwork-seven.vercel.app/) |
+| Task Poster Dashboard | [Open Dashboard](https://uniwork-seven.vercel.app/dashboard) |
+| Android Application | [Download APK](https://github.com/ravishanamina174/UniWorkSL-Releases/releases/download/v1.0.0/UniWorkSL-v1.0.0.apk) |
+| Android Release History | [UniWorkSL Releases](https://github.com/ravishanamina174/UniWorkSL-Releases/releases) |
+
+---
+
+<div align="center">
+
+### Small tasks. Bigger possibilities.
+
+**UniWorkSL — Built for Sri Lankan communities and university students.**
+
+[Website](https://uniwork-seven.vercel.app/) · [Dashboard](https://uniwork-seven.vercel.app/dashboard) · [Android App](https://github.com/ravishanamina174/UniWorkSL-Releases/releases/tag/v1.0.0)
+
+© 2026 UniWorkSL. Made in Sri Lanka.
+
+</div>
