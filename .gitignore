@@ -31,3 +31,5 @@ target/
 *.sql.gz
 /data/
 /postgres-data/
+
+/releases/android/*.apk
