@@ -50,3 +50,12 @@ cd apps/mobile && npx expo install --check && npx expo-doctor@latest
 ```
 
 Use `pnpm --filter @uniwork/mobile start` to launch Metro. A real device, Clerk Native API dashboard setup, and a reachable configured backend are needed for end-to-end verification. Those external checks are reported separately in `docs/development/mobile-verification.md`.
+
+
+----------------------
+
+iPhone Expo Go	                   npx expo start --clear
+Android Expo Go	                npx expo start --clear
+Android development build	       npx eas-cli@latest build -p android --profile development
+Run Android dev client	          npx expo start --dev-client --clear
+GitHub Release APK	             npx eas-cli@latest build -p android --profile release-apk
