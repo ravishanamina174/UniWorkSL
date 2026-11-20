@@ -3,6 +3,8 @@ import { SiteFooter } from "@/components/navigation/site-footer";
 import { HeroPreview } from "@/features/landing/hero-preview";
 import { DownloadSection } from "@/features/landing/download-section";
 import { HeroImage } from "@/features/landing/hero-image";
+import { AboutIllustrations } from "@/features/landing/about-illustrations";
+import { CookieConsent } from "@/components/navigation/cookie-consent";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Sprout, Paintbrush, Truck, Camera, PartyPopper, Flower2, MapPin, ShieldCheck, UsersRound, ArrowDownRight } from "lucide-react";
@@ -61,11 +63,12 @@ export default function HomePage() {
             <div className="about-copy">
               <p>Some jobs are too small for a formal service but still need a reliable person nearby. UniWork gives Task Posters a place to share that work and gives university students a way to find local opportunities around their studies.</p>
               <div className="about-points">
-                <div><UsersRound size={19} aria-hidden="true" /><span>For local people and university students</span></div>
-                <div><MapPin size={19} aria-hidden="true" /><span>Focused on practical, location-based tasks</span></div>
+                <div><UsersRound size={20} aria-hidden="true" /><span>For local people and university students</span></div>
+                <div><MapPin size={20} aria-hidden="true" /><span>Focused on practical, location-based tasks</span></div>
               </div>
             </div>
           </Container>
+          <AboutIllustrations />
         </section>
 
         <section id="how-it-works" className="section workflow-section" aria-labelledby="workflow-title">
@@ -125,6 +128,7 @@ export default function HomePage() {
       </main>
       {/* {process.env.NODE_ENV !== "production" ? <div className="dev-diagnostic-slot"><DevelopmentHealthDiagnostic /></div> : null} */}
       <SiteFooter />
+      <CookieConsent />
     </>
   );
 }

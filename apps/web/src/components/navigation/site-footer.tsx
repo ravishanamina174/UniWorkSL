@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { BrandSymbol } from "@/components/brand/brand-symbol";
+import { CookieSettingsButton } from "./cookie-consent";
 
 export function SiteFooter() {
   return (
@@ -24,7 +25,7 @@ export function SiteFooter() {
           <a href="#categories">Task categories <ArrowUpRight size={14} aria-hidden="true" /></a>
         </nav>
       </div>
-      <div className="footer-bottom"><span>© {new Date().getFullYear()} UniWork Sri Lanka. All rights reserved.</span><span>Made in Sri Lanka</span></div>
+      <div className="footer-bottom"><span>© {new Date().getFullYear()} UniWork Sri Lanka. All rights reserved.</span><CookieSettingsButton /><span>Made in Sri Lanka</span></div>
       <div className="footer-wordmark" aria-hidden="true">UniWorkSL</div>
     </footer>
   );
