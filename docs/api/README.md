@@ -80,6 +80,8 @@ PINs expire after five minutes and allow five attempts. The database stores only
 
 `GET /api/v1/poster/tasks/{taskId}/execution` returns selected-student summary, temporary PIN when active, verification status, arrival result, and completion/payment status to the owning poster only. No safety reports or student private profile fields are exposed to posters.
 
+SafeTask V1 adds Student-only `POST` and `GET /api/v1/student/tasks/{taskId}/safetask`, `POST /api/v1/student/tasks/{taskId}/safetask/location`, and `DELETE /api/v1/student/tasks/{taskId}/safetask`. Create returns a one-time private 64-character token; only its hash is stored. Location accepts latitude, longitude, and optional accuracy only after verified task start. The public `GET /api/v1/public/safetask/{token}` returns only guardian-approved task and latest-location data for a valid active token. Expired or revoked links return 404. Completion creates a one-hour safety window from the server-recorded completion timestamp. Flyway V9 creates the session table. See `docs/development/safetask.md` for current Android foreground-only limitations and deployment settings.
+
 Safety reports require an accepted task execution, are visible only to the reporter, and are not an emergency-response service. The API does not promise immediate human review.
 
 ## Migrations and OpenAPI

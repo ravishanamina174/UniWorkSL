@@ -54,7 +54,7 @@ export class UniWorkApi {
     try {
       response = await this.fetcher(`${this.baseUrl}${path}`, { ...init, headers });
     } catch {
-      throw new ApiRequestError('Could not reach the UniWork API. Check your connection and API URL.', 0, 'NETWORK_ERROR');
+      throw new ApiRequestError('The UniWork server could not be reached. Check that the deployed API is running and try again.', 0, 'NETWORK_ERROR');
     }
 
     if (!response.ok) {
@@ -66,7 +66,7 @@ export class UniWorkApi {
       }
       if (response.status === 401) await this.onUnauthorized?.();
       throw new ApiRequestError(
-        body.message || defaultMessage(response.status),
+        body.code && body.message ? body.message : defaultMessage(response.status, path),
         response.status,
         body.code || `HTTP_${response.status}`,
       );
@@ -101,6 +101,11 @@ export class UniWorkApi {
     this.request<StudentTaskExecution>(`/api/v1/student/tasks/${taskId}/execution/location`, json('POST', request));
   completeTask = (taskId: string, paymentReceived: boolean) =>
     this.request<StudentTaskExecution>(`/api/v1/student/tasks/${taskId}/execution/complete`, json('POST', { paymentReceived }));
+  createSafeTask = (taskId: string) => this.request<{ token: string }>(`/api/v1/student/tasks/${taskId}/safetask`, { method: 'POST' });
+  getSafeTask = (taskId: string) => this.request<{ status: string; expiresAt: string | null; lastUpdatedAt: string | null }>(`/api/v1/student/tasks/${taskId}/safetask`);
+  updateSafeTaskLocation = (taskId: string, latitude: number, longitude: number, accuracyMeters?: number) =>
+    this.request<{ status: string }>(`/api/v1/student/tasks/${taskId}/safetask/location`, json('POST', { latitude, longitude, accuracyMeters }));
+  stopSafeTask = (taskId: string) => this.request<{ status: string; expiresAt: string | null }>(`/api/v1/student/tasks/${taskId}/safetask`, { method: 'DELETE' });
   submitReview = (taskId: string, input: TaskReviewInput) => this.request<TaskReview>(`/api/v1/student/tasks/${taskId}/review`, json('POST', input));
   submitReport = (taskId: string, input: SafetyReportInput) => this.request<SafetyReport>(`/api/v1/student/tasks/${taskId}/reports`, json('POST', input));
 };
@@ -109,8 +114,9 @@ function json(method: string, value: unknown): RequestInit {
   return { method, body: JSON.stringify(value) };
 }
 
-function defaultMessage(status: number): string {
+function defaultMessage(status: number, path = ''): string {
   if (status === 403) return 'This account cannot use the Student app. UniWork roles cannot be switched.';
+  if (status === 404 && path.includes('/safetask')) return 'SafeTask is not available on the configured server yet. Deploy the backend SafeTask changes, then try again.';
   if (status === 404) return 'We could not find that profile or task.';
   if (status === 409) return 'This action is no longer available for the current task status.';
   if (status === 429) return 'Too many attempts. Wait a little and try again.';

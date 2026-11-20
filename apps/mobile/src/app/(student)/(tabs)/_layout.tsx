@@ -10,8 +10,8 @@ export default function StudentTabs() {
         headerShown: false,
         tabBarActiveTintColor: theme.accent,
         tabBarInactiveTintColor: theme.muted,
-        tabBarStyle: { backgroundColor: theme.surface, borderTopColor: theme.border, height: 62, paddingTop: 7, paddingBottom: 6 },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+        tabBarStyle: { backgroundColor: theme.surface, borderTopColor: theme.border, height: 68, paddingTop: 9, paddingBottom: 8, elevation: 5 },
+        tabBarLabelStyle: { fontSize: 12, fontWeight: '600' },
       }}
     >
       <Tabs.Screen name="marketplace" options={{ title: 'Marketplace', tabBarIcon: ({ color, size }) => <Compass color={color} size={size} /> }} />

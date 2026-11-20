@@ -91,6 +91,7 @@ export default function AppliedTasksScreen() {
             {row.status === 'ACCEPTED' ? <AppButton title="Start task" onPress={() => router.push({ pathname: '/(student)/tasks/[taskId]/start', params: { taskId: row.taskId } })} /> : null}
             {row.status === 'STARTED' ? <AppButton title="Report completion" onPress={() => router.push({ pathname: '/(student)/tasks/[taskId]/complete', params: { taskId: row.taskId } })} /> : null}
             {row.status === 'COMPLETED' ? <AppButton title="Review task" variant="secondary" onPress={() => router.push({ pathname: '/(student)/tasks/[taskId]/review', params: { taskId: row.taskId } })} /> : null}
+            {row.status === 'COMPLETED' ? <AppButton title="Safety sharing status" variant="quiet" onPress={() => router.push({ pathname: '/(student)/tasks/[taskId]/complete', params: { taskId: row.taskId } })} /> : null}
             {row.status === 'COMPLETED' ? <AppButton title="Report a safety or payment issue" variant="quiet" onPress={() => router.push({ pathname: '/(student)/tasks/[taskId]/report', params: { taskId: row.taskId } })} /> : null}
           </Card>
         ))
