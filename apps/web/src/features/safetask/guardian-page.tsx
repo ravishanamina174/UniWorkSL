@@ -13,6 +13,7 @@ export function GuardianPage({ token }: { token: string }) {
   const [ended, setEnded] = useState(false);
   const [error, setError] = useState("");
   const [checkedAt, setCheckedAt] = useState<number | null>(null);
+  const [tileFailed, setTileFailed] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<LeafletMap | null>(null);
   useEffect(() => {
@@ -30,26 +31,30 @@ export function GuardianPage({ token }: { token: string }) {
     return () => { alive = false; window.clearInterval(timer); };
   }, [token]);
   useEffect(() => {
-    if (!container.current || view?.latitude == null || view.longitude == null) return;
+    if (!container.current || view?.latitude == null || view.longitude == null || tileFailed) return;
     let cancelled = false;
     void import("leaflet").then((leaflet) => {
       if (cancelled || !container.current) return;
       map.current?.remove();
       map.current = leaflet.map(container.current).setView([view.latitude!, view.longitude!], 15);
-      leaflet.tileLayer(process.env.NEXT_PUBLIC_SAFETASK_TILE_URL || "https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>', maxZoom: 19,
-      }).addTo(map.current);
+      const tileUrl = process.env.NEXT_PUBLIC_SAFETASK_TILE_URL || "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png";
+      const attribution = tileUrl.includes('tile.openstreetmap.org')
+        ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        : '&copy; <a href="https://stadiamaps.com/attribution/">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+      leaflet.tileLayer(tileUrl, {
+        attribution, maxZoom: 20,
+      }).on('tileerror', () => setTileFailed(true)).addTo(map.current);
       leaflet.circleMarker([view.latitude!, view.longitude!], { radius: 11, color: "#425B9A", fillColor: "#425B9A", fillOpacity: .85 }).addTo(map.current);
     });
     return () => { cancelled = true; map.current?.remove(); map.current = null; };
-  }, [view?.latitude, view?.longitude]);
+  }, [view?.latitude, view?.longitude, tileFailed]);
   const coordinates = view?.latitude != null && view.longitude != null;
   const delayed = view?.lastUpdatedAt && checkedAt !== null && checkedAt - Date.parse(view.lastUpdatedAt) > 10 * 60_000;
   return <main className="guardian-page"><div className="guardian-wrap"><header className="guardian-header"><div className="guardian-brand"><BrandSymbol className="brand-mark" /> UniWorkSL <span>SafeTask</span></div><h1>Guardian Location Sharing</h1><p>Private location sharing chosen by the student. Updates may be delayed by signal, battery settings, or connectivity.</p></header>
     {ended ? <section className="guardian-card"><h2>Location Sharing Has Ended</h2><p>This safety-sharing session is no longer available.</p></section> : <>
       {error && <p role="alert" className="guardian-error">{error}</p>}
       {view ? <><section className="guardian-card"><strong className="guardian-status">{view.status === "SAFETY_WINDOW" ? "Task Completed — Safety Window" : view.status === "PENDING" ? "Waiting for task start" : "Active"}</strong><h2>{view.taskTitle}</h2><p>{view.generalTaskLocation} · {view.taskStatus}</p>{view.startedAt && <p>Task started: {new Date(view.startedAt).toLocaleString()}</p>}</section>
-      <section className="guardian-card"><h2>Latest shared location</h2>{coordinates ? <><div ref={container} className="guardian-map" aria-label="Map of last shared position" /><p>Coordinates: {view.latitude}, {view.longitude}</p><p>Last updated: {view.lastUpdatedAt ? new Date(view.lastUpdatedAt).toLocaleString() : "Unavailable"}{delayed ? " — delayed" : ""}</p>{view.accuracyMeters != null && <p>Reported accuracy: approximately {Math.round(view.accuracyMeters)} metres</p>}<a className="guardian-action" href={`https://www.google.com/maps/search/?api=1&query=${view.latitude},${view.longitude}`} target="_blank" rel="noreferrer">Open in Google Maps</a></> : <p>No location has been shared yet. Please check back later.</p>}</section></> : !error && <section className="guardian-card"><p>Loading sharing status…</p></section>}
+      <section className="guardian-card"><h2>Latest shared location</h2>{coordinates ? <>{tileFailed ? <p role="status">Map tiles are unavailable. The coordinates and Google Maps link below remain available.</p> : <div ref={container} className="guardian-map" aria-label="Map of last shared position" />}<p>Coordinates: {view.latitude}, {view.longitude}</p><p>Last updated: {view.lastUpdatedAt ? new Date(view.lastUpdatedAt).toLocaleString() : "Unavailable"}{delayed ? " — delayed" : ""}</p>{view.accuracyMeters != null && <p>Reported accuracy: approximately {Math.round(view.accuracyMeters)} metres</p>}<a className="guardian-action" href={`https://www.google.com/maps/search/?api=1&query=${view.latitude},${view.longitude}`} target="_blank" rel="noreferrer">Open in Google Maps</a></> : <p>No location has been shared yet. Please check back later.</p>}</section></> : !error && <section className="guardian-card"><p>Loading sharing status…</p></section>}
     </>}
     <section className="guardian-card guardian-emergency"><h2>Need emergency help?</h2><p>For an emergency requiring immediate police assistance in Sri Lanka, call 119. UniWork does not contact emergency services through this page.</p><a className="guardian-action" href="tel:119">Call Police — 119</a></section></div></main>;
 }

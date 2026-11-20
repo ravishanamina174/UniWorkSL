@@ -3,22 +3,22 @@ import Svg, { Path } from 'react-native-svg';
 import { StyleSheet, Text, View } from 'react-native';
 import { spacing, useTheme } from '@/theme';
 
-export function BrandMark() {
+export function BrandMark({ inverse = false }: { inverse?: boolean }) {
   const theme = useTheme();
   return (
     <View style={styles.mark}>
       <Svg width="100%" height="100%" viewBox="0 0 48 48" fill="none" accessibilityElementsHidden>
-        <Path d="M24 3.5 43.5 14.75v18.5L24 44.5 4.5 33.25v-18.5L24 3.5Z" stroke={theme.text} strokeWidth={1.7} strokeLinejoin="round" />
-        <Path d="m4.8 14.9 19.2 11 19.2-11M24 26v18" stroke={theme.text} strokeWidth={1.7} strokeLinejoin="round" />
-        <Path d="M29.2 21.6v6.5c0 3 2 4.6 4.1 4.6s4.1-1.6 4.1-4.6v-6.5" stroke={theme.accent} strokeWidth={1.6} strokeLinecap="round" />
+        <Path d="M24 3.5 43.5 14.75v18.5L24 44.5 4.5 33.25v-18.5L24 3.5Z" stroke={inverse ? '#FFFFFF' : theme.text} strokeWidth={1.7} strokeLinejoin="round" />
+        <Path d="m4.8 14.9 19.2 11 19.2-11M24 26v18" stroke={inverse ? '#FFFFFF' : theme.text} strokeWidth={1.7} strokeLinejoin="round" />
+        <Path d="M29.2 21.6v6.5c0 3 2 4.6 4.1 4.6s4.1-1.6 4.1-4.6v-6.5" stroke={inverse ? '#FFFFFF' : theme.accent} strokeWidth={1.6} strokeLinecap="round" />
       </Svg>
     </View>
   );
 }
 
-export function Wordmark() {
+export function Wordmark({ inverse = false }: { inverse?: boolean }) {
   const theme = useTheme();
-  return <View style={styles.wordmark}><BrandMark /><Text style={[styles.wordmarkText, { color: theme.text }]}>UniWorkSL</Text></View>;
+  return <View style={styles.wordmark}><BrandMark inverse={inverse} /><Text style={[styles.wordmarkText, { color: inverse ? '#FFFFFF' : theme.text }]}>UniWorkSL</Text></View>;
 }
 
 export function LocationBadge({ address }: { address: string }) {

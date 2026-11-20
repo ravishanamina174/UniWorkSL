@@ -10,6 +10,8 @@ Copy `backend/.env.example` to `backend/.env` and replace the placeholders with 
 
 Activate the `postgis` profile on the first backend startup against a new Neon database (`SPRING_PROFILES_ACTIVE=postgis ./mvnw spring-boot:run`). Flyway then applies the core V1–V2 migrations, the existing PostGIS V3 migration (`CREATE EXTENSION IF NOT EXISTS postgis`), and V4–V7 in version order. This profile must remain active on future starts so Flyway can resolve its history. The V3 migration can only run if the Neon role has permission to create the extension. `ddl-auto=validate` checks the mapped schema at startup; Flyway and Hibernate must both complete successfully before using the database. Never disable Flyway for normal operation.
 
+The existing project Neon database has PostGIS installed but Flyway history records V1, V2, then V4 onward (V3 was not applied). Start that database with the default profile; activating `postgis` against it fails Flyway validation because V3 would be out of order. Do not edit migration history or enable `outOfOrder` to work around this. A fresh database can follow the `postgis` profile path above. Marketplace V11 adds a partial GiST index to the current schema.
+
 Before applying migrations to any non-empty database, inspect its Flyway history and schema with read-only queries and take a Neon backup/restore point. If it already contains UniWork tables, do not baseline, repair, drop, or overwrite it without reviewing its migration history and data. If the existing data is from the stopped local PostgreSQL database, preserve it and plan a separate export/import; switching the URL does not migrate local rows. A blank or unverified target is not permission to discard data.
 
 Verify the extension after startup using `SELECT PostGIS_Version();`. The application deliberately continues to use the tested Haversine implementation; enabling the extension does not change task-location behavior or add spatial queries.
@@ -36,7 +38,7 @@ Set `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` in the web environment for the interactive
 
 ## Run the applications
 
-Install JavaScript dependencies at the repository root with `pnpm install`. Configure `apps/web/.env.local` from `.env.example` and `backend/.env` from `backend/.env.example`. Start the backend with `cd backend && SPRING_PROFILES_ACTIVE=postgis ./mvnw spring-boot:run`; Spring reads the ignored `.env` file from that working directory. Start the website with `pnpm dev` from the root. The web API client sends a Clerk session token as a bearer token to `NEXT_PUBLIC_API_BASE_URL`.
+Install JavaScript dependencies at the repository root with `pnpm install`. Configure `apps/web/.env.local` from `.env.example` and `backend/.env` from `backend/.env.example`. For the current Neon database, start the backend with `cd backend && ./mvnw spring-boot:run`; use `SPRING_PROFILES_ACTIVE=postgis` only for a fresh database following the migration path above. Spring reads the ignored `.env` file from that working directory. Start the website with `pnpm dev` from the root. The web API client sends a Clerk session token as a bearer token to `NEXT_PUBLIC_API_BASE_URL`.
 
 ## Verification
 

@@ -81,11 +81,13 @@ export class UniWorkApi {
   getProfessionalProfile = () => this.request<StudentProfessionalProfile>('/api/v1/student/professional-profile');
   saveProfessionalProfile = (input: StudentProfessionalProfileInput) => this.request<StudentProfessionalProfile>('/api/v1/student/professional-profile', json('PUT', input));
 
-  listTasks = (page: number, search: string, minAmount?: number, maxAmount?: number) => {
+  listTasks = (page: number, search: string, minAmount?: number, maxAmount?: number, date?: string, latitude?: number, longitude?: number) => {
     const params = new URLSearchParams({ page: String(page), size: '10' });
     if (search.trim()) params.set('search', search.trim());
     if (minAmount !== undefined) params.set('minAmount', String(minAmount));
     if (maxAmount !== undefined) params.set('maxAmount', String(maxAmount));
+    if (date) params.set('date', date);
+    if (latitude !== undefined && longitude !== undefined) { params.set('latitude', String(latitude)); params.set('longitude', String(longitude)); }
     return this.request<PageResponse<Task>>(`/api/v1/student/tasks?${params.toString()}`);
   };
   getTask = (taskId: string) => this.request<Task>(`/api/v1/student/tasks/${taskId}`);

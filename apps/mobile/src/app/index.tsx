@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Redirect } from 'expo-router';
+import { Redirect, type Href } from 'expo-router';
 import { useAuth } from '@clerk/expo';
 import { ApiRequestError } from '@/lib/api';
 import { useUniWorkApi } from '@/lib/use-api';
@@ -8,7 +8,7 @@ import { AppButton, ErrorState, LoadingState, Screen } from '@/components/ui';
 export default function EntryScreen() {
   const { api, error: configError } = useUniWorkApi();
   const { signOut } = useAuth();
-  const [destination, setDestination] = useState<'onboarding' | 'marketplace' | 'role-error' | 'error' | null>(null);
+  const [destination, setDestination] = useState<'onboarding' | 'dashboard' | 'role-error' | 'error' | null>(null);
   const [message, setMessage] = useState('');
   const [attempt, setAttempt] = useState(0);
 
@@ -20,7 +20,7 @@ export default function EntryScreen() {
     }
     let active = true;
     api.getProfile().then(() => {
-      if (active) setDestination('marketplace');
+      if (active) setDestination('dashboard');
     }).catch((error: unknown) => {
       if (!active) return;
       if (error instanceof ApiRequestError && ['STUDENT_PROFILE_REQUIRED', 'STUDENT_PROFILE_INCOMPLETE'].includes(error.code)) {
@@ -36,7 +36,7 @@ export default function EntryScreen() {
     return () => { active = false; };
   }, [api, configError, attempt]);
 
-  if (destination === 'marketplace') return <Redirect href="/(student)/(tabs)/marketplace" />;
+  if (destination === 'dashboard') return <Redirect href={'/(student)/(tabs)/dashboard' as Href} />;
   if (destination === 'onboarding') return <Redirect href="/onboarding" />;
   if (destination === 'role-error') return <Screen><ErrorState message={message} /><AppButton title="Sign out" variant="secondary" onPress={async () => { await signOut(); }} /></Screen>;
   if (destination === 'error') return <Screen><ErrorState message={message} onRetry={() => { setDestination(null); setAttempt((value) => value + 1); }} /></Screen>;

@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +25,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.ArgumentCaptor;
 
 class TaskServiceTest {
     private final TaskRepository tasks = mock(TaskRepository.class);
@@ -69,6 +74,31 @@ class TaskServiceTest {
         when(tasks.findByStatus(TaskStatus.PUBLISHED, PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "scheduledAt"))))
                 .thenReturn(new PageImpl<>(List.of(published)));
         assertEquals(1, service.listPublic(0, 5, "").content().size());
+    }
+
+    @Test
+    void discoveryCombinesColomboDatePriceAndLocation() {
+        when(tasks.browseDiscover(any(), any(), any(), any(), any(), eq(true), eq(6.9271), eq(79.8612), any()))
+                .thenReturn(new PageImpl<>(List.of()));
+        service.discover(1, 10, "  photo  ", new BigDecimal("1000"), new BigDecimal("5000"),
+                LocalDate.of(2026, 11, 20), 6.9271, 79.8612);
+        ArgumentCaptor<Instant> start = ArgumentCaptor.forClass(Instant.class);
+        ArgumentCaptor<Instant> end = ArgumentCaptor.forClass(Instant.class);
+        verify(tasks).browseDiscover(eq("photo"), eq(new BigDecimal("1000")), eq(new BigDecimal("5000")),
+                start.capture(), end.capture(), eq(true), eq(6.9271), eq(79.8612), eq(PageRequest.of(1, 10)));
+        assertEquals(Instant.parse("2026-11-19T18:30:00Z"), start.getValue());
+        assertEquals(Instant.parse("2026-11-20T18:30:00Z"), end.getValue());
+    }
+
+    @Test
+    void discoveryRejectsInvalidBoundsBeforeQuerying() {
+        assertEquals(HttpStatus.BAD_REQUEST, assertThrows(ApiException.class,
+                () -> service.discover(0, 10, "", new BigDecimal("500"), new BigDecimal("100"), null, null, null)).getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, assertThrows(ApiException.class,
+                () -> service.discover(0, 10, "", null, null, null, 6.9, null)).getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, assertThrows(ApiException.class,
+                () -> service.discover(0, 10, "", null, null, null, 91.0, 79.0)).getStatus());
+        verifyNoInteractions(tasks);
     }
 
     private TaskRequest futureTask() {

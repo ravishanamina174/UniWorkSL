@@ -40,13 +40,15 @@ Task amount uses decimal LKR values (`NUMERIC(12,2)` / Java `BigDecimal`). The w
 | --- | --- | --- |
 | PUT | `/api/v1/student/profile` | Create or update the authenticated Student profile |
 | GET | `/api/v1/student/profile` | Read the authenticated Student's private profile |
-| GET | `/api/v1/student/tasks?page=0&size=10&search=&minAmount=&maxAmount=` | Browse published tasks with paging, text and amount filters |
+| GET | `/api/v1/student/tasks?page=0&size=10&search=&minAmount=&maxAmount=&date=&latitude=&longitude=` | Browse published tasks with paging, title/description/skill search, LKR range, Sri Lanka calendar date, and optional 10 km proximity |
 | GET | `/api/v1/student/tasks/{taskId}` | Read a published task or a task the Student has applied to |
 | POST | `/api/v1/student/tasks/{taskId}/applications` | Apply to a published task |
 | GET | `/api/v1/student/applications?page=0&size=10&status=` | List only the authenticated Student's applications |
 | POST | `/api/v1/student/applications/{applicationId}/withdraw` | Withdraw a pending application |
 
 Student address and NIC use AES-256-GCM at rest. Student profile reads are owner-only. Applicant DTOs expose name, university, and faculty to the owning poster; they never include address, phone, or NIC.
+
+Marketplace `date` uses `YYYY-MM-DD` in `Asia/Colombo`. Send both `latitude` and `longitude` to enable 10,000-metre PostGIS filtering and distance ordering; coordinates are used for the request only. The endpoint rejects invalid coordinates and price ranges. Omitted filters leave published tasks available in scheduled-time order. Flyway V11 adds a partial GiST geography index without changing existing task data.
 
 ## Poster application management
 

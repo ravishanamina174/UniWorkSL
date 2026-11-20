@@ -50,7 +50,8 @@
           "locationWhenInUsePermission": "UniWork uses your location once after you choose Start Task to submit an arrival check. It does not track your location in the background."
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true

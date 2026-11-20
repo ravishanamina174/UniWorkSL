@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.time.LocalDate;
 
 @Validated
 @RestController
@@ -25,9 +26,12 @@ public class StudentTaskController {
     @GetMapping public PageResponse<TaskResponse> list(@AuthenticationPrincipal Jwt jwt,
             @RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) @Max(50) int size,
             @RequestParam(required = false) String search, @RequestParam(required = false) BigDecimal minAmount,
-            @RequestParam(required = false) BigDecimal maxAmount) {
+            @RequestParam(required = false) BigDecimal maxAmount,
+            @RequestParam(required = false) LocalDate date,
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude) {
         identities.requireStudent(jwt.getSubject());
-        return tasks.listPublic(page, size, search, minAmount, maxAmount);
+        return tasks.discover(page, size, search, minAmount, maxAmount, date, latitude, longitude);
     }
     @GetMapping("/{taskId}") public TaskResponse get(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID taskId) {
         identities.requireStudent(jwt.getSubject());

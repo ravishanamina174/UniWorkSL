@@ -49,4 +49,4 @@ export function useTheme(): Theme {
 }
 
 export const spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48 } as const;
-export const radius = { small: 4, dialog: 6 } as const;
+export const radius = { small: 9, dialog: 14 } as const;

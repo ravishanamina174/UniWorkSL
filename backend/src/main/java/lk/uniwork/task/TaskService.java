@@ -117,6 +117,24 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
+    public PageResponse<TaskResponse> discover(int page, int size, String search, java.math.BigDecimal minAmount,
+            java.math.BigDecimal maxAmount, java.time.LocalDate date, Double latitude, Double longitude) {
+        if (minAmount != null && minAmount.signum() < 0 || maxAmount != null && maxAmount.signum() < 0
+                || minAmount != null && maxAmount != null && minAmount.compareTo(maxAmount) > 0)
+            throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_AMOUNT_FILTER", "Choose a valid price range.");
+        if ((latitude == null) != (longitude == null) || latitude != null && (!Double.isFinite(latitude) || !Double.isFinite(longitude)
+                || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180))
+            throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_LOCATION_FILTER", "Choose a valid location.");
+        java.time.Instant start = date == null ? java.time.Instant.EPOCH : date.atStartOfDay(SRI_LANKA).toInstant();
+        java.time.Instant end = date == null ? java.time.Instant.parse("9999-12-31T00:00:00Z") : date.plusDays(1).atStartOfDay(SRI_LANKA).toInstant();
+        var result = tasks.browseDiscover(search == null ? "" : search.trim(), minAmount == null ? java.math.BigDecimal.ZERO : minAmount,
+                maxAmount == null ? new java.math.BigDecimal("9999999999.99") : maxAmount,
+                start, end, latitude != null, latitude == null ? 0 : latitude, longitude == null ? 0 : longitude,
+                PageRequest.of(page, size));
+        return PageResponse.from(result.map(this::toResponse));
+    }
+
+    @Transactional(readOnly = true)
     public TaskResponse getPublic(UUID taskId) {
         Task task = tasks.findById(taskId).filter(value -> value.getStatus() == TaskStatus.PUBLISHED)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "TASK_NOT_FOUND", "This published task could not be found."));
