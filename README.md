@@ -6,7 +6,7 @@
 
 Connecting Sri Lankan university students with meaningful local earning opportunities.
 
-[**Explore UniWorkSL**](https://uniwork-seven.vercel.app/) · [**Task Poster Dashboard**](https://uniwork-seven.vercel.app/dashboard) · [**Download Android App**](https://github.com/ravishanamina174/UniWorkSL/releases/download/v1.1.1/UniWorkSL-v1.1.1.apk)
+[**Explore UniWorkSL**](https://www.uniworksl.online) · [**Task Poster Dashboard**](https://www.uniworksl.online/dashboard) · [**Download Android App**](https://github.com/ravishanamina174/UniWorkSL/releases/download/v1.1.1/UniWorkSL-v1.1.1.apk)
 
 ![UniWorkSL Platform](docs/images/Hero-Readme.png)
 
@@ -51,7 +51,7 @@ UniWorkSL provides two dedicated experiences, designed around how each user actu
 
 Describe your task, choose a location, set the offered payment, and publish it to the student marketplace.
 
-[**Open Task Poster Dashboard →**](https://uniwork-seven.vercel.app/dashboard)
+[**Open Task Poster Dashboard →**](https://www.uniworksl.online/dashboard)
 
 ### For Students
 
@@ -180,7 +180,7 @@ Students and Task Posters should agree on the location, work, schedule, and paym
 | For Task Posters | For Students |
 |---|---|
 | Publish tasks and manage applications through the web dashboard. | Browse opportunities and manage tasks from an Android phone. |
-| [**Launch Dashboard →**](https://uniwork-seven.vercel.app/dashboard) | [**Download Android APK →**](https://github.com/ravishanamina174/UniWorkSL/releases/download/v1.1.1/UniWorkSL-v1.1.1.apk) |
+| [**Launch Dashboard →**](https://www.uniworksl.online/dashboard) | [**Download Android APK →**](https://github.com/ravishanamina174/UniWorkSL/releases/download/v1.1.1/UniWorkSL-v1.1.1.apk) |
 
 **Android Release v1.0.0**
 
@@ -211,8 +211,8 @@ The platform is designed around real-world workflows, including user roles, task
 
 | Resource | Link |
 |---|---|
-| Public Website | [uniwork-seven.vercel.app](https://uniwork-seven.vercel.app/) |
-| Task Poster Dashboard | [Open Dashboard](https://uniwork-seven.vercel.app/dashboard) |
+| Public Website | [uniwork-seven.vercel.app](https://www.uniworksl.online) |
+| Task Poster Dashboard | [Open Dashboard](https://www.uniworksl.online/dashboard) |
 | Android Application | [Download APK](https://github.com/ravishanamina174/UniWorkSL/releases/download/v1.1.1/UniWorkSL-v1.1.1.apk) |
 | Android Release History | [UniWorkSL Releases](https://github.com/ravishanamina174/UniWorkSL-Releases/releases) |
 
@@ -224,7 +224,7 @@ The platform is designed around real-world workflows, including user roles, task
 
 **UniWorkSL — Built for Sri Lankan communities and university students.**
 
-[Website](https://uniwork-seven.vercel.app/) · [Dashboard](https://uniwork-seven.vercel.app/dashboard) · [Android App](https://github.com/ravishanamina174/UniWorkSL/releases/download/v1.1.1/UniWorkSL-v1.1.1.apk)
+[Website](https://www.uniworksl.online) · [Dashboard](https://www.uniworksl.online/dashboard) · [Android App](https://github.com/ravishanamina174/UniWorkSL/releases/download/v1.1.1/UniWorkSL-v1.1.1.apk)
 
 © 2026 UniWorkSL. Made in Sri Lanka.
 
