@@ -2,6 +2,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { DashboardConfigurationRequired, hasClerkConfiguration } from "@/components/dashboard/dashboard-access-state";
 import { AdminShell } from "@/features/admin/admin-shell";
 import "./admin.css";
+import "./admin-alignment.css";
 
 export const dynamic = "force-dynamic";
 

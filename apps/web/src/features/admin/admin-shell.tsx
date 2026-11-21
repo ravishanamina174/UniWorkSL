@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { useEffect, useRef } from "react";
-import { Activity, ClipboardList, FileWarning, LayoutDashboard, MapPinned, ShieldAlert } from "lucide-react";
+import { Activity, ChevronRight, ClipboardList, FileWarning, LayoutDashboard, MapPinned, ShieldAlert } from "lucide-react";
 import { BrandSymbol } from "@/components/brand/brand-symbol";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
@@ -27,7 +27,8 @@ export function AdminShell({ children, name }: { children: React.ReactNode; name
     const left = active.getBoundingClientRect().left - row.getBoundingClientRect().left + row.scrollLeft;
     row.scrollTo({ left: Math.max(0, left - (row.clientWidth - active.clientWidth) / 2), behavior: "smooth" });
   }, [path]);
-  return <div className="admin-root"><header className="admin-topbar"><Link href="/" className="admin-brand"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span><small>Safety Administration</small></Link><div className="admin-account"><span>{name}</span><ThemeToggle /><UserButton /></div></header>
+  const pageLabel = links.find(({ href }) => href === path)?.label ?? "Overview";
+  return <div className="admin-root"><header className="admin-topbar"><div className="admin-top-left"><Link href="/" className="admin-brand"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span></Link><div className="admin-breadcrumb"><span>Safety Admin</span><ChevronRight size={15} aria-hidden="true" /><strong>{pageLabel}</strong></div></div><div className="admin-account"><ThemeToggle /><span>{name}</span><UserButton /></div></header>
     <div className="admin-frame"><aside className="admin-sidebar"><p className="admin-nav-label">SAFETY WORKSPACE</p><nav aria-label="Safety administration">{links.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={path === href ? "admin-nav-link active" : "admin-nav-link"} aria-current={path === href ? "page" : undefined}><Icon size={18} aria-hidden="true" />{label}</Link>)}</nav><p className="admin-sidebar-note">Private operations · Authorized team only</p></aside><div className="admin-content"><nav ref={mobileNav} className="admin-mobile-nav" aria-label="Mobile safety administration">{links.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={path === href ? "active" : ""} aria-current={path === href ? "page" : undefined}><Icon size={16} aria-hidden="true" />{label}</Link>)}</nav><main id="main-content">{children}</main></div></div>
   </div>;
 }

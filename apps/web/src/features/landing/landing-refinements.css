@@ -206,3 +206,22 @@
   .uniwork-landing .about-art-student { left: -12px; width: 220px; }
   .uniwork-landing .about-art-poster { right: 0; width: 100px; }
 }
+
+/* The SVG paths follow scroll position; the older entrance animation is disabled. */
+.connection-lines path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: none !important; transition: none !important; }
+.connection-source { gap: 18px; padding: 18px; border-radius: 7px; }
+.connection-icon { border: 1px solid color-mix(in srgb, var(--line) 24%, var(--border)); border-radius: 6px; }
+.connection-source h3 { font-size: 17px; letter-spacing: -.02em; }
+.connection-source p { font-size: 14px; line-height: 1.5; }
+.connection-destination { border-radius: 8px; border-color: color-mix(in srgb, var(--accent) 62%, var(--border)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent), 0 12px 34px color-mix(in srgb, var(--accent) 15%, transparent), 0 24px 60px color-mix(in srgb, #4776dc 10%, transparent); transition: box-shadow .2s ease; }
+.connection-destination:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent), 0 16px 42px color-mix(in srgb, var(--accent) 20%, transparent), 0 24px 60px color-mix(in srgb, #4776dc 12%, transparent); }
+.connection-brand { font-size: 23px; }
+.connection-brand .brand-mark { width: 34px; height: 34px; }
+.uniwork-landing .preview-window::after { content: ""; position: absolute; inset: 0 0 auto; height: 80px; background: linear-gradient(#ffffff20, transparent); pointer-events: none; z-index: 3; }
+.dark .uniwork-landing .preview-window { border-color: #8b8c9470; background: #141519; box-shadow: 0 30px 76px #0009, 0 2px 9px #0008, inset 0 1px #ffffff24; }
+.dark .uniwork-landing .preview-window-bar { background: linear-gradient(#313238, #222329); border-bottom-color: #484950; color: #d4d4d8; }
+.dark .uniwork-landing .preview-address { background: #25262c; border-color: #4a4b52; color: #dddde2; }
+.uniwork-landing .preview-mobile::after { content: ""; position: absolute; inset: 5px; border: 1px solid #ffffff8c; border-radius: 24px; pointer-events: none; }
+.dark .uniwork-landing .preview-mobile { border-color: #17181c; box-shadow: 0 28px 60px #0009, 0 0 0 1px #6b6c74, inset 0 0 0 1px #ffffff24; }
+.uniwork-landing .mobile-notch { top: 5px; left: 50%; transform: translateX(-50%); width: 55px; height: 13px; border-radius: 0 0 9px 9px; box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .connection-lines path { stroke-dashoffset: 0 !important; } .connection-destination { transition: none; } }
