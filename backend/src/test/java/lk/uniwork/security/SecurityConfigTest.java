@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SecurityConfigTest {
     @Autowired private MockMvc mockMvc;
     @MockitoBean private HealthService healthService;
+    @MockitoBean private AdminAuthorization adminAuthorization;
 
     @Test
     void healthIsPublicAndOtherRoutesRequireAuthentication() throws Exception {

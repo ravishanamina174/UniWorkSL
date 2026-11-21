@@ -16,6 +16,7 @@ import { ApiRequestError } from "@/services/api-client";
 import { useAuthenticatedApi } from "./use-api";
 import { formatLkr, formatSriLankaDate, taskStatusLabel } from "./task-ui";
 import { TaskForm } from "./task-form";
+import { PaymentDisputePanel } from "./payment-dispute-panel";
 
 const statuses: Array<TaskStatus | ""> = ["", "DRAFT", "PUBLISHED", "ACCEPTED", "STARTED", "ONGOING", "COMPLETED", "CANCELLED", "CLOSED"];
 
@@ -110,6 +111,7 @@ export function TaskDetailsPage() {
     {error ? <div className="form-alert" role="alert">{error}</div> : null}
     <section className="form-section"><div className="form-section-heading"><h2>Task information</h2></div><dl className="profile-details"><div><dt>Amount</dt><dd>{formatLkr(task.amountLkr)}</dd></div><div><dt>Date and time · Sri Lanka</dt><dd>{formatSriLankaDate(task.taskDateTime)}</dd></div><div className="profile-detail-full"><dt>Description</dt><dd>{task.description}</dd></div><div className="profile-detail-full"><dt>Required skills</dt><dd><span className="skill-list">{task.requiredSkills.map((skill) => <Badge key={skill}>{skill}</Badge>)}</span></dd></div><div className="profile-detail-full"><dt>Location</dt><dd>{task.locationAddress}<small className="coordinate-line">{task.latitude}, {task.longitude}</small></dd></div></dl></section>
     <div className="form-actions task-detail-actions"><ButtonLink href={`/dashboard/tasks/${task.taskId}/applications`} variant="secondary">View applications</ButtonLink>{task.status === "ACCEPTED" || task.status === "STARTED" || task.status === "COMPLETED" ? <ButtonLink href={`/dashboard/tasks/${task.taskId}/start`}>View start code &amp; status</ButtonLink> : null}{canEdit ? <ButtonLink href={`/dashboard/tasks/${task.taskId}/edit`} variant="secondary">Edit draft</ButtonLink> : null}{canEdit ? <Button disabled={busy} onClick={() => void performAction("publish")}>Publish task</Button> : null}{canCancel ? <Button variant="secondary" disabled={busy} onClick={() => setCancelOpen(true)}>Cancel task</Button> : null}<ButtonLink href="/dashboard/tasks" variant="secondary">Back to tasks</ButtonLink></div>
+    <PaymentDisputePanel taskId={task.taskId} />
     <Dialog open={cancelOpen} title="Cancel this task?" onClose={() => setCancelOpen(false)}><p>This task will no longer be available to students. You can’t undo this action.</p><div className="form-actions"><Button variant="secondary" onClick={() => setCancelOpen(false)}>Keep task</Button><Button className="button-danger" disabled={busy} onClick={() => void performAction("cancel")}>Cancel task</Button></div></Dialog>
   </div>;
 }

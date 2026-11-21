@@ -52,5 +52,6 @@ export default function StudentLayout() {
     <Stack.Screen name="tasks/[taskId]/complete" />
     <Stack.Screen name="tasks/[taskId]/review" />
     <Stack.Screen name="tasks/[taskId]/report" />
+    <Stack.Screen name="tasks/[taskId]/payment-dispute" />
   </Stack>;
 }

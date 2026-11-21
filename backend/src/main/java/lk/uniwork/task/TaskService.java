@@ -26,11 +26,14 @@ public class TaskService {
     private final TaskRepository tasks;
     private final TaskApplicationRepository applications;
     private final UserIdentityService identities;
+    private final lk.uniwork.admin.AdminService admin;
 
-    public TaskService(TaskRepository tasks, TaskApplicationRepository applications, UserIdentityService identities) {
+    public TaskService(TaskRepository tasks, TaskApplicationRepository applications, UserIdentityService identities,
+            lk.uniwork.admin.AdminService admin) {
         this.tasks = tasks;
         this.applications = applications;
         this.identities = identities;
+        this.admin = admin;
     }
 
     @Transactional
@@ -77,7 +80,8 @@ public class TaskService {
 
     @Transactional
     public TaskResponse publish(String subject, UUID taskId) {
-        identities.requireTaskPoster(subject);
+        UniWorkUser poster = identities.requireTaskPoster(subject);
+        admin.requireCanPublish(poster.getId());
         Task task = findOwnedForUpdate(subject, taskId);
         if (task.getStatus() != TaskStatus.DRAFT) throw conflict("Only draft tasks can be published.");
         if (!task.getScheduledAt().isAfter(Instant.now())) throw new ApiException(HttpStatus.BAD_REQUEST, "TASK_DATE_IN_PAST", "Choose a future task date and time.");

@@ -17,6 +17,12 @@ Use ignored local environment files for development and each hosting provider's 
 | `NEXT_PUBLIC_API_BASE_URL` | Vercel / web; EAS / mobile | Backend origin; HTTPS in production |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Vercel / web | Browser-visible Clerk publishable key; environment-specific |
 | `CLERK_SECRET_KEY` | Vercel / web | Clerk server secret; environment-specific |
+| `CLERK_SECRET_KEY` | Render / backend | Same Clerk instance secret; required for live Admin role checks against Clerk Backend API |
+| `CLERK_API_URL` | Render / backend | Optional Clerk Backend API override; default `https://api.clerk.com/v1` |
+| `NEXT_PUBLIC_ADMIN_TILE_URL` | Vercel / web | Optional Admin map raster tiles; default OpenStreetMap standard tiles |
+| `NEXT_PUBLIC_ADMIN_TILE_ATTRIBUTION` | Vercel / web | Attribution for the configured Admin tile provider |
+| `WATCHLIST_LOW_RATING_THRESHOLD` | Render / backend | Highest star rating flagged for review; default `2` |
+| `WATCHLIST_SERIOUS_REPORT_THRESHOLD` | Render / backend | Count of harassment or unsafe-location reports that triggers review; default `2` |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Vercel / web | Optional Maps JS key, restrict by API and referrer |
 | `NEXT_PUBLIC_ANDROID_APK_URL` | Vercel / web | Public HTTPS APK URL only after successful build/hosting |
 | `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` | EAS / mobile | Browser-visible Clerk publishable key for the matching instance |

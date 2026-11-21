@@ -212,3 +212,23 @@ export type SafetyReport = SafetyReportInput & {
   status: string;
   createdAt: string;
 };
+
+export type PaymentDisputeReason = "PAYMENT_NOT_RECEIVED" | "INCORRECT_PAYMENT_AMOUNT";
+export type PaymentDispute = {
+  disputeId: string;
+  taskId: string;
+  taskTitle: string;
+  studentName: string;
+  posterName: string;
+  agreedAmountLkr: number;
+  actualAmountLkr: number | null;
+  reason: PaymentDisputeReason;
+  studentStatement: string;
+  posterResponse: string | null;
+  posterSaysPaid: boolean | null;
+  status: string;
+  outcome: string | null;
+  createdAt: string;
+  respondedAt: string | null;
+  updatedAt: string;
+};

@@ -26,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.ArgumentCaptor;
 
@@ -33,7 +34,8 @@ class TaskServiceTest {
     private final TaskRepository tasks = mock(TaskRepository.class);
     private final TaskApplicationRepository applications = mock(TaskApplicationRepository.class);
     private final UserIdentityService identities = mock(UserIdentityService.class);
-    private final TaskService service = new TaskService(tasks, applications, identities);
+    private final lk.uniwork.admin.AdminService admin = mock(lk.uniwork.admin.AdminService.class);
+    private final TaskService service = new TaskService(tasks, applications, identities, admin);
     private final UniWorkUser poster = new UniWorkUser("clerk_poster", UserRole.TASK_POSTER);
 
     @Test
@@ -58,6 +60,16 @@ class TaskServiceTest {
         assertEquals(HttpStatus.CONFLICT, assertThrows(ApiException.class, () -> service.update("clerk_poster", task.getId(), futureTask())).getStatus());
         assertEquals(TaskStatus.CANCELLED, service.cancel("clerk_poster", task.getId()).status());
         assertEquals(HttpStatus.CONFLICT, assertThrows(ApiException.class, () -> service.cancel("clerk_poster", task.getId())).getStatus());
+    }
+
+    @Test
+    void publishingRestrictionIsEnforcedBeforeTaskStateChanges() {
+        when(identities.requireTaskPoster("clerk_poster")).thenReturn(poster);
+        doThrow(new ApiException(HttpStatus.FORBIDDEN,"PUBLISHING_RESTRICTED","Publishing is restricted."))
+                .when(admin).requireCanPublish(poster.getId());
+        assertEquals(HttpStatus.FORBIDDEN, assertThrows(ApiException.class,
+                () -> service.publish("clerk_poster",UUID.randomUUID())).getStatus());
+        verifyNoInteractions(tasks);
     }
 
     @Test

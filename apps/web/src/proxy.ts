@@ -7,5 +7,5 @@ const proxy = hasClerkConfiguration() ? clerkMiddleware() : () => NextResponse.n
 export default proxy;
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/sign-in/:path*", "/sign-up/:path*"],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/sign-in/:path*", "/sign-up/:path*"],
 };

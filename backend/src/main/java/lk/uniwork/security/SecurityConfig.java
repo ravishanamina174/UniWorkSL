@@ -18,16 +18,21 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import tools.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestClient;
 
 import java.time.Instant;
 import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+    @Bean
+    RestClient.Builder clerkRestClientBuilder() { return RestClient.builder(); }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource(@Value("${uniwork.web-origin:http://localhost:3000}") String webOrigin) {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -63,7 +68,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain apiSecurity(HttpSecurity http, ObjectProvider<JwtDecoder> decoderProvider, ObjectMapper objectMapper) throws Exception {
+    SecurityFilterChain apiSecurity(HttpSecurity http, ObjectProvider<JwtDecoder> decoderProvider, ObjectMapper objectMapper,
+            AdminAuthorization adminAuthorization) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -71,6 +77,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/health", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/public/tasks", "/api/v1/public/tasks/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/public/safetask/*").permitAll()
+                        .requestMatchers("/api/v1/admin/**").access((authentication, context) ->
+                                new AuthorizationDecision(adminAuthorization.isAdmin(authentication.get())))
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, exception) -> {

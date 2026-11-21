@@ -23,7 +23,7 @@ function dismissedThisVisit(): boolean {
 }
 
 export function CookieSettingsButton() {
-  return <button type="button" className="footer-cookie-settings" onClick={() => window.dispatchEvent(new Event(settingsEvent))}></button>;
+  return <button type="button" className="footer-cookie-settings" onClick={() => window.dispatchEvent(new Event(settingsEvent))}>Cookie settings</button>;
 }
 
 export function CookieConsent() {

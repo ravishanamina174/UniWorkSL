@@ -31,6 +31,7 @@ class TaskControllerTest {
     @Autowired private MockMvc mockMvc;
     @MockitoBean private TaskService service;
     @MockitoBean private TaskApplicationService applicationService;
+    @MockitoBean private lk.uniwork.security.AdminAuthorization adminAuthorization;
 
     @Test
     void posterTaskCreationRequiresAnAuthenticatedJwt() throws Exception {

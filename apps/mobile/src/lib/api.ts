@@ -13,6 +13,8 @@ import type {
   Task,
   TaskReview,
   TaskReviewInput,
+  PaymentDispute,
+  PaymentDisputeReason,
 } from '@uniwork/api-contracts';
 
 export class ApiRequestError extends Error {
@@ -110,6 +112,9 @@ export class UniWorkApi {
   stopSafeTask = (taskId: string) => this.request<{ status: string; expiresAt: string | null }>(`/api/v1/student/tasks/${taskId}/safetask`, { method: 'DELETE' });
   submitReview = (taskId: string, input: TaskReviewInput) => this.request<TaskReview>(`/api/v1/student/tasks/${taskId}/review`, json('POST', input));
   submitReport = (taskId: string, input: SafetyReportInput) => this.request<SafetyReport>(`/api/v1/student/tasks/${taskId}/reports`, json('POST', input));
+  listPaymentDisputes = (taskId: string) => this.request<PaymentDispute[]>(`/api/v1/student/tasks/${taskId}/payment-disputes`);
+  filePaymentDispute = (taskId: string, input: { reason: PaymentDisputeReason; actualAmountLkr?: number; statement: string }) =>
+    this.request<PaymentDispute>(`/api/v1/student/tasks/${taskId}/payment-disputes`, json('POST', input));
 };
 
 function json(method: string, value: unknown): RequestInit {

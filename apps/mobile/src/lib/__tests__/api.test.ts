@@ -24,4 +24,14 @@ describe('UniWorkApi', () => {
     await expect(api.getProfile()).rejects.toMatchObject({ status: 401, code: 'UNAUTHENTICATED' });
     expect(signOut).toHaveBeenCalledTimes(1); expect(fetcher).not.toHaveBeenCalled();
   });
+
+  it('submits a payment complaint without a client supplied agreed amount', async () => {
+    const fetcher = jest.fn(async (_url: string | URL | Request, _init?: RequestInit) => new Response(JSON.stringify({ disputeId: 'case-1' }), { status: 201, headers: { 'Content-Type': 'application/json' } }));
+    const api = new UniWorkApi('https://api.example.test', async () => 'student-token', undefined, fetcher as typeof fetch);
+    await api.filePaymentDispute('task-1', { reason: 'INCORRECT_PAYMENT_AMOUNT', actualAmountLkr: 500, statement: 'I received less than agreed.' });
+    const [url, request] = fetcher.mock.calls[0];
+    expect(url).toBe('https://api.example.test/api/v1/student/tasks/task-1/payment-disputes');
+    expect(JSON.parse(String(request?.body))).toEqual({ reason: 'INCORRECT_PAYMENT_AMOUNT', actualAmountLkr: 500, statement: 'I received less than agreed.' });
+    expect(new Headers(request?.headers).get('Authorization')).toBe('Bearer student-token');
+  });
 });

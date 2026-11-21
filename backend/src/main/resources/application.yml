@@ -51,8 +51,13 @@ uniwork:
     clerk-jwks-uri: ${CLERK_JWKS_URI:}
     jwt-audience: ${CLERK_JWT_AUDIENCE:}
     authorized-parties: ${CLERK_AUTHORIZED_PARTIES:${WEB_ORIGIN:http://localhost:3000}}
+    clerk-secret-key: ${CLERK_SECRET_KEY:}
+    clerk-api-url: ${CLERK_API_URL:https://api.clerk.com/v1}
   pii:
     encryption-key: ${UNIWORK_PII_ENCRYPTION_KEY:}
   ai:
     gemini-api-key: ${GEMINI_API_KEY:}
     gemini-model: ${GEMINI_MODEL:gemini-3.6-flash}
+  admin:
+    watchlist-low-rating-threshold: ${WATCHLIST_LOW_RATING_THRESHOLD:2}
+    watchlist-serious-report-threshold: ${WATCHLIST_SERIOUS_REPORT_THRESHOLD:2}

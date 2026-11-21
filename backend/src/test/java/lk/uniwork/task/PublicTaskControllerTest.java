@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PublicTaskControllerTest {
     @Autowired private MockMvc mockMvc;
     @MockitoBean private TaskService service;
+    @MockitoBean private lk.uniwork.security.AdminAuthorization adminAuthorization;
 
     @Test
     void publishedTaskListingIsPublicAndReturnsTheRealEmptyPage() throws Exception {
