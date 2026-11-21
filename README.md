@@ -211,7 +211,7 @@ The platform is designed around real-world workflows, including user roles, task
 
 | Resource | Link |
 |---|---|
-| Public Website | [uniwork-seven.vercel.app](https://www.uniworksl.online) |
+| Public Website | [uniworksl.online](https://www.uniworksl.online) |
 | Task Poster Dashboard | [Open Dashboard](https://www.uniworksl.online/dashboard) |
 | Android Application | [Download APK](https://github.com/ravishanamina174/UniWorkSL/releases/download/v1.1.1/UniWorkSL-v1.1.1.apk) |
 | Android Release History | [UniWorkSL Releases](https://github.com/ravishanamina174/UniWorkSL-Releases/releases) |
