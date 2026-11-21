@@ -184,7 +184,7 @@ Students and Task Posters should agree on the location, work, schedule, and paym
 
 **Android Release v1.0.0**
 
-[View Official Release](https://github.com/ravishanamina174/UniWorkSL-Releases/releases/tag/v1.1.2)
+[View Official Release](https://github.com/ravishanamina174/UniWorkSL/releases/tag/v1.1.2)
 
 The application is distributed as an Android APK. Android may ask users to approve installation from their browser or file manager.
 
