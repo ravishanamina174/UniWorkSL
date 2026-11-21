@@ -1,5 +1,6 @@
 package lk.uniwork.common;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatusCode;
@@ -26,6 +27,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException exception) {
         return error(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", "One or more request fields are invalid.");
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    ResponseEntity<ApiError> handleConstraintViolation(ConstraintViolationException exception) {
+        return error(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", "One or more request values are invalid.");
     }
 
     @ExceptionHandler(Exception.class)

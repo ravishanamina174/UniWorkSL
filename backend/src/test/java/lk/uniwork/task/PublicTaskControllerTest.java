@@ -29,4 +29,11 @@ class PublicTaskControllerTest {
         mockMvc.perform(get("/api/v1/public/tasks"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.content.length()").value(0)).andExpect(jsonPath("$.totalElements").value(0));
     }
+
+    @Test
+    void invalidPublicPageSizeReturnsAClientValidationError() throws Exception {
+        mockMvc.perform(get("/api/v1/public/tasks").param("size", "51"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"));
+    }
 }
