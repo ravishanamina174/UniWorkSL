@@ -1,9 +1,12 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { SiteHeader } from "./site-header";
 
-afterEach(() => { cleanup(); });
+const clerk = vi.hoisted(() => ({ role: null as string | null, loaded: true }));
+vi.mock("@clerk/nextjs", () => ({ useUser: () => ({ isLoaded: clerk.loaded, user: clerk.role ? { publicMetadata: { role: clerk.role } } : null }) }));
+
+afterEach(() => { cleanup(); clerk.role = null; clerk.loaded = true; });
 
 describe("site navigation", () => {
   it("opens the mobile menu and closes it after choosing a section", () => {
@@ -27,5 +30,23 @@ describe("site navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Toggle light and dark theme" }));
     await waitFor(() => expect(document.documentElement).toHaveClass("dark"));
     expect(window.localStorage.getItem("theme")).toBe("dark");
+  });
+
+  it("shows the Admin action only for the exact current Clerk role", () => {
+    clerk.loaded = false;
+    const view = render(<ThemeProvider><SiteHeader /></ThemeProvider>);
+    expect(screen.queryByRole("link", { name: /post a task|open admin workspace/i })).not.toBeInTheDocument();
+    clerk.loaded = true;
+    view.rerender(<ThemeProvider><SiteHeader /></ThemeProvider>);
+    expect(screen.getByRole("link", { name: /post a task/i })).toHaveAttribute("href", "/dashboard");
+    clerk.role = "TASK_POSTER";
+    view.rerender(<ThemeProvider><SiteHeader /></ThemeProvider>);
+    expect(screen.getByRole("link", { name: /post a task/i })).toHaveAttribute("href", "/dashboard");
+    clerk.role = "Admin";
+    view.rerender(<ThemeProvider><SiteHeader /></ThemeProvider>);
+    expect(screen.getByRole("link", { name: /open admin workspace/i })).toHaveAttribute("href", "/admin/dashboard");
+    clerk.role = null;
+    view.rerender(<ThemeProvider><SiteHeader /></ThemeProvider>);
+    expect(screen.queryByRole("link", { name: /open admin workspace/i })).not.toBeInTheDocument();
   });
 });

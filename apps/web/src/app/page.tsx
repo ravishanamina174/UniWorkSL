@@ -4,6 +4,8 @@ import { HeroPreview } from "@/features/landing/hero-preview";
 import { DownloadSection } from "@/features/landing/download-section";
 import { HeroImage } from "@/features/landing/hero-image";
 import { AboutIllustrations } from "@/features/landing/about-illustrations";
+import { ConnectionDiagram } from "@/features/landing/connection-diagram";
+import { FaqSection } from "@/features/landing/faq-section";
 import { CookieConsent } from "@/components/navigation/cookie-consent";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -71,6 +73,8 @@ export default function HomePage() {
           <AboutIllustrations />
         </section>
 
+        <ConnectionDiagram />
+
         <section id="how-it-works" className="section workflow-section" aria-labelledby="workflow-title">
           <Container>
             <div className="section-heading-row">
@@ -125,6 +129,7 @@ export default function HomePage() {
             <div className="safety-copy"><p>Task execution uses a poster-provided start code. After verifying it, a Student may share one foreground arrival-location check. Reviews and private safety reports are available after task coordination.</p><p>These tools do not verify a person’s identity or guarantee a task outcome. Payments are arranged directly between the Task Poster and student; UniWork does not handle or protect payments in Version 1.</p><div className="safety-note"><ShieldCheck size={20} aria-hidden="true" /><span>Stay clear about the task, timing, location, and payment with the other person before work begins.</span></div></div>
           </Container>
         </section>
+        <FaqSection />
       </main>
       {/* {process.env.NODE_ENV !== "production" ? <div className="dev-diagnostic-slot"><DevelopmentHealthDiagnostic /></div> : null} */}
       <SiteFooter />
