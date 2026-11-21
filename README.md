@@ -182,7 +182,7 @@ Students and Task Posters should agree on the location, work, schedule, and paym
 | Publish tasks and manage applications through the web dashboard. | Browse opportunities and manage tasks from an Android phone. |
 | [**Launch Dashboard →**](https://www.uniworksl.online/dashboard) | [**Download Android APK →**](https://github.com/ravishanamina174/UniWorkSL/releases/download/v1.1.2/UniWorkSL-v1.1.2.apk) |
 
-**Android Release v1.0.0**
+**Android Release v1.1.2**
 
 [View Official Release](https://github.com/ravishanamina174/UniWorkSL/releases/tag/v1.1.2)
 
