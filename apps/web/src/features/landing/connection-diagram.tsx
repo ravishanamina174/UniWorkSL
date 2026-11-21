@@ -25,9 +25,9 @@ export function ConnectionDiagram() {
       frame = 0;
       if (!visual) return;
       const rect = visual.getBoundingClientRect();
-      const start = window.innerHeight * .85;
-      const end = window.innerHeight * .25;
-      const progress = reducedMotion.matches ? 1 : Math.max(0, Math.min(1, (start - rect.top) / (rect.height + start - end)));
+      const start = window.innerHeight * .95;
+      const end = window.innerHeight * .4;
+      const progress = reducedMotion.matches ? 1 : Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
       paths.forEach((path) => { path.style.strokeDashoffset = String(1 - progress); });
     };
     const schedule = () => { if (!frame) frame = window.requestAnimationFrame(update); };

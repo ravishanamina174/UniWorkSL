@@ -225,3 +225,32 @@
 .dark .uniwork-landing .preview-mobile { border-color: #17181c; box-shadow: 0 28px 60px #0009, 0 0 0 1px #6b6c74, inset 0 0 0 1px #ffffff24; }
 .uniwork-landing .mobile-notch { top: 5px; left: 50%; transform: translateX(-50%); width: 55px; height: 13px; border-radius: 0 0 9px 9px; box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { .connection-lines path { stroke-dashoffset: 0 !important; } .connection-destination { transition: none; } }
+
+/* Dark presentation keeps the preview's hardware and interface together. */
+.dark .uniwork-landing .preview-window { color: #f2f2f5; background: #111216; border-color: #73747b80; }
+.dark .uniwork-landing .preview-window-bar { background: #24252b; }
+.dark .uniwork-landing .preview-window::after { background: linear-gradient(#ffffff0c, transparent); }
+.dark .uniwork-landing .preview-workspace, .dark .uniwork-landing .preview-content { background: #111216; }
+.dark .uniwork-landing .preview-sidebar { background: #191a20; border-color: #34353c; }
+.dark .uniwork-landing .preview-logo, .dark .uniwork-landing .preview-title-row h3, .dark .uniwork-landing .preview-task-heading strong, .dark .uniwork-landing .preview-steps strong { color: #f2f2f5; }
+.dark .uniwork-landing .preview-logo svg, .dark .uniwork-landing .preview-sidebar svg { color: #c5c3ce; }
+.dark .uniwork-landing .preview-nav-active { background: #313039; color: #ddd6f6; }
+.dark .uniwork-landing .preview-task-detail, .dark .uniwork-landing .preview-steps { background: #1d1e24; border-color: #393a42; }
+.dark .uniwork-landing .preview-task-icon { background: #30372f; color: #b8d1a7; }
+.dark .uniwork-landing .preview-task-meta, .dark .uniwork-landing .preview-steps > div, .dark .uniwork-landing .preview-caption { border-color: #393a42; }
+.dark .uniwork-landing .preview-caption { background: #191a20; color: #b8b8c1; }
+.dark .uniwork-landing .preview-crumb, .dark .uniwork-landing .preview-sidebar-bottom, .dark .uniwork-landing .preview-task-detail p, .dark .uniwork-landing .preview-task-meta { color: #b8b8c1; }
+.dark .uniwork-landing .preview-task-meta strong { color: #f2f2f5; }
+.dark .uniwork-landing .preview-add { background: #e8e8ed; color: #16171b; }
+.dark .uniwork-landing .preview-status { border-color: #52535c; color: #c9c9d0; }
+.dark .uniwork-landing .preview-mobile { background: #121318; color: #f2f2f5; border-color: #090a0e; }
+.dark .uniwork-landing .preview-mobile::after { border-color: #ffffff24; }
+.dark .uniwork-landing .mobile-notch, .dark .uniwork-landing .mobile-gesture { background: #050609; }
+.dark .uniwork-landing .mobile-brand { color: #f2f2f5; }
+.dark .uniwork-landing .mobile-brand-mark { color: #dddde3; }
+.dark .uniwork-landing .mobile-search, .dark .uniwork-landing .mobile-task-card { background: #1f2027; border-color: #3b3c45; color: #d1d1d9; }
+.dark .uniwork-landing .mobile-task-heading svg { background: #30372f; color: #b8d1a7; }
+.dark .uniwork-landing .mobile-preview-tags span { background: #2b2c34; border-color: #44454f; color: #d1d1d9; }
+.dark .uniwork-landing .mobile-task-card > strong, .dark .uniwork-landing .mobile-task-card > b { color: #f2f2f5; }
+.dark .uniwork-landing .mobile-tabbar { border-color: #3b3c45; }
+.dark .uniwork-landing .mobile-tabbar span:first-child { color: #b8a7fa; }
