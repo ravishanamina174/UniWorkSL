@@ -16,10 +16,6 @@ services:
         value: "3"
       - key: DB_POOL_MIN_IDLE
         value: "0"
-      - key: IDENTITY_OCR_CONCURRENCY
-        value: "1"
-      - key: IDENTITY_OCR_TIMEOUT_MS
-        value: "15000"
       - key: DB_URL
         sync: false
       - key: DB_USERNAME

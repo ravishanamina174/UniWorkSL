@@ -15,34 +15,31 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class IdentityVerificationService {
     private static final Logger logger=LoggerFactory.getLogger(IdentityVerificationService.class);
-    public record State(String status, String method, int unsuccessfulAttempts, Instant verifiedAt, boolean manualReviewAvailable, String lastReviewStatus) { }
-    public record MatchResult(String outcome, State verification) { }
+    public record State(String status, String method, Instant verifiedAt, String lastReviewStatus, String lastReviewReason) { }
     public record Review(UUID reviewId, UUID userId, String name, String userType, String maskedNic, String status,
                          String verificationStatus, Instant submittedAt, Instant expiresAt, Instant decidedAt, String decisionReason,
-                         int unsuccessfulAttempts) { }
+                         String method) { }
     private final JdbcTemplate db;
     private final UserIdentityService identities;
     private final StudentProfileRepository students;
     private final TaskPosterProfileRepository posters;
     private final PiiEncryptionService encryption;
     private final IdentityDocument documents;
-    private final NicOcr ocr;
     private final R2IdentityStorage storage;
     private final IdentityCleanupService cleanup;
     private final int retentionDays;
 
     public IdentityVerificationService(JdbcTemplate db, UserIdentityService identities, StudentProfileRepository students,
             TaskPosterProfileRepository posters, PiiEncryptionService encryption, IdentityDocument documents,
-            NicOcr ocr, R2IdentityStorage storage, IdentityCleanupService cleanup,
+            R2IdentityStorage storage, IdentityCleanupService cleanup,
             @Value("${uniwork.identity.review-retention-days:30}") int retentionDays) {
         this.db=db; this.identities=identities; this.students=students; this.posters=posters;
-        this.encryption=encryption; this.documents=documents; this.ocr=ocr; this.storage=storage; this.cleanup=cleanup;
+        this.encryption=encryption; this.documents=documents; this.storage=storage; this.cleanup=cleanup;
         this.retentionDays=Math.max(1,retentionDays);
     }
 
@@ -70,9 +67,9 @@ public class IdentityVerificationService {
         db.update("insert into identity_verifications(user_id) values(?) on conflict (user_id) do nothing",userId);
     }
     private State state(UUID userId) {
-        var rows=db.query("select status,method,unsuccessful_attempts,verified_at,(select r.status from identity_reviews r where r.user_id=v.user_id order by r.submitted_at desc limit 1) from identity_verifications v where user_id=?",
-                (rs,n)->new State(rs.getString(1),rs.getString(2),rs.getInt(3),rs.getTimestamp(4)==null?null:rs.getTimestamp(4).toInstant(),rs.getInt(3)>=2,rs.getString(5)),userId);
-        return rows.isEmpty()?new State("UNVERIFIED",null,0,null,false,null):rows.getFirst();
+        var rows=db.query("select status,method,verified_at,(select r.status from identity_reviews r where r.user_id=v.user_id order by r.submitted_at desc limit 1),(select r.decision_reason from identity_reviews r where r.user_id=v.user_id order by r.submitted_at desc limit 1) from identity_verifications v where user_id=?",
+                (rs,n)->new State(rs.getString(1),rs.getString(2),rs.getTimestamp(3)==null?null:rs.getTimestamp(3).toInstant(),rs.getString(4),rs.getString(5)),userId);
+        return rows.isEmpty()?new State("UNVERIFIED",null,null,null,null):rows.getFirst();
     }
     @Transactional(readOnly=true)
     public State status(String subject, UserRole role) { return state(user(subject,role).getId()); }
@@ -89,39 +86,14 @@ public class IdentityVerificationService {
     }
 
     @Transactional
-    public MatchResult match(String subject, UserRole role, MultipartFile file) {
-        UniWorkUser user=user(subject,role);
-        String nic=profileNic(user);
-        IdentityDocument.Image image=documents.read(file);
-        ensureRow(user.getId());
-        var locked=db.queryForList("select status from identity_verifications where user_id=? for update",String.class,user.getId());
-        if (locked.getFirst().equals("VERIFIED")) return new MatchResult("MATCHED",state(user.getId()));
-        if (locked.getFirst().equals("MANUAL_REVIEW_PENDING")) throw new ApiException(HttpStatus.CONFLICT,"REVIEW_PENDING","Your document is already awaiting review.");
-        if (state(user.getId()).unsuccessfulAttempts()>=10) throw new ApiException(HttpStatus.TOO_MANY_REQUESTS,"VERIFY_ATTEMPT_LIMIT","Use manual review for further NIC matching help.");
-        Instant last=db.queryForObject("select last_attempt_at from identity_verifications where user_id=?",(rs,n)->rs.getTimestamp(1)==null?null:rs.getTimestamp(1).toInstant(),user.getId());
-        if (last!=null && last.isAfter(Instant.now().minusSeconds(15))) throw new ApiException(HttpStatus.TOO_MANY_REQUESTS,"VERIFY_RATE_LIMIT","Please wait before trying another image.");
-        Set<String> found=ocr.extract(image.bytes());
-        String outcome;
-        if (found.size()==1 && NicNumbers.same(nic,found.iterator().next())) {
-            db.update("update identity_verifications set status='VERIFIED',method='AUTOMATIC_OCR',verified_at=now(),last_attempt_at=now(),updated_at=now() where user_id=?",user.getId());
-            outcome="MATCHED";
-        } else {
-            outcome=found.size()==1 ? "NOT_MATCHED" : "UNREADABLE";
-            db.update("update identity_verifications set unsuccessful_attempts=unsuccessful_attempts+1,last_attempt_at=now(),updated_at=now() where user_id=?",user.getId());
-        }
-        return new MatchResult(outcome,state(user.getId()));
-    }
-
-    @Transactional
     public State submitReview(String subject, UserRole role, MultipartFile file) {
         UniWorkUser user=user(subject,role); profileNic(user);
         IdentityDocument.Image image=documents.read(file);
         ensureRow(user.getId());
         db.queryForList("select status from identity_verifications where user_id=? for update",String.class,user.getId());
         State current=state(user.getId());
-        if (current.status().equals("VERIFIED")) throw new ApiException(HttpStatus.CONFLICT,"ALREADY_VERIFIED","Your NIC is already matched.");
+        if (current.status().equals("VERIFIED")) throw new ApiException(HttpStatus.CONFLICT,"ALREADY_VERIFIED","Your NIC has already been reviewed.");
         if (current.status().equals("MANUAL_REVIEW_PENDING")) throw new ApiException(HttpStatus.CONFLICT,"REVIEW_PENDING","A review is already pending.");
-        if (current.unsuccessfulAttempts()<2) throw new ApiException(HttpStatus.FORBIDDEN,"REVIEW_NOT_AVAILABLE","Try automatic matching twice before requesting a manual review.");
         UUID id=UUID.randomUUID(); String key="nic-reviews/"+UUID.randomUUID()+".jpg";
         try { storage.put(key,image.bytes()); }
         catch (RuntimeException failure) { throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE,"PRIVATE_STORAGE_UNAVAILABLE","The document could not be submitted. Please try again."); }
@@ -150,9 +122,9 @@ public class IdentityVerificationService {
         return new Review(rs.getObject("review_id",UUID.class),userId,name,type,"••••••••"+nic.substring(Math.max(0,nic.length()-4)),
                 rs.getString("status"),rs.getString("verification_status"),rs.getTimestamp("submitted_at").toInstant(),
                 rs.getTimestamp("expires_at").toInstant(),rs.getTimestamp("decided_at")==null?null:rs.getTimestamp("decided_at").toInstant(),
-                rs.getString("decision_reason"),rs.getInt("unsuccessful_attempts"));
+                rs.getString("decision_reason"),rs.getString("method"));
     }
-    private static final String REVIEW_SQL="select r.*,u.role,v.status verification_status,v.unsuccessful_attempts from identity_reviews r join uniwork_users u on u.user_id=r.user_id join identity_verifications v on v.user_id=r.user_id";
+    private static final String REVIEW_SQL="select r.*,u.role,v.status verification_status,v.method from identity_reviews r join uniwork_users u on u.user_id=r.user_id join identity_verifications v on v.user_id=r.user_id";
     @Transactional(readOnly=true)
     public PageResponse<Review> reviews(int page,int size,String status,String search) {
         int bounded=Math.min(Math.max(size,1),50), index=Math.max(page,0); String filter=status==null||status.isBlank()?"PENDING":status;

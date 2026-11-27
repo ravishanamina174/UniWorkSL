@@ -73,6 +73,3 @@ uniwork:
     r2-endpoint: ${R2_ENDPOINT:}
     review-retention-days: ${IDENTITY_REVIEW_RETENTION_DAYS:30}
     orphan-grace-days: ${IDENTITY_ORPHAN_GRACE_DAYS:45}
-    tesseract-command: ${IDENTITY_TESSERACT_COMMAND:tesseract}
-    ocr-concurrency: ${IDENTITY_OCR_CONCURRENCY:1}
-    ocr-timeout-ms: ${IDENTITY_OCR_TIMEOUT_MS:15000}

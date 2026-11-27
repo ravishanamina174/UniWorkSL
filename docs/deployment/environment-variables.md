@@ -20,9 +20,6 @@ Use ignored local environment files for development and each hosting provider's 
 | `IDENTITY_REVIEW_RETENTION_DAYS` | Render / backend | Pending review expiry, default 30 days |
 | `IDENTITY_ORPHAN_GRACE_DAYS` | Render / backend | Age after which unreferenced NIC objects are deleted, default 45 days |
 | `IDENTITY_CLEANUP_INTERVAL_MS` | Render / backend | Retry and expiry sweep interval, default one hour |
-| `IDENTITY_TESSERACT_COMMAND` | Backend | Optional OCR binary path; default `tesseract` |
-| `IDENTITY_OCR_CONCURRENCY` | Render / backend | OCR subprocess limit; keep at `1` on 512 MiB instances |
-| `IDENTITY_OCR_TIMEOUT_MS` | Render / backend | OCR subprocess timeout; default `15000` |
 | `NEXT_PUBLIC_API_BASE_URL` | Vercel / web; EAS / mobile | Backend origin; HTTPS in production |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Vercel / web | Browser-visible Clerk publishable key; environment-specific |
 | `CLERK_SECRET_KEY` | Vercel / web | Clerk server secret; environment-specific |

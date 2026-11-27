@@ -40,8 +40,7 @@ export type TaskPosterProfile = {
 };
 
 export type IdentityStatus = "UNVERIFIED" | "MANUAL_REVIEW_PENDING" | "VERIFIED" | "REJECTED";
-export type IdentityVerification = { status: IdentityStatus; method: "AUTOMATIC_OCR" | "MANUAL_REVIEW" | null; unsuccessfulAttempts: number; verifiedAt: string | null; manualReviewAvailable: boolean; lastReviewStatus: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED" | null };
-export type IdentityMatchResult = { outcome: "MATCHED" | "NOT_MATCHED" | "UNREADABLE"; verification: IdentityVerification };
+export type IdentityVerification = { status: IdentityStatus; method: "MANUAL_REVIEW" | null; verifiedAt: string | null; lastReviewStatus: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED" | null; lastReviewReason: string | null };
 
 export type TaskInput = {
   title: string;

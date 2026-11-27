@@ -25,14 +25,4 @@ public final class NicNumbers {
         return true;
     }
 
-    public static boolean same(String profile, String extracted) {
-        if (!valid(profile) || !valid(extracted)) return false;
-        String a = normalize(profile), b = normalize(extracted);
-        if (a.equals(b)) return true;
-        String old = OLD.matcher(a).matches() ? a : b;
-        String current = NEW.matcher(a).matches() ? a : b;
-        // Official old-to-new layout inserts the century and a leading serial zero.
-        return OLD.matcher(old).matches() && NEW.matcher(current).matches()
-                && current.equals("19" + old.substring(0, 5) + "0" + old.substring(5, 9));
-    }
 }

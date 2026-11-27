@@ -21,10 +21,6 @@ public class IdentityVerificationController {
     public IdentityVerificationService.State status(@AuthenticationPrincipal Jwt jwt,@PathVariable String audience) {
         return service.status(jwt.getSubject(),role(audience));
     }
-    @PostMapping(value="/api/v1/{audience:student|poster}/identity/match",consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
-    public IdentityVerificationService.MatchResult match(@AuthenticationPrincipal Jwt jwt,@PathVariable String audience,@RequestPart("image") MultipartFile image) {
-        return service.match(jwt.getSubject(),role(audience),image);
-    }
     @PostMapping(value="/api/v1/{audience:student|poster}/identity/reviews",consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
     public IdentityVerificationService.State review(@AuthenticationPrincipal Jwt jwt,@PathVariable String audience,@RequestPart("image") MultipartFile image) {
         return service.submitReview(jwt.getSubject(),role(audience),image);

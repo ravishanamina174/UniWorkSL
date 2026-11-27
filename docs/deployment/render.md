@@ -12,7 +12,7 @@ The backend-only image is built by `backend/Dockerfile`. The root `render.yaml` 
 - Render supplies `PORT`; Spring Boot binds to `${PORT:8080}`. Do not set a fixed port in the dashboard.
 - Hikari defaults cap each instance at three pooled connections, no idle connection, and a 29-minute maximum connection lifetime. The Blueprint lets operators override pool bounds.
 
-The image uses Maven with Java 21 for its build stage and a non-root Java 21 JRE Alpine runtime. It installs Tesseract plus English language data. The runtime caps Java heap at 256 MiB, reserves bounded metaspace/direct memory, uses Serial GC, and limits OCR to one subprocess. `backend/.dockerignore` excludes local `.env` files and build output. No credentials are baked into the image. Container runtime testing has not been performed locally.
+The image uses Maven with Java 21 for its build stage and a non-root Java 21 JRE Alpine runtime. The runtime caps Java heap at 256 MiB, reserves direct memory, uses Serial GC, and bounds uploaded identity images before private storage. `backend/.dockerignore` excludes local `.env` files and build output. No credentials are baked into the image. Container runtime testing has not been performed locally.
 
 ## Required Render environment values
 
@@ -32,7 +32,7 @@ Provide these in the Render Dashboard or Blueprint prompt; never commit their va
 | `R2_BUCKET_NAME` | `uniwork-identity` |
 | `R2_ENDPOINT` | Optional R2 S3 endpoint override; blank uses the account-specific endpoint |
 
-The existing backend deployment image now installs Tesseract and English language data for local OCR. Keep R2 private; no public bucket URL is used. The identity feature requires Flyway V13 before web/mobile clients use its endpoints. Pending reviews expire after 30 days by default; the hourly cleanup first marks them expired, then deletes the private object. Approval and rejection trigger deletion immediately after database commit, with the same sweep retrying failures. Set an R2 bucket lifecycle rule longer than the configured review period (for example 45 days with the default 30-day review period) as a backup for an orphan created by a database failure after upload. Check cleanup failures in operations monitoring; the database retains a deletion-pending marker until successful removal.
+Keep R2 private; no public bucket URL is used. The identity feature requires Flyway V14 before web/mobile clients use its manual-review endpoints. Pending reviews expire after 30 days by default; the hourly cleanup first marks them expired, then deletes the private object. Approval and rejection trigger deletion immediately after database commit, with the same sweep retrying failures. Set an R2 bucket lifecycle rule longer than the configured review period (for example 45 days with the default 30-day review period) as a backup for an orphan created by a database failure after upload. Check cleanup failures in operations monitoring; the database retains a deletion-pending marker until successful removal.
 
 `CLERK_JWKS_URI` is optional; by default the backend uses `<issuer>/.well-known/jwks.json`. Determine the mobile token's actual `azp` from a real Clerk Student session before adding a mobile party to `CLERK_AUTHORIZED_PARTIES`. Do not allow broad wildcards or weaken JWT validation to get a mobile request accepted. Clerk's guidance recommends explicitly allowlisting authorized parties when the claim is present: [Clerk session token claims](https://clerk.com/docs/guides/sessions/session-tokens).
 

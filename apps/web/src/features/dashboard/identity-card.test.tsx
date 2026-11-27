@@ -6,24 +6,26 @@ const request = vi.hoisted(() => vi.fn());
 vi.mock("./use-api", () => ({ useAuthenticatedApi: () => request }));
 afterEach(() => { cleanup(); request.mockReset(); });
 
-describe("Task Poster NIC matching", () => {
-  it("shows the server status and manual review after two failed checks", async () => {
-    request.mockImplementation(async (path: string) => path.endsWith("/match")
-      ? { outcome: "UNREADABLE", verification: { status: "UNVERIFIED", unsuccessfulAttempts: 2, manualReviewAvailable: true } }
-      : { status: "UNVERIFIED", unsuccessfulAttempts: 1, manualReviewAvailable: false });
+describe("Task Poster NIC manual review", () => {
+  it("submits a valid image for manual review", async () => {
+    request.mockImplementation(async (_path: string, options?: RequestInit) => options?.method === "POST"
+      ? { status: "MANUAL_REVIEW_PENDING", method: "MANUAL_REVIEW", lastReviewStatus: "PENDING", lastReviewReason: null }
+      : { status: "UNVERIFIED", method: null, lastReviewStatus: null, lastReviewReason: null });
     render(<IdentityCard initialStatus="UNVERIFIED" />);
     await screen.findByText("Verification Required");
     const file = new File([new Uint8Array(8)], "nic.png", { type: "image/png" });
-    fireEvent.change(screen.getByLabelText(/drag a nic image/i), { target: { files: [file] } });
-    fireEvent.click(screen.getByRole("button", { name: "Check NIC image" }));
-    await screen.findByRole("button", { name: "Request Manual Review" });
-    expect(request).toHaveBeenCalledWith("/api/v1/poster/identity/match", expect.objectContaining({ method: "POST", body: expect.any(FormData) }));
+    const drop = screen.getByText("Drag a NIC image here or click to select").closest("label")!;
+    fireEvent.change(drop.querySelector('input[type="file"]')!, { target: { files: [file] } });
+    fireEvent.click(screen.getByRole("button", { name: "Submit for Verification" }));
+    await screen.findByText("Verification Pending");
+    expect(request).toHaveBeenCalledWith("/api/v1/poster/identity/reviews", expect.objectContaining({ method: "POST", body: expect.any(FormData) }));
   });
 
-  it("reports expired reviews and lets users submit a new image", async () => {
-    request.mockResolvedValue({ status: "UNVERIFIED", lastReviewStatus: "EXPIRED", unsuccessfulAttempts: 2, manualReviewAvailable: true });
-    render(<IdentityCard initialStatus="UNVERIFIED" />);
-    await waitFor(() => expect(screen.getByText("Review Expired")).toBeInTheDocument());
-    expect(screen.getByText(/previous review expired/)).toBeInTheDocument();
+  it("shows a rejection reason and allows resubmission", async () => {
+    request.mockResolvedValue({ status: "REJECTED", lastReviewStatus: "REJECTED", lastReviewReason: "Image is too dark." });
+    render(<IdentityCard initialStatus="REJECTED" />);
+    await waitFor(() => expect(screen.getByText("Submission Rejected")).toBeInTheDocument());
+    expect(screen.getByText(/Reason: Image is too dark/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Submit for Verification" })).toBeInTheDocument();
   });
 });

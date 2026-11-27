@@ -7,7 +7,6 @@ import type {
   StudentProfile,
   StudentProfileInput,
   IdentityVerification,
-  IdentityMatchResult,
   StudentProfessionalProfile,
   StudentProfessionalProfileInput,
   StudentTaskApplication,
@@ -82,10 +81,10 @@ export class UniWorkApi {
 
   getProfile = () => this.request<StudentProfile>('/api/v1/student/profile');
   getIdentity = () => this.request<IdentityVerification>('/api/v1/student/identity');
-  submitIdentity = (asset: { uri: string; fileName?: string | null; mimeType?: string | null }, manual = false) => {
+  submitIdentity = (asset: { uri: string; fileName?: string | null; mimeType?: string | null }) => {
     const form = new FormData();
     form.append('image', { uri: asset.uri, name: asset.fileName || 'nic.jpg', type: asset.mimeType || 'image/jpeg' } as unknown as Blob);
-    return this.request<IdentityVerification | IdentityMatchResult>(`/api/v1/student/identity/${manual ? 'reviews' : 'match'}`, { method: 'POST', body: form });
+    return this.request<IdentityVerification>('/api/v1/student/identity/reviews', { method: 'POST', body: form });
   };
   saveProfile = (input: StudentProfileInput) => this.request<StudentProfile>('/api/v1/student/profile', json('PUT', input));
   getProfessionalProfile = () => this.request<StudentProfessionalProfile>('/api/v1/student/professional-profile');

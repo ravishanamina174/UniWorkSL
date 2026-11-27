@@ -39,7 +39,7 @@ public class IdentityDocument {
                 } finally { reader.dispose(); }
             }
             if (decoded==null) throw invalid();
-            // Re-encoding removes EXIF and other metadata before OCR or private storage.
+            // Re-encoding removes EXIF and other metadata before private storage.
             ByteArrayOutputStream clean = new ByteArrayOutputStream();
             BufferedImage rgb = new BufferedImage(decoded.getWidth(), decoded.getHeight(), BufferedImage.TYPE_INT_RGB);
             var graphics = rgb.createGraphics();
