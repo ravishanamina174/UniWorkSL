@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { BadgeCheck } from "lucide-react";
 import type { Gender, TaskPosterProfile } from "@uniwork/api-contracts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +46,7 @@ export function ProfileForm({ initial, onboarding = false }: { initial?: TaskPos
       <div className="form-grid">
         <label className="form-field form-field-full"><span>Full Name</span><Input name="fullName" autoComplete="name" maxLength={160} required defaultValue={initial?.fullName ?? ""} /></label>
         <label className="form-field"><span>Phone Number</span><Input name="phoneNumber" type="tel" inputMode="tel" autoComplete="tel" placeholder="07X XXX XXXX" pattern="(?:\\+94|0)7[0-9]{8}" required defaultValue={initial?.phoneNumber ?? ""} /></label>
-        <label className="form-field"><span>NIC</span>{initial?.verificationStatus === "VERIFIED" || initial?.verificationStatus === "MANUAL_REVIEW_PENDING" ? <><Input value={`••••••••${initial.nic.slice(-4)}`} disabled /><input name="nic" type="hidden" value={initial.nic} /><small>{initial.verificationStatus === "VERIFIED" ? "NIC Reviewed. This number is locked after approval." : "Verification pending. This number is locked while under review."}</small></> : <><Input name="nic" autoComplete="off" maxLength={12} pattern="(?:[0-9]{9}[vVxX]|[0-9]{12})" required defaultValue={initial?.nic ?? ""} /><small>Stored encrypted. Visible only in your authenticated profile.</small></>}</label>
+        <label className="form-field"><span>NIC</span>{initial?.verificationStatus === "VERIFIED" || initial?.verificationStatus === "MANUAL_REVIEW_PENDING" ? <><Input value={`••••••••${initial.nic.slice(-4)}`} disabled /><input name="nic" type="hidden" value={initial.nic} />{initial.verificationStatus === "VERIFIED" ? <span className="nic-verified-badge"><BadgeCheck size={16} aria-hidden="true" />NIC Verified</span> : null}<small>{initial.verificationStatus === "VERIFIED" ? "NIC Reviewed. This number is locked after approval." : "Verification pending. This number is locked while under review."}</small></> : <><Input name="nic" autoComplete="off" maxLength={12} pattern="(?:[0-9]{9}[vVxX]|[0-9]{12})" required defaultValue={initial?.nic ?? ""} /><small>Stored encrypted. Visible only in your authenticated profile.</small></>}</label>
         <label className="form-field form-field-full"><span>Address</span><Input name="address" autoComplete="street-address" maxLength={500} required defaultValue={initial?.address ?? ""} /></label>
         <label className="form-field"><span>Gender</span><select className="ui-input" name="gender" required defaultValue={initial?.gender ?? ""}><option value="" disabled>Select an option</option>{genders.map((gender) => <option key={gender.value} value={gender.value}>{gender.label}</option>)}</select></label>
       </div>

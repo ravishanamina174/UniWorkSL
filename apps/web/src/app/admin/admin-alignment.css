@@ -52,4 +52,15 @@
 .identity-review-detail p { color: var(--muted); }
 .identity-review-image { display: block; max-width: 100%; max-height: 560px; margin: 18px 0; object-fit: contain; border: 1px solid var(--border); }
 .identity-review-detail textarea { width: min(100%, 680px); padding: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+.identity-review-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+.identity-review-actions button, .identity-review-secondary-button { min-height: 42px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 6px; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; transition: background .16s ease, border-color .16s ease, transform .16s ease; }
+.identity-review-actions button:hover, .identity-review-secondary-button:hover { transform: translateY(-1px); }
+.identity-review-actions button:disabled { cursor: not-allowed; opacity: .5; transform: none; }
+.identity-review-approve { border-color: #39856d !important; background: #39856d; color: #fff; }
+.identity-review-approve:hover:not(:disabled) { background: #2f715d; }
+.identity-review-reject { border-color: color-mix(in srgb, var(--error) 45%, var(--border)) !important; background: color-mix(in srgb, var(--error) 8%, var(--surface)); color: var(--error); }
+.identity-review-reject:hover:not(:disabled) { background: color-mix(in srgb, var(--error) 14%, var(--surface)); }
+.identity-review-secondary-button { background: var(--surface); color: var(--foreground); }
+.identity-review-close { min-width: 38px; min-height: 38px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--foreground); cursor: pointer; }
 @media (max-width: 800px) { .identity-review-row { grid-template-columns: 1fr auto; } .identity-review-row span:nth-child(2), .identity-review-row span:nth-child(3), .identity-review-row span:nth-child(4) { display: none; } }
+@media (max-width: 600px) { .identity-review-actions { align-items: stretch; flex-direction: column; } .identity-review-actions button, .identity-review-secondary-button { width: 100%; } .identity-review-detail { padding-inline: 16px; } }
