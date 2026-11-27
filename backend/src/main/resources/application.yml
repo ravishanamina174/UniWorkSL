@@ -24,6 +24,10 @@ spring:
     locations: classpath:db/migration
   jackson:
     default-property-inclusion: non_null
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
 server:
   port: ${PORT:8080}
   error:
@@ -61,3 +65,12 @@ uniwork:
   admin:
     watchlist-low-rating-threshold: ${WATCHLIST_LOW_RATING_THRESHOLD:2}
     watchlist-serious-report-threshold: ${WATCHLIST_SERIOUS_REPORT_THRESHOLD:2}
+  identity:
+    r2-account-id: ${R2_ACCOUNT_ID:}
+    r2-access-key-id: ${R2_ACCESS_KEY_ID:}
+    r2-secret-access-key: ${R2_SECRET_ACCESS_KEY:}
+    r2-bucket-name: ${R2_BUCKET_NAME:uniwork-identity}
+    r2-endpoint: ${R2_ENDPOINT:}
+    review-retention-days: ${IDENTITY_REVIEW_RETENTION_DAYS:30}
+    orphan-grace-days: ${IDENTITY_ORPHAN_GRACE_DAYS:45}
+    tesseract-command: ${IDENTITY_TESSERACT_COMMAND:tesseract}

@@ -10,8 +10,10 @@ public class StudentProfileService {
     private final UserRepository users;
     private final StudentProfileRepository profiles;
     private final PiiEncryptionService encryption;
-    public StudentProfileService(UserRepository users, StudentProfileRepository profiles, PiiEncryptionService encryption) {
-        this.users = users; this.profiles = profiles; this.encryption = encryption;
+    private final lk.uniwork.identity.IdentityVerificationService verification;
+    public StudentProfileService(UserRepository users, StudentProfileRepository profiles, PiiEncryptionService encryption,
+            lk.uniwork.identity.IdentityVerificationService verification) {
+        this.users = users; this.profiles = profiles; this.encryption = encryption; this.verification=verification;
     }
     @Transactional
     public StudentProfileResponse save(String subject, StudentProfileRequest request) {
@@ -21,6 +23,7 @@ public class StudentProfileService {
         String address = encryption.encrypt(request.address().trim());
         String nic = encryption.encrypt(request.nic().trim().toUpperCase());
         StudentProfile profile = profiles.findById(user.getId()).orElse(null);
+        if (profile != null) verification.requireNicUnchanged(user.getId(), encryption.decrypt(profile.getNicCiphertext()), request.nic());
         if (profile == null) profile = profiles.save(new StudentProfile(user, clean(request.fullName()), request.age(), request.gender(), address,
                 clean(request.phoneNumber()), nic, clean(request.university()), clean(request.faculty())));
         else profile.update(clean(request.fullName()), request.age(), request.gender(), address, clean(request.phoneNumber()), nic,
@@ -38,7 +41,8 @@ public class StudentProfileService {
     }
     private StudentProfileResponse response(StudentProfile p) {
         return new StudentProfileResponse(p.getId(), p.getFullName(), p.getAge(), p.getGender(), encryption.decrypt(p.getAddressCiphertext()),
-                p.getPhoneNumber(), encryption.decrypt(p.getNicCiphertext()), p.getUniversity(), p.getFaculty(), p.getCreatedAt(), p.getUpdatedAt());
+                p.getPhoneNumber(), encryption.decrypt(p.getNicCiphertext()), p.getUniversity(), p.getFaculty(), p.getCreatedAt(), p.getUpdatedAt(),
+                verification.status(p.getId()).status());
     }
     private String clean(String value) { return value.trim(); }
 }

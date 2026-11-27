@@ -51,6 +51,7 @@
         }
       ],
       "expo-web-browser",
+      ["expo-image-picker", { "photosPermission": "Choose a NIC photo for document matching or private safety team review.", "cameraPermission": false, "microphonePermission": false }],
       "@react-native-community/datetimepicker"
     ],
     "experiments": {

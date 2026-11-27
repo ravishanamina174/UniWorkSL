@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import type { Task, TaskInput } from "@uniwork/api-contracts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ export function TaskForm({ initial, taskId }: { initial?: Task; taskId?: string 
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [verificationRequired, setVerificationRequired] = useState(false);
   const [savedTaskId, setSavedTaskId] = useState(taskId ?? "");
   const [latitude, setLatitude] = useState(initial?.latitude?.toString() ?? "");
   const [longitude, setLongitude] = useState(initial?.longitude?.toString() ?? "");
@@ -43,6 +45,7 @@ export function TaskForm({ initial, taskId }: { initial?: Task; taskId?: string 
     event.preventDefault();
     setSaving(true);
     setError("");
+    setVerificationRequired(false);
     const form = new FormData(event.currentTarget);
     const skillInput = parseRequiredSkills(String(form.get("requiredSkills") ?? ""));
     if (skillInput.error) { setError(skillInput.error); setSaving(false); return; }
@@ -71,6 +74,7 @@ export function TaskForm({ initial, taskId }: { initial?: Task; taskId?: string 
       router.push(`/dashboard/tasks/${result.taskId}`);
       router.refresh();
     } catch (cause) {
+      setVerificationRequired(cause instanceof ApiRequestError && cause.code === "NIC_VERIFICATION_REQUIRED");
       setError(cause instanceof ApiRequestError ? cause.message : cause instanceof Error ? cause.message : "The task could not be saved.");
     } finally {
       setSaving(false);
@@ -96,7 +100,7 @@ export function TaskForm({ initial, taskId }: { initial?: Task; taskId?: string 
         <label className="form-field"><span>Longitude</span><Input type="number" min="-180" max="180" step="0.000001" inputMode="decimal" value={longitude} onChange={(event) => setLongitude(event.target.value)} required /></label>
       </div>
     </section>
-    {error ? <div className="form-alert" role="alert">{error}{savedTaskId ? <> Draft saved. <a href={`/dashboard/tasks/${savedTaskId}`}>Open task</a></> : null}</div> : null}
+    {error ? <div className="form-alert" role="alert">{verificationRequired ? <strong>NIC Verification Required. </strong> : null}{error} {verificationRequired ? <Link href="/dashboard/profile">Verify your NIC in Profile</Link> : null}{savedTaskId ? <> Draft saved. <Link href={`/dashboard/tasks/${savedTaskId}`}>Open task</Link></> : null}</div> : null}
     <div className="form-actions"><Button type="button" variant="secondary" onClick={() => router.back()}>Cancel</Button><Button type="submit" variant="secondary" disabled={saving}>{saving ? "Saving…" : "Save draft"}</Button><Button type="submit" data-publish="true" disabled={saving}>{saving ? "Saving…" : "Publish task"}</Button></div>
   </form>;
 }

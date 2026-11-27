@@ -14,6 +14,13 @@ Use ignored local environment files for development and each hosting provider's 
 | `CLERK_AUTHORIZED_PARTIES` | Render / backend | Exact comma-separated allowed token parties; include canonical web origin and verify mobile `azp` before adding it |
 | `WEB_ORIGIN` | Render / backend | One canonical HTTPS Vercel origin, used for CORS |
 | `UNIWORK_PII_ENCRYPTION_KEY` | Render / backend | Stable Base64 32-byte AES key; preserve for records encrypted with it |
+| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | Render / backend | Private Cloudflare R2 credentials for NIC manual reviews |
+| `R2_BUCKET_NAME` | Render / backend | Private bucket, normally `uniwork-identity` |
+| `R2_ENDPOINT` | Render / backend | Optional S3 endpoint override; otherwise derived from account ID |
+| `IDENTITY_REVIEW_RETENTION_DAYS` | Render / backend | Pending review expiry, default 30 days |
+| `IDENTITY_ORPHAN_GRACE_DAYS` | Render / backend | Age after which unreferenced NIC objects are deleted, default 45 days |
+| `IDENTITY_CLEANUP_INTERVAL_MS` | Render / backend | Retry and expiry sweep interval, default one hour |
+| `IDENTITY_TESSERACT_COMMAND` | Backend | Optional OCR binary path; default `tesseract` |
 | `NEXT_PUBLIC_API_BASE_URL` | Vercel / web; EAS / mobile | Backend origin; HTTPS in production |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Vercel / web | Browser-visible Clerk publishable key; environment-specific |
 | `CLERK_SECRET_KEY` | Vercel / web | Clerk server secret; environment-specific |

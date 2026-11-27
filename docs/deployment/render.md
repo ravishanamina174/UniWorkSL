@@ -28,6 +28,11 @@ Provide these in the Render Dashboard or Blueprint prompt; never commit their va
 | `CLERK_AUTHORIZED_PARTIES` | Comma-separated exact origins permitted by policy; must include `WEB_ORIGIN` |
 | `WEB_ORIGIN` | The canonical HTTPS Vercel Task Poster origin, with no path or trailing slash |
 | `UNIWORK_PII_ENCRYPTION_KEY` | Base64 encoded 32-byte AES key, stored as a secret and preserved for the lifetime of data encrypted with it |
+| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | Credentials limited to the private `uniwork-identity` bucket |
+| `R2_BUCKET_NAME` | `uniwork-identity` |
+| `R2_ENDPOINT` | Optional R2 S3 endpoint override; blank uses the account-specific endpoint |
+
+The existing backend deployment image now installs Tesseract and English language data for local OCR. Keep R2 private; no public bucket URL is used. The identity feature requires Flyway V13 before web/mobile clients use its endpoints. Pending reviews expire after 30 days by default; the hourly cleanup first marks them expired, then deletes the private object. Approval and rejection trigger deletion immediately after database commit, with the same sweep retrying failures. Set an R2 bucket lifecycle rule longer than the configured review period (for example 45 days with the default 30-day review period) as a backup for an orphan created by a database failure after upload. Check cleanup failures in operations monitoring; the database retains a deletion-pending marker until successful removal.
 
 `CLERK_JWKS_URI` is optional; by default the backend uses `<issuer>/.well-known/jwks.json`. Determine the mobile token's actual `azp` from a real Clerk Student session before adding a mobile party to `CLERK_AUTHORIZED_PARTIES`. Do not allow broad wildcards or weaken JWT validation to get a mobile request accepted. Clerk's guidance recommends explicitly allowlisting authorized parties when the claim is present: [Clerk session token claims](https://clerk.com/docs/guides/sessions/session-tokens).
 

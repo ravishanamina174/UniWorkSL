@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { useEffect, useRef } from "react";
-import { Activity, ChevronRight, ClipboardList, FileWarning, LayoutDashboard, MapPinned, ShieldAlert } from "lucide-react";
+import { Activity, ChevronRight, ClipboardList, FileWarning, LayoutDashboard, MapPinned, ShieldAlert, ScanFace } from "lucide-react";
 import { BrandSymbol } from "@/components/brand/brand-symbol";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
@@ -14,6 +14,7 @@ const links = [
   { href: "/admin/watchlist", label: "Safety Watchlist", icon: ShieldAlert },
   { href: "/admin/disputes", label: "Payment Disputes", icon: FileWarning },
   { href: "/admin/cases", label: "Investigations", icon: ClipboardList },
+  { href: "/admin/identity-reviews", label: "Identity Reviews", icon: ScanFace },
   { href: "/admin/audit-logs", label: "Audit Logs", icon: Activity },
 ];
 

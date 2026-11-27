@@ -10,11 +10,14 @@ public class TaskPosterProfileService {
     private final UserRepository users;
     private final TaskPosterProfileRepository profiles;
     private final PiiEncryptionService encryption;
+    private final lk.uniwork.identity.IdentityVerificationService verification;
 
-    public TaskPosterProfileService(UserRepository users, TaskPosterProfileRepository profiles, PiiEncryptionService encryption) {
+    public TaskPosterProfileService(UserRepository users, TaskPosterProfileRepository profiles, PiiEncryptionService encryption,
+            lk.uniwork.identity.IdentityVerificationService verification) {
         this.users = users;
         this.profiles = profiles;
         this.encryption = encryption;
+        this.verification=verification;
     }
 
     @Transactional(readOnly = true)
@@ -48,6 +51,7 @@ public class TaskPosterProfileService {
         String ciphertext = encryption.encrypt(request.nic().trim().toUpperCase());
         if (user == null) user = users.save(new UniWorkUser(clerkUserId, UserRole.TASK_POSTER));
         TaskPosterProfile profile = profiles.findById(user.getId()).orElse(null);
+        if (profile != null) verification.requireNicUnchanged(user.getId(), encryption.decrypt(profile.getNicCiphertext()), request.nic());
         if (profile == null) {
             profile = new TaskPosterProfile(user, request.fullName().trim(), request.address().trim(), request.phoneNumber().trim(), ciphertext, request.gender());
             profile = profiles.save(profile);
@@ -59,6 +63,7 @@ public class TaskPosterProfileService {
 
     private ProfileResponse toResponse(TaskPosterProfile profile) {
         return new ProfileResponse(profile.getId(), profile.getUser().getRole(), profile.getFullName(), profile.getAddress(),
-                profile.getPhoneNumber(), encryption.decrypt(profile.getNicCiphertext()), profile.getGender(), profile.getCreatedAt(), profile.getUpdatedAt());
+                profile.getPhoneNumber(), encryption.decrypt(profile.getNicCiphertext()), profile.getGender(), profile.getCreatedAt(), profile.getUpdatedAt(),
+                verification.status(profile.getId()).status());
     }
 }

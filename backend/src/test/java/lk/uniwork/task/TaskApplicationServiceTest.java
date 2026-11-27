@@ -20,7 +20,8 @@ class TaskApplicationServiceTest {
     private final StudentProfileRepository profiles=mock(StudentProfileRepository.class);
     private final UserIdentityService identities=mock(UserIdentityService.class);
     private final TaskExecutionRepository executions=mock(TaskExecutionRepository.class);
-    private final TaskApplicationService service=new TaskApplicationService(tasks,applications,profiles,identities,executions);
+    private final lk.uniwork.identity.IdentityVerificationService verification=mock(lk.uniwork.identity.IdentityVerificationService.class);
+    private final TaskApplicationService service=new TaskApplicationService(tasks,applications,profiles,identities,executions,verification);
     private final UniWorkUser poster=new UniWorkUser("poster",UserRole.TASK_POSTER);
     private final UniWorkUser student=new UniWorkUser("student",UserRole.STUDENT);
 
@@ -49,6 +50,29 @@ class TaskApplicationServiceTest {
         assertEquals(TaskApplicationStatus.ACCEPTED,response.status()); assertEquals(TaskStatus.ACCEPTED,task.getStatus());
         verify(applications).updatePendingStatuses(task.getId(),TaskApplicationStatus.PENDING,TaskApplicationStatus.REJECTED);
         verify(executions).save(any(TaskExecution.class));
+    }
+
+    @Test void unverifiedStudentCannotApply() {
+        Task task=task(); task.publish();
+        when(identities.requireStudent("student")).thenReturn(student);
+        when(profiles.findById(student.getId())).thenReturn(Optional.of(profile()));
+        when(tasks.findByIdForUpdate(task.getId())).thenReturn(Optional.of(task));
+        doThrow(new ApiException(HttpStatus.FORBIDDEN,"NIC_VERIFICATION_REQUIRED","Verify your NIC."))
+                .when(verification).requireVerified(eq(student.getId()),eq("NIC_VERIFICATION_REQUIRED"),any());
+        ApiException failure=assertThrows(ApiException.class,()->service.apply("student",task.getId()));
+        assertEquals(HttpStatus.FORBIDDEN,failure.getStatus());
+        verify(applications,never()).save(any());
+    }
+
+    @Test void verifiedStudentCanApplyToPublishedTask() {
+        Task task=task(); task.publish();
+        when(identities.requireStudent("student")).thenReturn(student);
+        when(profiles.findById(student.getId())).thenReturn(Optional.of(profile()));
+        when(tasks.findByIdForUpdate(task.getId())).thenReturn(Optional.of(task));
+        when(applications.findByTaskIdAndStudentClerkUserId(task.getId(),"student")).thenReturn(Optional.empty());
+        when(applications.save(any(TaskApplication.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        assertEquals(TaskApplicationStatus.PENDING,service.apply("student",task.getId()).status());
+        verify(verification).requireVerified(eq(student.getId()),eq("NIC_VERIFICATION_REQUIRED"),any());
     }
 
     private Task task(){return new Task(poster,"Task","Details",new BigDecimal("1000"),LocalDateTime.now().plusDays(1).atZone(ZoneId.of("Asia/Colombo")).toInstant(),"Address",new BigDecimal("6.9"),new BigDecimal("79.8"),Set.of("help"));}

@@ -15,7 +15,8 @@ class TaskPosterProfileServiceTest {
     private final UserRepository users = mock(UserRepository.class);
     private final TaskPosterProfileRepository profiles = mock(TaskPosterProfileRepository.class);
     private final PiiEncryptionService encryption = new PiiEncryptionService(Base64.getEncoder().encodeToString(new byte[32]));
-    private final TaskPosterProfileService service = new TaskPosterProfileService(users, profiles, encryption);
+    private final lk.uniwork.identity.IdentityVerificationService verification = mock(lk.uniwork.identity.IdentityVerificationService.class);
+    private final TaskPosterProfileService service = new TaskPosterProfileService(users, profiles, encryption, verification);
 
     @Test
     void createsPosterRoleServerSideAndEncryptsNicAtRest() {
@@ -23,6 +24,7 @@ class TaskPosterProfileServiceTest {
         when(users.save(any(UniWorkUser.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(profiles.findById(any())).thenReturn(Optional.empty());
         when(profiles.save(any(TaskPosterProfile.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(verification.status(org.mockito.ArgumentMatchers.<java.util.UUID>nullable(java.util.UUID.class))).thenReturn(new lk.uniwork.identity.IdentityVerificationService.State("UNVERIFIED", null, 0, null, false, null));
         ProfileResponse response = service.completeOrUpdate("clerk_poster", new ProfileRequest("A Person", "A home address", "0771234567", "123456789V", Gender.PREFER_NOT_TO_SAY));
         assertEquals(UserRole.TASK_POSTER, response.role());
         assertEquals("123456789V", response.nic());

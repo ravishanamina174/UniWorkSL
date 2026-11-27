@@ -35,7 +35,8 @@ class TaskServiceTest {
     private final TaskApplicationRepository applications = mock(TaskApplicationRepository.class);
     private final UserIdentityService identities = mock(UserIdentityService.class);
     private final lk.uniwork.admin.AdminService admin = mock(lk.uniwork.admin.AdminService.class);
-    private final TaskService service = new TaskService(tasks, applications, identities, admin);
+    private final lk.uniwork.identity.IdentityVerificationService verification = mock(lk.uniwork.identity.IdentityVerificationService.class);
+    private final TaskService service = new TaskService(tasks, applications, identities, admin, verification);
     private final UniWorkUser poster = new UniWorkUser("clerk_poster", UserRole.TASK_POSTER);
 
     @Test
@@ -70,6 +71,18 @@ class TaskServiceTest {
         assertEquals(HttpStatus.FORBIDDEN, assertThrows(ApiException.class,
                 () -> service.publish("clerk_poster",UUID.randomUUID())).getStatus());
         verifyNoInteractions(tasks);
+    }
+
+    @Test
+    void unverifiedPosterCannotPublishButCanKeepDraft() {
+        when(identities.requireTaskPoster("clerk_poster")).thenReturn(poster);
+        when(tasks.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        assertEquals(TaskStatus.DRAFT, service.create("clerk_poster", futureTask()).status());
+        doThrow(new ApiException(HttpStatus.FORBIDDEN,"NIC_VERIFICATION_REQUIRED","Verify your NIC."))
+                .when(verification).requireVerified(eq(poster.getId()),eq("NIC_VERIFICATION_REQUIRED"),any());
+        ApiException failure=assertThrows(ApiException.class,()->service.publish("clerk_poster",UUID.randomUUID()));
+        assertEquals(HttpStatus.FORBIDDEN,failure.getStatus());
+        verify(tasks,org.mockito.Mockito.never()).findByIdForUpdate(any());
     }
 
     @Test

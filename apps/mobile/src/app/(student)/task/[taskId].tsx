@@ -6,6 +6,7 @@ import type { ApplicationStatus, Task } from '@uniwork/api-contracts';
 import { AppButton, Card, EmptyState, ErrorState, LoadingState, Screen, ScreenHeader, SectionTitle, SkillBadges, StatusPill, formatDate } from '@/components/ui';
 import { useUniWorkApi } from '@/lib/use-api';
 import { useTheme } from '@/theme';
+import { ApiRequestError } from '@/lib/api';
 
 export default function TaskDetailsScreen() {
   const { taskId } = useLocalSearchParams<{ taskId: string }>();
@@ -18,6 +19,7 @@ export default function TaskDetailsScreen() {
   const [applying, setApplying] = useState(false);
   const [error, setError] = useState(configError || '');
   const [notice, setNotice] = useState('');
+  const [verificationRequired, setVerificationRequired] = useState(false);
 
   const load = useCallback(async () => {
     if (!api) { setError(configError || 'The UniWork API is not configured.'); setLoading(false); return; }
@@ -45,7 +47,8 @@ export default function TaskDetailsScreen() {
       setApplicationStatus(application.status);
       setNotice('Your application was sent to the Task Poster.');
     } catch (cause) {
-      setNotice(cause instanceof Error ? cause.message : 'The application could not be sent.');
+      if (cause instanceof ApiRequestError && cause.code === 'NIC_VERIFICATION_REQUIRED') { setVerificationRequired(true); setNotice('Verify Your NIC to Apply. Complete NIC matching in your profile before applying for tasks.'); }
+      else setNotice(cause instanceof Error ? cause.message : 'The application could not be sent.');
     } finally {
       setApplying(false);
     }
@@ -83,6 +86,7 @@ export default function TaskDetailsScreen() {
       </Card>
       {applicationStatus ? <Card><View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}><Text style={{ color: theme.text, fontWeight: '600' }}>Your application</Text><StatusPill status={applicationStatus} /></View></Card> : null}
       {notice ? <Text accessibilityRole="alert" style={{ color: notice.includes('could not') || notice.includes('no longer') ? theme.danger : theme.success, fontSize: 14 }}>{notice}</Text> : null}
+      {verificationRequired ? <AppButton title="Open Profile to verify NIC" variant="secondary" onPress={() => router.push('/(student)/(tabs)/profile')} /> : null}
       {canApply ? <AppButton title="Apply for this task" onPress={apply} loading={applying} /> : null}
       {scheduleStart ? <AppButton title={task.status === 'STARTED' ? 'View task start' : 'Start task'} icon={ShieldCheck} onPress={() => router.push({ pathname: '/(student)/tasks/[taskId]/start', params: { taskId } })} /> : null}
       {completed ? <AppButton title="Leave a review" variant="secondary" onPress={() => router.push({ pathname: '/(student)/tasks/[taskId]/review', params: { taskId } })} /> : null}

@@ -27,13 +27,15 @@ public class TaskService {
     private final TaskApplicationRepository applications;
     private final UserIdentityService identities;
     private final lk.uniwork.admin.AdminService admin;
+    private final lk.uniwork.identity.IdentityVerificationService verification;
 
     public TaskService(TaskRepository tasks, TaskApplicationRepository applications, UserIdentityService identities,
-            lk.uniwork.admin.AdminService admin) {
+            lk.uniwork.admin.AdminService admin, lk.uniwork.identity.IdentityVerificationService verification) {
         this.tasks = tasks;
         this.applications = applications;
         this.identities = identities;
         this.admin = admin;
+        this.verification = verification;
     }
 
     @Transactional
@@ -82,6 +84,7 @@ public class TaskService {
     public TaskResponse publish(String subject, UUID taskId) {
         UniWorkUser poster = identities.requireTaskPoster(subject);
         admin.requireCanPublish(poster.getId());
+        verification.requireVerified(poster.getId(), "NIC_VERIFICATION_REQUIRED", "Please verify your NIC from your profile before publishing a task.");
         Task task = findOwnedForUpdate(subject, taskId);
         if (task.getStatus() != TaskStatus.DRAFT) throw conflict("Only draft tasks can be published.");
         if (!task.getScheduledAt().isAfter(Instant.now())) throw new ApiException(HttpStatus.BAD_REQUEST, "TASK_DATE_IN_PAST", "Choose a future task date and time.");

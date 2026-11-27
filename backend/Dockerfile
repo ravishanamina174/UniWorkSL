@@ -7,6 +7,7 @@ COPY src/ src/
 RUN ./mvnw -B -DskipTests package
 
 FROM eclipse-temurin:21-jre-alpine AS runtime
+RUN apk add --no-cache tesseract-ocr tesseract-ocr-data-eng
 RUN addgroup -S uniwork && adduser -S -G uniwork uniwork
 WORKDIR /app
 COPY --from=build --chown=uniwork:uniwork /workspace/target/uniwork-api-0.1.0-SNAPSHOT.jar /app/app.jar

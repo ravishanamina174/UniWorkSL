@@ -24,9 +24,11 @@ public class TaskApplicationService {
     private final StudentProfileRepository profiles;
     private final UserIdentityService identities;
     private final TaskExecutionRepository executions;
+    private final lk.uniwork.identity.IdentityVerificationService verification;
     public TaskApplicationService(TaskRepository tasks, TaskApplicationRepository applications,
-                                  StudentProfileRepository profiles, UserIdentityService identities, TaskExecutionRepository executions) {
-        this.tasks = tasks; this.applications = applications; this.profiles = profiles; this.identities = identities; this.executions = executions;
+                                  StudentProfileRepository profiles, UserIdentityService identities, TaskExecutionRepository executions,
+                                  lk.uniwork.identity.IdentityVerificationService verification) {
+        this.tasks = tasks; this.applications = applications; this.profiles = profiles; this.identities = identities; this.executions = executions; this.verification=verification;
     }
 
     @Transactional
@@ -37,6 +39,7 @@ public class TaskApplicationService {
         Task task = tasks.findByIdForUpdate(taskId).orElseThrow(() -> notFound("TASK_NOT_FOUND", "This task is unavailable."));
         if (task.getStatus() != TaskStatus.PUBLISHED) throw conflict("Only published tasks accept applications.");
         if (task.getPoster().getId().equals(student.getId())) throw new ApiException(HttpStatus.FORBIDDEN, "OWN_TASK_APPLICATION", "You cannot apply to your own task.");
+        verification.requireVerified(student.getId(), "NIC_VERIFICATION_REQUIRED", "Complete NIC matching in your profile before applying for tasks.");
         TaskApplication existing = applications.findByTaskIdAndStudentClerkUserId(taskId, subject).orElse(null);
         if (existing != null) {
             if (existing.getStatus() != TaskApplicationStatus.WITHDRAWN) throw conflict("You already have an active application for this task.");

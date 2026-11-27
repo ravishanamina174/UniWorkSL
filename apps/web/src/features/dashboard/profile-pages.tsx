@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingState } from "@/components/ui/loading-state";
 import { useAuthenticatedApi } from "./use-api";
 import { ProfileForm } from "./profile-form";
+import { IdentityCard } from "./identity-card";
 
 function useProfile() {
   const api = useAuthenticatedApi();
@@ -35,6 +36,7 @@ export function ProfileViewPage() {
     <section className="form-section"><div className="form-section-heading"><h2>Personal information</h2><p>Your NIC and home address are only available through this authenticated profile.</p></div>
       <dl className="profile-details"><div><dt>Full Name</dt><dd>{profile.fullName}</dd></div><div><dt>Phone Number</dt><dd>{profile.phoneNumber}</dd></div><div><dt>NIC</dt><dd>{maskedNic}</dd></div><div><dt>Gender</dt><dd>{profile.gender.replaceAll("_", " ").toLowerCase()}</dd></div><div className="profile-detail-full"><dt>Address</dt><dd>{profile.address}</dd></div></dl>
     </section>
+    <IdentityCard initialStatus={profile.verificationStatus} />
   </div>;
 }
 

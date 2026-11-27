@@ -36,7 +36,12 @@ export type TaskPosterProfile = {
   gender: Gender;
   createdAt: string;
   updatedAt: string;
+  verificationStatus: IdentityStatus;
 };
+
+export type IdentityStatus = "UNVERIFIED" | "MANUAL_REVIEW_PENDING" | "VERIFIED" | "REJECTED";
+export type IdentityVerification = { status: IdentityStatus; method: "AUTOMATIC_OCR" | "MANUAL_REVIEW" | null; unsuccessfulAttempts: number; verifiedAt: string | null; manualReviewAvailable: boolean; lastReviewStatus: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED" | null };
+export type IdentityMatchResult = { outcome: "MATCHED" | "NOT_MATCHED" | "UNREADABLE"; verification: IdentityVerification };
 
 export type TaskInput = {
   title: string;
@@ -133,6 +138,7 @@ export type StudentProfile = StudentProfileInput & {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  verificationStatus: IdentityStatus;
 };
 
 export type Availability = "WEEKENDS" | "WEEKDAYS" | "EVERY_DAY" | "AFTER_5_PM" | "HOLIDAY_FULL_TIME";

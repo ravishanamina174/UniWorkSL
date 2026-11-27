@@ -41,3 +41,15 @@
 .admin-charts h2 { font-size: 17px; font-weight: 650; }
 .admin-charts p { color: var(--muted); }
 .admin-nav-link.active svg { color: var(--accent-strong); }
+.identity-review-list { border: 1px solid var(--border); background: var(--surface); }
+.identity-review-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 16px; align-items: center; width: 100%; padding: 17px 20px; border: 0; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); text-align: left; cursor: pointer; }
+.identity-review-row:last-child { border-bottom: 0; }
+.identity-review-row:hover { background: var(--surface-tint); }
+.identity-review-row span:first-child { display: flex; flex-direction: column; gap: 4px; }
+.identity-review-row small { color: var(--muted); }
+.identity-review-detail { margin-top: 18px; padding: 0 20px 20px; border: 1px solid var(--border); background: var(--surface); }
+.identity-review-detail .form-section-heading { display: flex; justify-content: space-between; margin: 0 -20px 16px; }
+.identity-review-detail p { color: var(--muted); }
+.identity-review-image { display: block; max-width: 100%; max-height: 560px; margin: 18px 0; object-fit: contain; border: 1px solid var(--border); }
+.identity-review-detail textarea { width: min(100%, 680px); padding: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+@media (max-width: 800px) { .identity-review-row { grid-template-columns: 1fr auto; } .identity-review-row span:nth-child(2), .identity-review-row span:nth-child(3), .identity-review-row span:nth-child(4) { display: none; } }
