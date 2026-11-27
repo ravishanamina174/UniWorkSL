@@ -17,4 +17,9 @@ class IdentityDocumentTest {
     @Test void rejectsContentThatOnlyClaimsToBeAnImage() {
         assertThrows(ApiException.class,()->new IdentityDocument().read(new MockMultipartFile("image","nic.png","image/png","not an image".getBytes())));
     }
+
+    @Test void rejectsImagesWithUnsafeDimensionsBeforeDecodingPixels() throws Exception {
+        var bytes=new ByteArrayOutputStream(); ImageIO.write(new BufferedImage(4001,3000,BufferedImage.TYPE_INT_RGB),"png",bytes);
+        assertThrows(ApiException.class,()->new IdentityDocument().read(new MockMultipartFile("image","large.png","image/png",bytes.toByteArray())));
+    }
 }

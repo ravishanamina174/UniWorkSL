@@ -8,8 +8,8 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
-      maximum-pool-size: ${DB_POOL_MAX_SIZE:5}
-      minimum-idle: ${DB_POOL_MIN_IDLE:1}
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:3}
+      minimum-idle: ${DB_POOL_MIN_IDLE:0}
       connection-timeout: ${DB_POOL_CONNECTION_TIMEOUT_MS:30000}
       max-lifetime: ${DB_POOL_MAX_LIFETIME_MS:1740000}
       data-source-properties:
@@ -74,3 +74,5 @@ uniwork:
     review-retention-days: ${IDENTITY_REVIEW_RETENTION_DAYS:30}
     orphan-grace-days: ${IDENTITY_ORPHAN_GRACE_DAYS:45}
     tesseract-command: ${IDENTITY_TESSERACT_COMMAND:tesseract}
+    ocr-concurrency: ${IDENTITY_OCR_CONCURRENCY:1}
+    ocr-timeout-ms: ${IDENTITY_OCR_TIMEOUT_MS:15000}

@@ -13,4 +13,6 @@ WORKDIR /app
 COPY --from=build --chown=uniwork:uniwork /workspace/target/uniwork-api-0.1.0-SNAPSHOT.jar /app/app.jar
 USER uniwork
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.jar"]
+# Render's free instance has 512 MiB. Keep a fixed heap ceiling so native JVM,
+# Spring, image decoding, and the single OCR worker retain headroom.
+ENTRYPOINT ["java", "-Xms64m", "-Xmx256m", "-Xss512k", "-XX:MaxMetaspaceSize=96m", "-XX:MaxDirectMemorySize=32m", "-XX:+UseSerialGC", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.jar"]

@@ -10,9 +10,9 @@ The backend-only image is built by `backend/Dockerfile`. The root `render.yaml` 
 - Health check path: `/api/v1/health`.
 - `SPRING_PROFILES_ACTIVE=postgis,prod` enables the PostGIS Flyway location and production settings.
 - Render supplies `PORT`; Spring Boot binds to `${PORT:8080}`. Do not set a fixed port in the dashboard.
-- Hikari defaults cap each instance at five pooled connections, one idle connection, and a 29-minute maximum connection lifetime. The Blueprint lets operators override pool bounds.
+- Hikari defaults cap each instance at three pooled connections, no idle connection, and a 29-minute maximum connection lifetime. The Blueprint lets operators override pool bounds.
 
-The image uses Maven with Java 21 for its build stage and a non-root Java 21 JRE Alpine runtime. `backend/.dockerignore` excludes local `.env` files and build output. No credentials are baked into the image. Container runtime testing has not been performed locally.
+The image uses Maven with Java 21 for its build stage and a non-root Java 21 JRE Alpine runtime. It installs Tesseract plus English language data. The runtime caps Java heap at 256 MiB, reserves bounded metaspace/direct memory, uses Serial GC, and limits OCR to one subprocess. `backend/.dockerignore` excludes local `.env` files and build output. No credentials are baked into the image. Container runtime testing has not been performed locally.
 
 ## Required Render environment values
 

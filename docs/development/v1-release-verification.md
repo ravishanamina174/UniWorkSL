@@ -42,7 +42,7 @@ The repository is prepared for deployment and contains the public site, Task Pos
 
 ## Security and reliability review
 
-- Backend production profile disables Swagger/OpenAPI routes, validates required TLS/origin/PII settings at startup, keeps Hibernate schema mode at `validate`, runs Flyway with the PostGIS profile, and bounds the Hikari pool to five connections per instance.
+- Backend production profile disables Swagger/OpenAPI routes, validates required TLS/origin/PII settings at startup, keeps Hibernate schema mode at `validate`, runs Flyway with the PostGIS profile, bounds the Hikari pool to three connections per instance, and caps the Render JVM heap at 256 MiB with one OCR subprocess.
 - API security retains Clerk JWT signature/JWKS, issuer, expiration, not-before, optional audience, and configured `azp` validation. Student and Poster role/ownership rules are enforced server-side. No authentication checks were bypassed.
 - PII encryption key values, Clerk secrets, database credentials, and local environment contents are not included here or in the deployment files. Keep the same PII key for any database containing values encrypted with it.
 - Mobile requests only a foreground location fix after valid PIN verification; no background permission is declared. Location is not represented as a safety guarantee. Direct payments remain outside UniWork.

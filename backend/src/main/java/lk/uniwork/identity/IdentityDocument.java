@@ -12,6 +12,8 @@ import java.io.IOException;
 
 @Component
 public class IdentityDocument {
+    private static final long MAX_PIXELS = 12_000_000L;
+    private static final int MAX_DIMENSION = 6000;
     public record Image(byte[] bytes, String contentType) { }
 
     public Image read(MultipartFile file) {
@@ -31,7 +33,8 @@ public class IdentityDocument {
                 try {
                     reader.setInput(source);
                     int width=reader.getWidth(0), height=reader.getHeight(0);
-                    if (width<300 || height<150 || (long)width*height>20_000_000) throw invalid();
+                    if (width<300 || height<150 || width>MAX_DIMENSION || height>MAX_DIMENSION
+                            || (long)width*height>MAX_PIXELS) throw invalid();
                     decoded=reader.read(0);
                 } finally { reader.dispose(); }
             }

@@ -21,6 +21,8 @@ Use ignored local environment files for development and each hosting provider's 
 | `IDENTITY_ORPHAN_GRACE_DAYS` | Render / backend | Age after which unreferenced NIC objects are deleted, default 45 days |
 | `IDENTITY_CLEANUP_INTERVAL_MS` | Render / backend | Retry and expiry sweep interval, default one hour |
 | `IDENTITY_TESSERACT_COMMAND` | Backend | Optional OCR binary path; default `tesseract` |
+| `IDENTITY_OCR_CONCURRENCY` | Render / backend | OCR subprocess limit; keep at `1` on 512 MiB instances |
+| `IDENTITY_OCR_TIMEOUT_MS` | Render / backend | OCR subprocess timeout; default `15000` |
 | `NEXT_PUBLIC_API_BASE_URL` | Vercel / web; EAS / mobile | Backend origin; HTTPS in production |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Vercel / web | Browser-visible Clerk publishable key; environment-specific |
 | `CLERK_SECRET_KEY` | Vercel / web | Clerk server secret; environment-specific |
@@ -35,7 +37,7 @@ Use ignored local environment files for development and each hosting provider's 
 | `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` | EAS / mobile | Browser-visible Clerk publishable key for the matching instance |
 | `SPRING_PROFILES_ACTIVE` | Render / backend | `postgis,prod` |
 | `PORT` | Render / backend | Automatically supplied by Render; do not hard-code |
-| `SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE` | Render / backend | Default/Blueprint cap: 5 per instance |
-| `SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE` | Render / backend | Default/Blueprint idle floor: 1 |
+| `SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE` | Render / backend | Default/Blueprint cap: 3 per instance |
+| `SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE` | Render / backend | Default/Blueprint idle floor: 0 |
 
 For local emulator development, mobile's example API origin uses `http://10.0.2.2:8080`. For physical-device development, replace it with a reachable computer LAN address. Production must use HTTPS.
