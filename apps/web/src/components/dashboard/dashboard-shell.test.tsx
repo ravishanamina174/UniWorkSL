@@ -14,7 +14,7 @@ describe("Task Poster navigation", () => {
     render(<DashboardShell displayName="Poster"><p>Page content</p></DashboardShell>);
     const mobile = screen.getByRole("navigation", { name: "Mobile dashboard navigation" });
     const desktop = screen.getByRole("navigation", { name: "Dashboard navigation" });
-    for (const label of ["Dashboard", "Posted Tasks", "Applications", "Student Lookup", "Profile"]) {
+    for (const label of ["Dashboard", "Posted Tasks", "Applications", "Student Categories", "Profile"]) {
       expect(within(mobile).getByRole("link", { name: label })).toBeInTheDocument();
       expect(within(desktop).getByRole("link", { name: label })).toBeInTheDocument();
     }

@@ -14,15 +14,15 @@ export function SiteFooter() {
         </div>
         <nav className="footer-link-group" aria-label="Explore UniWorkSL">
           <span>Explore</span>
-          <a href="#about">Why UniWork</a>
-          <a href="#how-it-works">How it works</a>
-          <a href="#safety">Student safety</a>
+          <Link href="/#about">Why UniWork</Link>
+          <Link href="/#how-it-works">How it works</Link>
+          <Link href="/#safety">Student safety</Link>
         </nav>
         <nav className="footer-link-group" aria-label="Get started with UniWorkSL">
           <span>Get started</span>
-          <Link href="#student-app">Student app <ArrowUpRight size={14} aria-hidden="true" /></Link>
+          <Link href="/#student-app">Student app <ArrowUpRight size={14} aria-hidden="true" /></Link>
           <Link href="/dashboard">Post a task <ArrowUpRight size={14} aria-hidden="true" /></Link>
-          <a href="#categories">Task categories <ArrowUpRight size={14} aria-hidden="true" /></a>
+          <Link href="/#categories">Task categories <ArrowUpRight size={14} aria-hidden="true" /></Link>
         </nav>
       </div>
       <div className="footer-bottom"><span>© {new Date().getFullYear()} UniWork Sri Lanka. All rights reserved.</span><span>Made in Sri Lanka</span></div>

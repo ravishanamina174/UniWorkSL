@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
-import { BriefcaseBusiness, ChevronRight, FileSearch, FileText, LayoutDashboard, UserRound } from "lucide-react";
+import { BriefcaseBusiness, ChevronRight, Grid2X2, FileText, LayoutDashboard, UserRound } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { BrandSymbol } from "@/components/brand/brand-symbol";
 
@@ -12,12 +12,12 @@ const navigation = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/tasks", label: "Posted Tasks", icon: BriefcaseBusiness },
   { href: "/dashboard/applications", label: "Applications", icon: FileText },
-  { href: "/dashboard/student-lookup", label: "Student Lookup", icon: FileSearch },
+  { href: "/dashboard/student-categories", label: "Student Categories", icon: Grid2X2 },
   { href: "/dashboard/profile", label: "Profile", icon: UserRound },
 ];
 
 const routeLabels: Record<string, string> = {
-  dashboard: "Dashboard", tasks: "Posted Tasks", new: "Create Task", applications: "Applications", "student-lookup": "Student Lookup", profile: "Profile", onboarding: "Complete Profile", edit: "Edit Task",
+  dashboard: "Dashboard", tasks: "Posted Tasks", new: "Create Task", applications: "Applications", "student-categories": "Student Categories", profile: "Profile", onboarding: "Complete Profile", edit: "Edit Task",
 };
 
 export function DashboardShell({ children, displayName }: { children: React.ReactNode; displayName: string }) {

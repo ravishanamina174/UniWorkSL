@@ -1,2 +1,2 @@
-import { StudentLookupPage } from "@/features/dashboard/student-lookup-page";
-export default function Page() { return <StudentLookupPage />; }
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/dashboard/student-categories"); }

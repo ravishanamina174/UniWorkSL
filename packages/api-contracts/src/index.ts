@@ -170,9 +170,6 @@ export type StudentProfessionalProfile = {
   updatedAt: string | null;
 };
 export type StudentProfessionalProfileInput = Omit<StudentProfessionalProfile, "profileId" | "updatedAt">;
-export type StudentLookupCriteria = { skills: string[]; location: string | null; availability: Availability[]; languages: ProfessionalLanguage[] };
-export type StudentLookupCandidate = StudentProfessionalProfile & { name: string; matchScore: number; matchReasons: string[] };
-export type StudentLookupResponse = { criteria: StudentLookupCriteria; candidates: StudentLookupCandidate[] };
 
 export type StudentTaskApplication = {
   applicationId: string;

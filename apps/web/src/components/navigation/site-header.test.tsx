@@ -25,6 +25,23 @@ describe("site navigation", () => {
     expect(screen.queryByRole("navigation", { name: "Mobile navigation" })).not.toBeInTheDocument();
   });
 
+  it("expands mobile categories only on request and closes the desktop dropdown with Escape", () => {
+    render(<ThemeProvider><SiteHeader /></ThemeProvider>);
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation menu" }));
+    const mobile = screen.getByRole("navigation", { name: "Mobile navigation" });
+    expect(within(mobile).queryByRole("link", { name: /moving & packing/i })).not.toBeInTheDocument();
+    fireEvent.click(within(mobile).getByRole("button", { name: "Categories" }));
+    expect(within(mobile).getByRole("link", { name: /moving & packing/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Close navigation menu" }));
+    fireEvent.click(screen.getByRole("button", { name: "Categories" }));
+    expect(screen.getByRole("button", { name: "Categories" })).toHaveAttribute("aria-expanded", "true");
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.getByRole("button", { name: "Categories" })).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(screen.getByRole("button", { name: "Categories" }));
+    fireEvent.pointerDown(document.body);
+    expect(screen.getByRole("button", { name: "Categories" })).toHaveAttribute("aria-expanded", "false");
+  });
+
   it("switches to dark mode and persists the selected theme", async () => {
     render(<ThemeProvider><SiteHeader /></ThemeProvider>);
     fireEvent.click(screen.getByRole("button", { name: "Toggle light and dark theme" }));
