@@ -36,9 +36,9 @@ export function SiteHeader() {
   }, [menuOpen]);
 
   return (
-    <header className="site-header">
+    <header id="top" className="site-header">
       <div className="site-header-inner">
-        <Link href="/" className="brand-lockup" aria-label="UniWorkSL home"><BrandSymbol className="brand-mark" /><span className="brand-wordmark">UniWorkSL</span></Link>
+        <Link href="/#top" className="brand-lockup" aria-label="UniWorkSL home"><BrandSymbol className="brand-mark" /><span className="brand-wordmark">UniWorkSL</span></Link>
         <nav className="desktop-nav" aria-label="Main navigation">{links.map((link) => <Link key={link.href} href={`/${link.href}`} onClick={() => setCategoriesOpen(false)}>{link.label}</Link>)}<div ref={categoriesRef} className="categories-nav" onMouseEnter={() => setCategoriesOpen(true)} onMouseLeave={() => setCategoriesOpen(false)}><button type="button" aria-expanded={categoriesOpen} aria-controls="desktop-categories" onClick={() => setCategoriesOpen(true)}>Categories <ChevronDown size={14} aria-hidden="true" /></button>{categoriesOpen && <div id="desktop-categories" className="categories-dropdown">{STUDENT_CATEGORIES.map((category) => <Link href={`/categories/${category.slug}`} onClick={() => setCategoriesOpen(false)} key={category.value}>{category.label}</Link>)}</div>}</div></nav>
         <div className="header-actions"><ThemeToggle /><Link className="header-download" href="/#student-app">Download app</Link>{isLoaded && <Link className="header-dashboard" href={isAdmin ? "/admin/dashboard" : "/dashboard"}>{isAdmin ? <>Open Admin Workspace <LayoutDashboard size={15} aria-hidden="true" /></> : <>Post a task <ArrowUpRight size={15} aria-hidden="true" /></>}</Link>}</div>
         <button className="mobile-menu-toggle" type="button" aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => { setMenuOpen((open) => !open); setMobileCategoriesOpen(false); }}>{menuOpen ? <X size={21} /> : <Menu size={21} />}</button>

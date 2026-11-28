@@ -1,16 +1,17 @@
 import { useState, type ComponentProps, type ReactNode } from 'react';
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MapPin } from 'lucide-react-native';
 import type { LucideIcon } from 'lucide-react-native';
 import type { Task, TaskStatus } from '@uniwork/api-contracts';
 import { radius, spacing, useTheme } from '@/theme';
 
-export function Screen({ children, scroll = true, refreshing, onRefresh }: { children: ReactNode; scroll?: boolean; refreshing?: boolean; onRefresh?: () => void }) {
+export function Screen({ children, scroll = true, refreshing, onRefresh, keyboardAware = false }: { children: ReactNode; scroll?: boolean; refreshing?: boolean; onRefresh?: () => void; keyboardAware?: boolean }) {
   const theme = useTheme();
+  const content = scroll ? <ScrollView contentContainerStyle={styles.screenContent} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" automaticallyAdjustKeyboardInsets={keyboardAware && Platform.OS === 'ios'} refreshControl={onRefresh ? <RefreshControl refreshing={refreshing || false} onRefresh={onRefresh} tintColor={theme.accent} /> : undefined}>{children}</ScrollView> : <View style={styles.screenContent}>{children}</View>;
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.background }]} edges={['top', 'left', 'right']}>
-      {scroll ? <ScrollView contentContainerStyle={styles.screenContent} keyboardShouldPersistTaps="handled" refreshControl={onRefresh ? <RefreshControl refreshing={refreshing || false} onRefresh={onRefresh} tintColor={theme.accent} /> : undefined}>{children}</ScrollView> : <View style={styles.screenContent}>{children}</View>}
+      {keyboardAware ? <KeyboardAvoidingView style={styles.safe} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>{content}</KeyboardAvoidingView> : content}
     </SafeAreaView>
   );
 }

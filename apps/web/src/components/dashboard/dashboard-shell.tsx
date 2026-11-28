@@ -38,7 +38,7 @@ export function DashboardShell({ children, displayName }: { children: React.Reac
     <div className="dashboard-root">
       <header className="dashboard-topbar">
         <div className="dashboard-top-left">
-          <Link href="/" className="brand-lockup"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span></Link>
+          <Link href="/#top" className="brand-lockup"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span></Link>
           <div className="dashboard-breadcrumb"><span>Task Poster</span><ChevronRight size={15} aria-hidden="true" /><strong>{pageLabel}</strong></div>
         </div>
         <div className="dashboard-top-right"><ThemeToggle /><span className="dashboard-user-name">{displayName}</span><UserButton /></div>

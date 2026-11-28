@@ -25,4 +25,13 @@ describe("authenticated API client", () => {
     await expect(request).rejects.toMatchObject({ status: 401, code: "UNAUTHENTICATED" } satisfies Partial<ApiRequestError>);
     await expect(request).rejects.not.toThrow("secret-test-token");
   });
+
+  it("passes safe field validation details to the form", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({
+      status: 400, code: "VALIDATION_FAILED", message: "One or more request fields are invalid.",
+      fieldErrors: { latitude: "numeric value out of bounds" },
+    }, { status: 400 })));
+    await expect(apiRequest("/api/v1/poster/direct-tasks", { method: "POST", body: "{}" }))
+      .rejects.toMatchObject({ code: "VALIDATION_FAILED", fieldErrors: { latitude: "numeric value out of bounds" } });
+  });
 });

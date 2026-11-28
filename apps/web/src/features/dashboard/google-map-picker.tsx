@@ -9,7 +9,7 @@ export type Coordinates = { latitude: number; longitude: number };
 
 let loaderConfigured = false;
 
-export function GoogleMapPicker({ value, onChange, onAddressChange }: { value: Coordinates | null; onChange: (coordinates: Coordinates) => void; onAddressChange?: (address: string) => void }) {
+export function GoogleMapPicker({ value, onChange, onAddressChange, manualCoordinatesAvailable = true }: { value: Coordinates | null; onChange: (coordinates: Coordinates) => void; onAddressChange?: (address: string) => void; manualCoordinatesAvailable?: boolean }) {
   const mapElement = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
   const marker = useRef<google.maps.Marker | null>(null);
@@ -102,12 +102,12 @@ export function GoogleMapPicker({ value, onChange, onAddressChange }: { value: C
         map.setCenter(point);
         map.setZoom(15);
       }
-    }, () => setLocationError("Location permission was unavailable. You can enter coordinates manually."), { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
-  }, []);
+    }, () => setLocationError(manualCoordinatesAvailable ? "Location permission was unavailable. You can enter coordinates manually." : "Location permission was unavailable. Allow location access or choose a point on the map."), { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+  }, [manualCoordinatesAvailable]);
 
   return <div className="map-picker">
     <div className="map-picker-toolbar"><div><MapPin size={16} aria-hidden="true" /><span>Task location</span></div><Button type="button" variant="secondary" onClick={chooseCurrentLocation}><LocateFixed size={15} aria-hidden="true" /> Use my current location</Button></div>
-    {apiKey ? <><div className="google-map-frame">{loading ? <div className="map-placeholder" role="status">Loading Google Maps…</div> : null}<div className="google-map" ref={mapElement} aria-label="Google Map. Click to select a task location." />{mapError ? <p className="map-error" role="alert">{mapError}</p> : null}</div><p className="field-hint">Click the map to place a marker, or drag the marker to adjust the location.</p></> : <div className="map-config-message"><MapPin size={18} aria-hidden="true" /><div><strong>Google Maps is not configured.</strong><p>Add <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> to <code>apps/web/.env.local</code> for the interactive map. Manual coordinates are available below.</p></div></div>}
+    {apiKey ? <><div className="google-map-frame">{loading ? <div className="map-placeholder" role="status">Loading Google Maps…</div> : null}<div className="google-map" ref={mapElement} aria-label="Google Map. Click to select a task location." />{mapError ? <p className="map-error" role="alert">{mapError}</p> : null}</div><p className="field-hint">Click the map to place a marker, or drag the marker to adjust the location.</p></> : <div className="map-config-message"><MapPin size={18} aria-hidden="true" /><div><strong>Google Maps is not configured.</strong><p>{manualCoordinatesAvailable ? <>Add <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> to <code>apps/web/.env.local</code> for the interactive map. Manual coordinates are available below.</> : <>Use your current location above, or configure <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> for map selection.</>}</p></div></div>}
     {locationError ? <p className="field-error" role="alert">{locationError}</p> : null}
   </div>;
 }

@@ -63,5 +63,5 @@ export function OnboardingPage() {
   useEffect(() => { if (profileExists) router.replace("/dashboard"); }, [profileExists, router]);
   if (checking || profileExists) return <LoadingState label="Checking your profile" />;
   if (error) return <div className="form-alert" role="alert">{error}</div>;
-  return <div className="dashboard-content-stack"><header className="dashboard-page-head"><div><p className="eyebrow">TASK POSTER SETUP</p><h1>Complete your profile</h1><p>Enter the details needed to set up your Task Poster workspace.</p></div><Link className="text-link" href="/">Back to UniWork</Link></header><EmptyState icon={<UserRound size={20} />} title="A few details to get started" description="Your profile is stored securely and is visible only to you." /><ProfileForm onboarding /></div>;
+  return <div className="dashboard-content-stack"><header className="dashboard-page-head"><div><p className="eyebrow">TASK POSTER SETUP</p><h1>Complete your profile</h1><p>Enter the details needed to set up your Task Poster workspace.</p></div><Link className="text-link" href="/#top">Back to UniWork</Link></header><EmptyState icon={<UserRound size={20} />} title="A few details to get started" description="Your profile is stored securely and is visible only to you." /><ProfileForm onboarding /></div>;
 }

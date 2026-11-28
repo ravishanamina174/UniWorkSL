@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,6 +39,24 @@ class DirectTaskServiceTest {
         verify(users).findById(student.getId());
         verify(gate).requirePosterVerified(poster.getId());
         verify(tasks).save(any(DirectTask.class));
+    }
+
+    @Test
+    void createdOfferAppearsInPosterAndStudentLists() {
+        UniWorkUser poster = new UniWorkUser("poster", UserRole.TASK_POSTER);
+        UniWorkUser student = new UniWorkUser("student", UserRole.STUDENT);
+        when(identities.requireTaskPoster("poster")).thenReturn(poster);
+        when(identities.requireStudent("student")).thenReturn(student);
+        when(users.findById(student.getId())).thenReturn(Optional.of(student));
+        when(tasks.save(any(DirectTask.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        service.create("poster", request(student.getId().toString()));
+        var saved = org.mockito.ArgumentCaptor.forClass(DirectTask.class);
+        verify(tasks).save(saved.capture());
+        when(tasks.findByPosterClerkUserIdOrderByCreatedAtDesc("poster")).thenReturn(List.of(saved.getValue()));
+        when(tasks.findByStudentClerkUserIdOrderByCreatedAtDesc("student")).thenReturn(List.of(saved.getValue()));
+
+        assertEquals(saved.getValue().getId(), service.poster("poster").getFirst().directTaskId());
+        assertEquals(saved.getValue().getId(), service.student("student").getFirst().directTaskId());
     }
 
     @Test

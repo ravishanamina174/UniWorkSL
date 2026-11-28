@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.Instant;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,7 +28,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException exception) {
-        return error(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", "One or more request fields are invalid.");
+        Map<String, String> fields = exception.getBindingResult().getFieldErrors().stream()
+                .collect(Collectors.toMap(error -> error.getField(), error ->
+                        error.getDefaultMessage() == null ? "Invalid value." : error.getDefaultMessage(),
+                        (first, ignored) -> first));
+        return ResponseEntity.badRequest().body(new ApiError(400, "VALIDATION_FAILED",
+                "One or more request fields are invalid.", Instant.now(), fields));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

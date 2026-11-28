@@ -8,7 +8,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="footer-main">
         <div className="footer-intro">
-          <Link href="/" className="brand-lockup footer-brand" aria-label="UniWorkSL home"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span></Link>
+          <Link href="/#top" className="brand-lockup footer-brand" aria-label="UniWorkSL home"><BrandSymbol className="brand-mark" /><span>UniWorkSL</span></Link>
           <p>The First Dedicated Student Task Network in Sri Lanka.</p>
           
         </div>

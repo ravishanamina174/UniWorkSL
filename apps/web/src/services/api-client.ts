@@ -2,7 +2,7 @@ import type { ApiError } from "@uniwork/api-contracts";
 import { getApiBaseUrl } from "@/lib/env";
 
 export class ApiRequestError extends Error {
-  constructor(public readonly status: number, message: string, public readonly code = "REQUEST_FAILED") {
+  constructor(public readonly status: number, message: string, public readonly code = "REQUEST_FAILED", public readonly fieldErrors: Record<string, string> = {}) {
     super(message);
     this.name = "ApiRequestError";
   }
@@ -31,7 +31,8 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
   if (!response.ok) {
     let body: Partial<ApiError> = {};
     try { body = await response.json() as Partial<ApiError>; } catch { /* non-JSON response */ }
-    throw new ApiRequestError(response.status, body.message || `Request failed (${response.status}).`, body.code);
+    throw new ApiRequestError(response.status, body.message || `Request failed (${response.status}).`, body.code,
+      (body as Partial<ApiError> & { fieldErrors?: Record<string, string> }).fieldErrors ?? {});
   }
   return await response.json() as T;
 }

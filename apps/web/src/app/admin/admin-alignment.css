@@ -64,3 +64,6 @@
 .identity-review-close { min-width: 38px; min-height: 38px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--foreground); cursor: pointer; }
 @media (max-width: 800px) { .identity-review-row { grid-template-columns: 1fr auto; } .identity-review-row span:nth-child(2), .identity-review-row span:nth-child(3), .identity-review-row span:nth-child(4) { display: none; } }
 @media (max-width: 600px) { .identity-review-actions { align-items: stretch; flex-direction: column; } .identity-review-actions button, .identity-review-secondary-button { width: 100%; } .identity-review-detail { padding-inline: 16px; } }
+
+.admin-sidebar { position: sticky; top: 62px; height: calc(100vh - 62px); align-self: start; overflow-y: auto; overscroll-behavior: contain; }
+@media (max-width: 980px) { .admin-sidebar { position: static; height: auto; overflow: visible; } }
