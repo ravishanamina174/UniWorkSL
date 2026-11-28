@@ -4,7 +4,7 @@ describe('UniWorkApi', () => {
   it('sends the Clerk bearer token and JSON request body', async () => {
     const fetcher = jest.fn(async (_url: string | URL | Request, init?: RequestInit) => new Response(JSON.stringify({ userId: 'u1' }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
     const api = new UniWorkApi('https://api.example.test', async () => 'test-token', undefined, fetcher as typeof fetch);
-    await api.saveProfile({ fullName: 'A', age: 22, gender: 'OTHER', address: 'X', phoneNumber: '12345678', nic: '123456789V', university: 'U', faculty: 'F' });
+    await api.saveProfile({ fullName: 'A', age: 22, gender: 'OTHER', address: 'X', phoneNumber: '12345678', nic: '123456789V', university: 'U', faculty: 'F', primaryCategory: 'MOVING_PACKING' });
     const [, request] = fetcher.mock.calls[0];
     expect(new Headers(request?.headers).get('Authorization')).toBe('Bearer test-token');
     expect(JSON.parse(String(request?.body))).toMatchObject({ fullName: 'A' });

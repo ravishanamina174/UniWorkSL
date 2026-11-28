@@ -32,7 +32,9 @@ public class TaskApplicationService {
     }
 
     @Transactional
-    public TaskApplicationResponse apply(String subject, UUID taskId) {
+    public TaskApplicationResponse apply(String subject, UUID taskId, String introduction) {
+        if (introduction == null || introduction.isBlank() || introduction.trim().split("\\s+").length > 200)
+            throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_APPLICATION_INTRODUCTION", "Write a short introduction of no more than 200 words.");
         UniWorkUser student = identities.requireStudent(subject);
         StudentProfile profile = profiles.findById(student.getId()).orElseThrow(() -> new ApiException(HttpStatus.FORBIDDEN,
                 "STUDENT_PROFILE_REQUIRED", "Complete your Student profile before applying."));
@@ -44,11 +46,15 @@ public class TaskApplicationService {
         if (existing != null) {
             if (existing.getStatus() != TaskApplicationStatus.WITHDRAWN) throw conflict("You already have an active application for this task.");
             existing.changeStatus(TaskApplicationStatus.PENDING);
+            existing.setIntroduction(introduction.trim());
             return TaskApplicationResponse.from(existing, profile);
         }
-        TaskApplication saved = applications.save(new TaskApplication(task, student));
+        TaskApplication application = new TaskApplication(task, student); application.setIntroduction(introduction.trim());
+        TaskApplication saved = applications.save(application);
         return TaskApplicationResponse.from(saved, profile);
     }
+    @Transactional
+    public TaskApplicationResponse apply(String subject, UUID taskId) { return apply(subject, taskId, "I can help with this task and will follow the agreed schedule."); }
 
     @Transactional(readOnly = true)
     public PageResponse<TaskApplicationResponse> mine(String subject, int page, int size, TaskApplicationStatus status) {

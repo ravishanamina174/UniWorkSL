@@ -3,7 +3,7 @@ import type { StudentProfileInput } from '@uniwork/api-contracts';
 
 const validProfile: StudentProfileInput = {
   fullName: 'Student Example', age: 21, gender: 'PREFER_NOT_TO_SAY', address: 'Colombo',
-  phoneNumber: '+94 77 123 4567', nic: '200412345678', university: 'University of Colombo', faculty: 'Science',
+  phoneNumber: '+94 77 123 4567', nic: '200412345678', university: 'University of Colombo', faculty: 'Science', primaryCategory: 'MOVING_PACKING',
 };
 
 describe('student profile validation', () => {

@@ -12,6 +12,7 @@ export function validateStudentProfile(input: StudentProfileInput): ProfileField
   if (!/^(?:[0-9]{9}[vVxX]|[0-9]{12})$/.test(input.nic.trim())) errors.nic = 'Enter a valid Sri Lankan NIC.';
   if (!input.university.trim()) errors.university = 'Enter your university.';
   if (!input.faculty.trim()) errors.faculty = 'Enter your faculty.';
+  if (!input.primaryCategory) errors.primaryCategory = 'Choose your primary category.';
   return errors;
 }
 

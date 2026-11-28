@@ -100,7 +100,7 @@ export class UniWorkApi {
     return this.request<PageResponse<Task>>(`/api/v1/student/tasks?${params.toString()}`);
   };
   getTask = (taskId: string) => this.request<Task>(`/api/v1/student/tasks/${taskId}`);
-  applyForTask = (taskId: string) => this.request<StudentTaskApplication>(`/api/v1/student/tasks/${taskId}/applications`, { method: 'POST' });
+  applyForTask = (taskId: string, introduction = 'I can help with this task and will follow the agreed schedule.') => this.request<StudentTaskApplication>(`/api/v1/student/tasks/${taskId}/applications`, { method: 'POST', body: JSON.stringify({ introduction }) });
   listApplications = (page = 0) => this.request<PageResponse<StudentTaskApplication>>(`/api/v1/student/applications?page=${page}&size=50`);
   withdrawApplication = (applicationId: string) => this.request<StudentTaskApplication>(`/api/v1/student/applications/${applicationId}/withdraw`, { method: 'POST' });
   listAcceptedTasks = (page = 0) => this.request<PageResponse<StudentTaskExecution>>(`/api/v1/student/tasks/accepted?page=${page}&size=50`);
@@ -119,6 +119,9 @@ export class UniWorkApi {
   stopSafeTask = (taskId: string) => this.request<{ status: string; expiresAt: string | null }>(`/api/v1/student/tasks/${taskId}/safetask`, { method: 'DELETE' });
   submitReview = (taskId: string, input: TaskReviewInput) => this.request<TaskReview>(`/api/v1/student/tasks/${taskId}/review`, json('POST', input));
   submitReport = (taskId: string, input: SafetyReportInput) => this.request<SafetyReport>(`/api/v1/student/tasks/${taskId}/reports`, json('POST', input));
+  listDirectTasks = () => this.request<DirectTask[]>('/api/v1/student/direct-tasks');
+  actOnDirectTask = (directTaskId: string, action: 'ACCEPT' | 'DECLINE' | 'COUNTER', proposedAmount?: number) =>
+    this.request<DirectTask>(`/api/v1/student/direct-tasks/${directTaskId}/action`, json('POST', { action, proposedAmount }));
   listPaymentDisputes = (taskId: string) => this.request<PaymentDispute[]>(`/api/v1/student/tasks/${taskId}/payment-disputes`);
   filePaymentDispute = (taskId: string, input: { reason: PaymentDisputeReason; actualAmountLkr?: number; statement: string }) =>
     this.request<PaymentDispute>(`/api/v1/student/tasks/${taskId}/payment-disputes`, json('POST', input));
@@ -127,6 +130,8 @@ export class UniWorkApi {
 function json(method: string, value: unknown): RequestInit {
   return { method, body: JSON.stringify(value) };
 }
+
+export type DirectTask = { directTaskId: string; posterName: string; studentName: string; description: string; scheduledAt: string; amountLkr: number; locationAddress: string; status: string; counterAmountLkr?: number | null; taskId?: string | null };
 
 function defaultMessage(status: number, path = ''): string {
   if (status === 403) return 'This account cannot use the Student app. UniWork roles cannot be switched.';

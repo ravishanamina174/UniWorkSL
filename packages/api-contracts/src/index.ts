@@ -51,6 +51,7 @@ export type TaskInput = {
   latitude: number;
   longitude: number;
   requiredSkills: string[];
+  category?: StudentCategory;
 };
 
 export type Task = TaskInput & {
@@ -79,6 +80,7 @@ export type TaskApplication = {
   studentName: string;
   university: string;
   faculty: string;
+  introduction: string | null;
 };
 
 export type PosterExecution = {
@@ -131,6 +133,7 @@ export type StudentProfileInput = {
   nic: string;
   university: string;
   faculty: string;
+  primaryCategory: StudentCategory;
 };
 
 export type StudentProfile = StudentProfileInput & {
@@ -139,6 +142,15 @@ export type StudentProfile = StudentProfileInput & {
   updatedAt: string;
   verificationStatus: IdentityStatus;
 };
+export type StudentCategory = "MOVING_PACKING" | "EVENTS_PROMOTIONS" | "TUTORING_EDUCATION" | "IT_TECH_SUPPORT" | "DESIGN_CREATIVE" | "PHOTOGRAPHY_VIDEO" | "SHOPPING_ERRANDS" | "DELIVERY_PICKUP" | "GARDENING_OUTDOOR" | "CLEANING_HOME" | "OFFICE_DATA_ENTRY" | "PET_CARE_ASSISTANCE";
+export const STUDENT_CATEGORIES: ReadonlyArray<{ value: StudentCategory; label: string; slug: string }> = [
+  { value: "MOVING_PACKING", label: "Moving & Packing", slug: "moving-packing" }, { value: "EVENTS_PROMOTIONS", label: "Events & Promotions", slug: "events-promotions" },
+  { value: "TUTORING_EDUCATION", label: "Tutoring & Education", slug: "tutoring-education" }, { value: "IT_TECH_SUPPORT", label: "IT & Tech Support", slug: "it-tech-support" },
+  { value: "DESIGN_CREATIVE", label: "Design & Creative", slug: "design-creative" }, { value: "PHOTOGRAPHY_VIDEO", label: "Photography & Video", slug: "photography-video" },
+  { value: "SHOPPING_ERRANDS", label: "Shopping & Errands", slug: "shopping-errands" }, { value: "DELIVERY_PICKUP", label: "Delivery & Pickup", slug: "delivery-pickup" },
+  { value: "GARDENING_OUTDOOR", label: "Gardening & Outdoor Help", slug: "gardening-outdoor" }, { value: "CLEANING_HOME", label: "Cleaning & Home Help", slug: "cleaning-home" },
+  { value: "OFFICE_DATA_ENTRY", label: "Office & Data Entry", slug: "office-data-entry" }, { value: "PET_CARE_ASSISTANCE", label: "Pet Care & Assistance", slug: "pet-care-assistance" },
+];
 
 export type Availability = "WEEKENDS" | "WEEKDAYS" | "EVERY_DAY" | "AFTER_5_PM" | "HOLIDAY_FULL_TIME";
 export type ProfessionalLanguage = "SINHALA" | "ENGLISH" | "TAMIL";
@@ -171,6 +183,7 @@ export type StudentTaskApplication = {
   studentName: string;
   university: string;
   faculty: string;
+  introduction: string | null;
 };
 
 export type PinVerificationResult = {

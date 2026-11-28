@@ -1,4 +1,4 @@
-import type { Gender, StudentProfileInput } from '@uniwork/api-contracts';
+import { STUDENT_CATEGORIES, type Gender, type StudentProfileInput } from '@uniwork/api-contracts';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
@@ -16,7 +16,7 @@ const genders: { value: Gender; label: string }[] = [
 ];
 
 const emptyProfile: StudentProfileInput = {
-  fullName: '', age: 18, gender: 'PREFER_NOT_TO_SAY', address: '', phoneNumber: '', nic: '', university: '', faculty: '',
+  fullName: '', age: 18, gender: 'PREFER_NOT_TO_SAY', address: '', phoneNumber: '', nic: '', university: '', faculty: '', primaryCategory: 'MOVING_PACKING',
 };
 
 export default function StudentOnboardingScreen() {
@@ -82,6 +82,7 @@ export default function StudentOnboardingScreen() {
           {field('nic', 'NIC number', { autoCapitalize: 'characters', helper: 'Old 10-character or new 12-digit NIC format.' })}
           {field('university', 'University', { autoCapitalize: 'words' })}
           {field('faculty', 'Faculty', { autoCapitalize: 'words' })}
+          <View style={{ gap: 8 }}><Text style={{ color: theme.text, fontSize: 14, fontWeight: '600' }}>Primary category</Text><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{STUDENT_CATEGORIES.map((item) => <SelectOption key={item.value} label={item.label} value={item.value} selected={profile.primaryCategory === item.value} onSelect={(value) => update('primaryCategory', value)} />)}</View>{errors.primaryCategory ? <Text accessibilityRole="alert" style={{ color: theme.danger, fontSize: 12 }}>{errors.primaryCategory}</Text> : null}</View>
           {message ? <Text accessibilityRole="alert" style={{ color: theme.danger, fontSize: 13, lineHeight: 19 }}>{message}</Text> : null}
           <AppButton title="Save Student profile" onPress={submit} loading={saving} />
         </Card>

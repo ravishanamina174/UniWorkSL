@@ -9,13 +9,14 @@ export type Coordinates = { latitude: number; longitude: number };
 
 let loaderConfigured = false;
 
-export function GoogleMapPicker({ value, onChange }: { value: Coordinates | null; onChange: (coordinates: Coordinates) => void }) {
+export function GoogleMapPicker({ value, onChange, onAddressChange }: { value: Coordinates | null; onChange: (coordinates: Coordinates) => void; onAddressChange?: (address: string) => void }) {
   const mapElement = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
   const marker = useRef<google.maps.Marker | null>(null);
   const syncMarker = useRef<(coordinates: Coordinates, pan: boolean) => void>(() => {});
   const valueRef = useRef(value);
   const onChangeRef = useRef(onChange);
+  const onAddressChangeRef = useRef(onAddressChange);
   const [mapError, setMapError] = useState("");
   const [locationError, setLocationError] = useState("");
   const [loading, setLoading] = useState(Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY));
@@ -23,6 +24,7 @@ export function GoogleMapPicker({ value, onChange }: { value: Coordinates | null
 
   useEffect(() => { valueRef.current = value; }, [value]);
   useEffect(() => { onChangeRef.current = onChange; }, [onChange]);
+  useEffect(() => { onAddressChangeRef.current = onAddressChange; }, [onAddressChange]);
 
   useEffect(() => {
     if (!apiKey || !mapElement.current) { setLoading(false); return; }
@@ -45,13 +47,19 @@ export function GoogleMapPicker({ value, onChange }: { value: Coordinates | null
           clickableIcons: false,
         });
         mapInstance.current = map;
+        const resolveAddress = (coordinates: Coordinates) => {
+          if (!onAddressChangeRef.current) return;
+          new google.maps.Geocoder().geocode({ location: { lat: coordinates.latitude, lng: coordinates.longitude } }, (results, status) => {
+            if (status === "OK" && results?.[0]?.formatted_address) onAddressChangeRef.current?.(results[0].formatted_address);
+          });
+        };
         const setMarker = (coordinates: Coordinates, pan = true) => {
           const position = { lat: coordinates.latitude, lng: coordinates.longitude };
           if (!marker.current) {
             marker.current = new google.maps.Marker({ map, position, draggable: true, title: "Selected task location" });
             marker.current.addListener("dragend", () => {
               const location = marker.current?.getPosition();
-              if (location) onChangeRef.current({ latitude: location.lat(), longitude: location.lng() });
+              if (location) { const coordinates = { latitude: location.lat(), longitude: location.lng() }; onChangeRef.current(coordinates); resolveAddress(coordinates); }
             });
           } else marker.current.setPosition(position);
           if (pan) map.panTo(position);
@@ -61,7 +69,7 @@ export function GoogleMapPicker({ value, onChange }: { value: Coordinates | null
           if (event.latLng) {
             const coordinates = { latitude: event.latLng.lat(), longitude: event.latLng.lng() };
             setMarker(coordinates);
-            onChangeRef.current(coordinates);
+            onChangeRef.current(coordinates); resolveAddress(coordinates);
           }
         });
         if (initial) setMarker(initial, false);
@@ -86,6 +94,7 @@ export function GoogleMapPicker({ value, onChange }: { value: Coordinates | null
     navigator.geolocation.getCurrentPosition((position) => {
       const coordinates = { latitude: position.coords.latitude, longitude: position.coords.longitude };
       onChangeRef.current(coordinates);
+      if (onAddressChangeRef.current && window.google?.maps?.Geocoder) new google.maps.Geocoder().geocode({ location: { lat: coordinates.latitude, lng: coordinates.longitude } }, (results, status) => { if (status === "OK" && results?.[0]?.formatted_address) onAddressChangeRef.current?.(results[0].formatted_address); });
       const map = mapInstance.current;
       if (map) {
         const point = { lat: coordinates.latitude, lng: coordinates.longitude };

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
@@ -24,7 +26,7 @@ public class StudentApplicationController {
     private final lk.uniwork.user.UserIdentityService identities;
     public StudentApplicationController(TaskApplicationService service, lk.uniwork.user.UserIdentityService identities) { this.service = service; this.identities = identities; }
     @PostMapping("/tasks/{taskId}/applications") @ResponseStatus(HttpStatus.CREATED)
-    public TaskApplicationResponse apply(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID taskId) { return service.apply(jwt.getSubject(), taskId); }
+    public TaskApplicationResponse apply(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID taskId, @Valid @RequestBody TaskApplicationRequest request) { return service.apply(jwt.getSubject(), taskId, request.introduction()); }
     @GetMapping("/applications")
     public PageResponse<TaskApplicationResponse> mine(@AuthenticationPrincipal Jwt jwt, @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(50) int size, @RequestParam(required = false) TaskApplicationStatus status) {

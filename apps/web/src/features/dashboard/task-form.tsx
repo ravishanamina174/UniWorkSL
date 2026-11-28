@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { Task, TaskInput } from "@uniwork/api-contracts";
+import { STUDENT_CATEGORIES, type Task, type TaskInput, type StudentCategory } from "@uniwork/api-contracts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +22,7 @@ export function TaskForm({ initial, taskId }: { initial?: Task; taskId?: string 
   const [latitude, setLatitude] = useState(initial?.latitude?.toString() ?? "");
   const [longitude, setLongitude] = useState(initial?.longitude?.toString() ?? "");
   const [title, setTitle] = useState(initial?.title ?? "");
+  const [category, setCategory] = useState<StudentCategory | "">(initial?.category ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [enhancing, setEnhancing] = useState<"TITLE" | "DESCRIPTION" | "">("");
   const [preview, setPreview] = useState<{ type: "TITLE" | "DESCRIPTION"; originalText: string; enhancedText: string } | null>(null);
@@ -58,6 +59,7 @@ export function TaskForm({ initial, taskId }: { initial?: Task; taskId?: string 
       latitude: Number(latitude),
       longitude: Number(longitude),
       requiredSkills: skillInput.skills ?? [],
+      category: category || undefined,
     };
     if (!latitude || !longitude || !isValidCoordinatePair(payload.latitude, payload.longitude)) {
       setError("Choose a location or enter valid latitude and longitude coordinates."); setSaving(false); return;
@@ -89,6 +91,7 @@ export function TaskForm({ initial, taskId }: { initial?: Task; taskId?: string 
         <label className="form-field"><span>Amount (LKR)</span><Input name="amountLkr" type="number" min="0.01" max="9999999999.99" step="0.01" inputMode="decimal" required defaultValue={initial?.amountLkr ?? ""} /></label>
         <label className="form-field"><span>Task date and time (Sri Lanka)</span><Input name="taskDateTime" type="datetime-local" required defaultValue={initial?.taskDateTime?.slice(0, 16) ?? ""} /></label>
         <label className="form-field form-field-full"><span>Required skills</span><Input name="requiredSkills" maxLength={1800} required defaultValue={initial?.requiredSkills.join(", ") ?? ""} placeholder="Gardening, lifting, careful handling" /><small>Separate skills with commas, up to 20 skills.</small></label>
+        <label className="form-field"><span>Task category</span><select required value={category} onChange={(event) => setCategory(event.target.value as StudentCategory)}><option value="">Choose a category</option>{STUDENT_CATEGORIES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
       </div>
     </section>
     {preview ? <section className="ai-preview" aria-live="polite"><div><strong>AI suggestion</strong><button type="button" className="text-button" onClick={() => setPreview(null)}>Close</button></div><dl><div><dt>Original</dt><dd>{preview.originalText}</dd></div><div><dt>Enhanced</dt><dd>{preview.enhancedText}</dd></div></dl><div className="form-actions"><Button type="button" variant="secondary" onClick={() => setPreview(null)}>Keep original</Button><Button type="button" onClick={() => { if (preview.type === "TITLE") setTitle(preview.enhancedText); else setDescription(preview.enhancedText); setPreview(null); }}>Use enhanced text</Button></div></section> : null}

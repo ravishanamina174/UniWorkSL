@@ -75,7 +75,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/health", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/actuator/health").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/public/tasks", "/api/v1/public/tasks/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/public/tasks", "/api/v1/public/tasks/**", "/api/v1/public/categories/**", "/api/v1/public/students/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/public/safetask/*").permitAll()
                         .requestMatchers("/api/v1/admin/**").access((authentication, context) ->
                                 new AuthorizationDecision(adminAuthorization.isAdmin(authentication.get())))

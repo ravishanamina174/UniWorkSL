@@ -1,0 +1,7 @@
+package lk.uniwork.task;
+import jakarta.validation.constraints.*; import java.math.BigDecimal; import java.time.Instant; import java.util.UUID; import lk.uniwork.user.StudentCategory;
+public final class DirectTaskDtos { private DirectTaskDtos(){}
+ public record Create(String studentId,@NotBlank @Size(max=2000) String description,@NotNull Instant scheduledAt,@NotNull @Positive BigDecimal amountLkr,@NotBlank @Size(max=500) String locationAddress,@NotNull @DecimalMin("-90.0") @DecimalMax("90.0") @Digits(integer=3,fraction=6) BigDecimal latitude,@NotNull @DecimalMin("-180.0") @DecimalMax("180.0") @Digits(integer=3,fraction=6) BigDecimal longitude,StudentCategory category){}
+ public record Action(@NotBlank String action,@Positive BigDecimal proposedAmount){}
+ public record Response(UUID directTaskId,String posterName,String studentName,String description,Instant scheduledAt,BigDecimal amountLkr,String locationAddress,BigDecimal latitude,BigDecimal longitude,StudentCategory category,DirectTaskStatus status,BigDecimal counterAmountLkr,UUID taskId,Instant createdAt){ static Response from(DirectTask t,String posterName,String studentName){return new Response(t.getId(),posterName,studentName,t.getDescription(),t.getScheduledAt(),t.getAmountLkr(),t.getLocationAddress(),t.getLatitude(),t.getLongitude(),t.getCategory(),t.getStatus(),t.getCounterAmountLkr(),t.getLinkedTask()==null?null:t.getLinkedTask().getId(),t.getCreatedAt());}}
+}

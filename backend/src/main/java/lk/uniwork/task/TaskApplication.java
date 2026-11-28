@@ -35,6 +35,7 @@ public class TaskApplication {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 24)
     private TaskApplicationStatus status = TaskApplicationStatus.PENDING;
+    @Column(length = 1400) private String introduction;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -52,6 +53,7 @@ public class TaskApplication {
         this.student = student;
         this.status = TaskApplicationStatus.PENDING;
     }
+    public void setIntroduction(String introduction) { this.introduction = introduction; }
 
     public void changeStatus(TaskApplicationStatus status) { this.status = status; }
     public void withdraw() {
@@ -64,4 +66,5 @@ public class TaskApplication {
     public UniWorkUser getStudent() { return student; }
     public TaskApplicationStatus getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
+    public String getIntroduction() { return introduction; }
 }

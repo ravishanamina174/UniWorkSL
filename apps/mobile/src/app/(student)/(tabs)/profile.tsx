@@ -3,12 +3,14 @@ import { useCallback, useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { CheckCircle2 } from 'lucide-react-native';
 import { router, useFocusEffect } from 'expo-router';
-import type { Availability, Gender, ProfessionalLanguage, StudentProfessionalProfile, StudentProfile } from '@uniwork/api-contracts';
+import { STUDENT_CATEGORIES, type Availability, type Gender, type ProfessionalLanguage, type StudentProfessionalProfile, type StudentProfile } from '@uniwork/api-contracts';
 import { AppButton, Card, ErrorState, LoadingState, Screen, ScreenHeader, SelectOption, TextField } from '@/components/ui';
 import { useUniWorkApi } from '@/lib/use-api';
 import { IdentitySection } from '@/components/identity-section';
+import { useTheme } from '@/theme';
 
 export default function ProfileScreen() {
+  const theme = useTheme();
   const { api, error: configError } = useUniWorkApi();
   const { signOut } = useAuth();
   const [profile, setProfile] = useState<StudentProfile | null>(null);
@@ -31,12 +33,12 @@ export default function ProfileScreen() {
   async function save() {
     if (!api) return;
     setSaving(true);
-    try { setProfile(await api.saveProfile({ fullName: profile!.fullName, age: profile!.age, gender: profile!.gender, address: profile!.address, phoneNumber: profile!.phoneNumber, nic: profile!.nic, university: profile!.university, faculty: profile!.faculty })); if (professional) await api.saveProfessionalProfile(professional); Alert.alert('Profile saved', 'Your Student profile was updated.'); }
+    try { setProfile(await api.saveProfile({ fullName: profile!.fullName, age: profile!.age, gender: profile!.gender, address: profile!.address, phoneNumber: profile!.phoneNumber, nic: profile!.nic, university: profile!.university, faculty: profile!.faculty, primaryCategory: profile!.primaryCategory })); if (professional) await api.saveProfessionalProfile(professional); Alert.alert('Profile saved', 'Your Student profile was updated.'); }
     catch (cause) { Alert.alert('Could not save profile', cause instanceof Error ? cause.message : 'Try again.'); }
     finally { setSaving(false); }
   }
   return <Screen><ScreenHeader title="Your profile" subtitle="Keep your Student details up to date." />
-    <Card><View style={{ gap: 12 }}>{edit('fullName', 'Full name')}{edit('age', 'Age', 'numeric')}<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{genders.map((item) => <SelectOption key={item.value} label={item.label} value={item.value} selected={profile.gender === item.value} onSelect={(gender) => setProfile((old) => old ? { ...old, gender } : old)} />)}</View>{edit('address', 'Address')}{edit('phoneNumber', 'Phone number', 'phone-pad')}{profile.verificationStatus === 'VERIFIED' || profile.verificationStatus === 'MANUAL_REVIEW_PENDING' ? <Text>{profile.verificationStatus === 'VERIFIED' ? 'NIC Reviewed' : 'NIC review pending'} · ••••••••{profile.nic.slice(-4)}. This number is locked.</Text> : edit('nic', 'National identity number')}{edit('university', 'University')}{edit('faculty', 'Faculty')}</View>
+    <Card><View style={{ gap: 12 }}>{edit('fullName', 'Full name')}{edit('age', 'Age', 'numeric')}<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{genders.map((item) => <SelectOption key={item.value} label={item.label} value={item.value} selected={profile.gender === item.value} onSelect={(gender) => setProfile((old) => old ? { ...old, gender } : old)} />)}</View>{edit('address', 'Address')}{edit('phoneNumber', 'Phone number', 'phone-pad')}{profile.verificationStatus === 'VERIFIED' || profile.verificationStatus === 'MANUAL_REVIEW_PENDING' ? <Text>{profile.verificationStatus === 'VERIFIED' ? 'NIC Reviewed' : 'NIC review pending'} · ••••••••{profile.nic.slice(-4)}. This number is locked.</Text> : edit('nic', 'National identity number')}{edit('university', 'University')}{edit('faculty', 'Faculty')}<View style={{ gap: 8 }}><Text style={{ color: theme.text, fontSize: 14, fontWeight: '600' }}>Primary category</Text><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{STUDENT_CATEGORIES.map((item) => <SelectOption key={item.value} label={item.label} value={item.value} selected={profile.primaryCategory === item.value} onSelect={(value) => setProfile((old) => old ? { ...old, primaryCategory: value } : old)} />)}</View></View></View>
       <AppButton title="Save profile" loading={saving} onPress={() => void save()} /></Card>
     {profile.verificationStatus === 'VERIFIED' ? <View accessibilityRole="text" style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 7, marginTop: -4, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, backgroundColor: '#e7f5ee', borderWidth: 1, borderColor: '#9bd0b5' }}><CheckCircle2 size={18} color="#24734f" /><Text style={{ color: '#24734f', fontSize: 14, fontWeight: '700' }}>NIC Verified</Text></View> : null}
     {api ? <IdentitySection api={api} initialStatus={profile.verificationStatus} onReviewed={() => void load()} /> : null}

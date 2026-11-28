@@ -42,7 +42,7 @@ public class TaskService {
     public TaskResponse create(String subject, TaskRequest request) {
         UniWorkUser poster = identities.requireTaskPoster(subject);
         Task task = tasks.save(new Task(poster, clean(request.title()), clean(request.description()), request.amountLkr(),
-                scheduledInstant(request.taskDateTime()), clean(request.locationAddress()), request.latitude(), request.longitude(), cleanSkills(request.requiredSkills())));
+                scheduledInstant(request.taskDateTime()), clean(request.locationAddress()), request.latitude(), request.longitude(), cleanSkills(request.requiredSkills()), request.category()));
         return toResponse(task);
     }
 
@@ -77,6 +77,7 @@ public class TaskService {
         if (task.getStatus() != TaskStatus.DRAFT) throw conflict("Only draft tasks can be edited.");
         task.updateDetails(clean(request.title()), clean(request.description()), request.amountLkr(), scheduledInstant(request.taskDateTime()),
                 clean(request.locationAddress()), request.latitude(), request.longitude(), cleanSkills(request.requiredSkills()));
+        task.setCategory(request.category());
         return toResponse(task);
     }
 
@@ -181,7 +182,7 @@ public class TaskService {
     private TaskResponse toResponse(Task task) {
         LocalDateTime sriLankaTime = task.getScheduledAt().atZone(SRI_LANKA).toLocalDateTime();
         return new TaskResponse(task.getId(), task.getPoster().getId(), task.getTitle(), task.getDescription(), task.getAmountLkr(),
-                task.getRequiredSkills(), sriLankaTime, task.getLocationAddress(), task.getLatitude(), task.getLongitude(), task.getStatus(), task.getCreatedAt(), task.getUpdatedAt());
+                task.getRequiredSkills(), sriLankaTime, task.getLocationAddress(), task.getLatitude(), task.getLongitude(), task.getCategory(), task.getStatus(), task.getCreatedAt(), task.getUpdatedAt());
     }
 
     private Instant scheduledInstant(LocalDateTime value) {

@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
+import lk.uniwork.user.StudentCategory;
 
 @Entity
 @Table(name = "tasks")
@@ -59,6 +60,10 @@ public class Task {
     @Column(nullable = false, length = 24)
     private TaskStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 40)
+    private StudentCategory category;
+
     @ElementCollection
     @BatchSize(size = 25)
     @CollectionTable(name = "task_skills", joinColumns = @JoinColumn(name = "task_id"))
@@ -83,6 +88,12 @@ public class Task {
         updateDetails(title, description, amountLkr, scheduledAt, locationAddress, latitude, longitude, requiredSkills);
     }
 
+    public Task(UniWorkUser poster, String title, String description, BigDecimal amountLkr, Instant scheduledAt,
+                String locationAddress, BigDecimal latitude, BigDecimal longitude, Set<String> requiredSkills, StudentCategory category) {
+        this(poster, title, description, amountLkr, scheduledAt, locationAddress, latitude, longitude, requiredSkills);
+        this.category = category;
+    }
+
     public void updateDetails(String title, String description, BigDecimal amountLkr, Instant scheduledAt,
                               String locationAddress, BigDecimal latitude, BigDecimal longitude, Set<String> requiredSkills) {
         this.title = title;
@@ -101,6 +112,7 @@ public class Task {
     public void acceptStudent() { this.status = TaskStatus.ACCEPTED; }
     public void start() { this.status = TaskStatus.STARTED; }
     public void complete() { this.status = TaskStatus.COMPLETED; }
+    public void setCategory(StudentCategory category) { this.category = category; }
     public UUID getId() { return id; }
     public UniWorkUser getPoster() { return poster; }
     public String getTitle() { return title; }
@@ -111,6 +123,7 @@ public class Task {
     public BigDecimal getLatitude() { return latitude; }
     public BigDecimal getLongitude() { return longitude; }
     public TaskStatus getStatus() { return status; }
+    public StudentCategory getCategory() { return category; }
     public Set<String> getRequiredSkills() { return Set.copyOf(requiredSkills); }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }

@@ -18,6 +18,7 @@ public class StudentProfileService {
     @Transactional
     public StudentProfileResponse save(String subject, StudentProfileRequest request) {
         UniWorkUser user = users.findByClerkUserId(subject).orElse(null);
+        if (request.primaryCategory() == null) throw new ApiException(HttpStatus.BAD_REQUEST, "PRIMARY_CATEGORY_REQUIRED", "Choose your primary work category.");
         if (user != null && user.getRole() != UserRole.STUDENT) throw new ApiException(HttpStatus.FORBIDDEN, "STUDENT_ROLE_REQUIRED", "This account cannot become a Student.");
         if (user == null) user = users.save(new UniWorkUser(subject, UserRole.STUDENT));
         String address = encryption.encrypt(request.address().trim());
@@ -25,9 +26,9 @@ public class StudentProfileService {
         StudentProfile profile = profiles.findById(user.getId()).orElse(null);
         if (profile != null) verification.requireNicUnchanged(user.getId(), encryption.decrypt(profile.getNicCiphertext()), request.nic());
         if (profile == null) profile = profiles.save(new StudentProfile(user, clean(request.fullName()), request.age(), request.gender(), address,
-                clean(request.phoneNumber()), nic, clean(request.university()), clean(request.faculty())));
+                clean(request.phoneNumber()), nic, clean(request.university()), clean(request.faculty()), request.primaryCategory()));
         else profile.update(clean(request.fullName()), request.age(), request.gender(), address, clean(request.phoneNumber()), nic,
-                clean(request.university()), clean(request.faculty()));
+                clean(request.university()), clean(request.faculty()), request.primaryCategory());
         return response(profile);
     }
     @Transactional(readOnly = true)
@@ -42,7 +43,7 @@ public class StudentProfileService {
     private StudentProfileResponse response(StudentProfile p) {
         return new StudentProfileResponse(p.getId(), p.getFullName(), p.getAge(), p.getGender(), encryption.decrypt(p.getAddressCiphertext()),
                 p.getPhoneNumber(), encryption.decrypt(p.getNicCiphertext()), p.getUniversity(), p.getFaculty(), p.getCreatedAt(), p.getUpdatedAt(),
-                verification.status(p.getId()).status());
+                verification.status(p.getId()).status(), p.getPrimaryCategory());
     }
     private String clean(String value) { return value.trim(); }
 }
